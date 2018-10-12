@@ -1,0 +1,86 @@
+---
+title: "Combine the microarray and RNA-seq data and generated masked data"
+author: J. Taroni for ALSF CCDL
+date: 10/12/2018
+output: html_notebook
+---
+
+Because we need to mask values (e.g., they can't be missing tp start), we'll do 
+an inner join for this particular experiment. 
+This is different from how we expect to do imputation in production.
+
+### Functions
+
+```{r}
+# magrittr pipe
+`%>%` <- dplyr::`%>%`
+
+# microarray data is "missing" a column name, we need to fill it in
+read_in_microarray_data <- function(filename) {
+  # read in a given file and set the first column name to "Gene"
+  # we're suppressing warnings here because we know the missing column is
+  # a problem -- that's why we have this function!
+  df <- suppressWarnings(data.table::fread(filename, data.table = FALSE))
+  colnames(df)[1] <- "Gene"
+  return(df)
+}
+```
+
+### Read in files and aggregate
+
+First, the microarray data
+
+```{r}
+# full path to all the microarray data we obtain
+microarray_files <- list.files(file.path("data", "microarray"), 
+                               full.names = TRUE)
+# initialize a list to hold the data.frames 
+df_list <- list()
+for (file_iter in seq_along(microarray_files)) {
+  df_list[[file_iter]] <- read_in_microarray_data(microarray_files[file_iter])
+}
+```
+
+Now the inner join.
+We also have to get rid of the `_at` trailing the `ENSDARG` ids that is an
+artifact of using Brainarray.
+
+```{r}
+dir.create(file.path("data", "aggregated"), recursive = TRUE)
+microarray_df <- plyr::join_all(df_list, by = "Gene", type = "inner") %>%
+  dplyr::mutate(Gene = sub("_at", "", Gene))
+readr::write_tsv(microarray_df, file.path("data", "aggregated",
+                                          "microarray_zebrafish.tsv"))
+```
+
+Now we'll repeat the process with RNA-seq data.
+
+```{r}
+seq_files <- list.files(file.path("data", "rnaseq"), full.names = TRUE)
+
+df_list <- list()
+for (file_iter in seq_along(seq_files)) {
+  df_list[[file_iter]] <- data.table::fread(seq_files[file_iter],
+                                            data.table = FALSE)
+}
+
+seq_df <- plyr::join_all(df_list, by = "Gene", type = "inner")
+readr::write_tsv(seq_df, file.path("data", "aggregated", "seq_zebrafish.tsv"))
+```
+
+And join all the data together, again using an inner join because we'll need
+to mask values.
+
+```{r}
+both_df <- dplyr::inner_join(microarray_df, seq_df, by = "Gene")
+# are there any missing values
+any(is.na(both_df))
+```
+
+Write the "complete" `data.frame` to file.
+
+```{r}
+readr::write_tsv(both_df, file.path("data", "aggregated", "all_zebrafish.tsv"))
+```
+
+

@@ -26,7 +26,7 @@ read_in_microarray_data <- function(filename) {
 }
 ```
 
-### Read in files and aggregate
+## Read in files and aggregate
 
 First, the microarray data
 
@@ -83,4 +83,217 @@ Write the "complete" `data.frame` to file.
 readr::write_tsv(both_df, file.path("data", "aggregated", "all_zebrafish.tsv"))
 ```
 
+Let's also quantile normalize the data and write that to file.
+The rationale is that the _end result_ in a compendium will be quantile 
+normalized and therefore we should use the quantile normalized expression 
+values as our true values.
+
+We need a matrix for quantile normalization.
+
+```{r}
+both_mat <- both_df %>%
+  tibble::column_to_rownames("Gene") %>%
+  as.matrix()
+```
+
+And we'll also need the target!
+
+```{r}
+target_df <- 
+  readr::read_tsv(file.path("data", "qn_target", 
+                            "d8gyazczr661umla1979zxu7_1538153041_target.tsv"),
+                  col_names = FALSE)
+target <- as.vector(as.matrix(target_df))
+```
+
+```{r}
+# BiocInstaller::biocLite("preprocessCore")
+qn_mat <- preprocessCore::normalize.quantiles.use.target(both_mat,
+                                                         target = target)
+qn_df <- data.frame(Gene = rownames(both_mat), qn_mat)
+colnames(qn_df)[2:ncol(qn_df)] <- colnames(both_mat)
+readr::write_tsv(qn_df, file.path("data", "aggregated", 
+                                  "qn_all_zebrafish.tsv"))
+```
+
+We'll only keep around what we want for the masking bit.
+
+```{r}
+rm(list = setdiff(ls(), c("both_mat", "both_df", "%>%")))
+```
+
+## Masking
+
+#### Functions
+
+```{r}
+mask_completely_at_random <- function(exprs_mat, indices_df,
+                                      seed = 12345, perc_masked = 0.3) {
+  # given an expression matrix (exprs_mat) and a "grid" of its indices 
+  # (indices_df, where the row indices are in the first column and column 
+  # indices are in the second column), mask some percentage (perc_masked)
+  # of the values by replacing them with NAs
+  
+  # set seed for reproducibility!
+  set.seed(seed)
+  
+  # how many cells do we want to mask in the expression data.frame and which
+  # cells are they?
+  ncells <- floor(nrow(indices_df) * perc_masked)
+  rand_indices_df <- indices_df[sample(1:nrow(indices_df), ncells), ]
+  
+  # we need to return a matrix that has NAs -- the values are "masked"
+  masked_exprs_mat <- exprs_mat
+  masked_exprs_mat[as.matrix(rand_indices_df)] <- NA
+  
+  # We also want to store a data.frame that includes the row and column indices
+  # of the values that were masked and the original values. This facilitates
+  # our downstream error calculations. 
+  rand_indices_df$original_values <- exprs_mat[as.matrix(rand_indices_df)]
+
+  # return the masked expression matrix (will passed to imputer of
+  # choice), the data.frame that keeps track of indices and original values,
+  # and the seed used to generate them
+  return_list <- list(exprs_mat = masked_exprs_mat,
+                      indices = rand_indices_df,
+                      seed = seed)
+  return(return_list)
+  
+}
+
+mask_random_rows <- function(exprs_mat, seed = 12345) {
+  # 10% of rows missing 10% of values
+  # 10% of rows missing 20% of values
+  # 5% of rows missing 30% of values
+  
+  get_masked_columns <- function(expression_mat, perc_masked = 0.1) {
+    # 10% of values will be masked by default
+    col_indices <- sample(1:ncol(expression_mat), 
+                          floor(ncol(expression_mat) * perc_masked))
+  }
+  
+  get_indices_df <- function(expression_matrix, 
+                             row_indices, 
+                             percent_masked) {
+    # for each row index, get an appropriate level of masked columns/samples
+    column_index_list <- lapply(row_indices, 
+                                function(x) 
+                                  get_masked_columns(expression_matrix,
+                                                     percent_masked))
+    names(column_index_list) <- as.character(row_indices)
+    # we want this in data.frame form
+    indices_df <- reshape2::melt(column_index_list)
+    # reshape makes it that the elements of the list are in the first column
+    # these are the column indices in this case
+    colnames(indices_df) <- c("column", "row")
+    # and that's the opposite of the order we want
+    indices_df <- indices_df[, c("row", "column")]
+    return(indices_df)
+  }
+  
+  # set seed for reproducibility
+  set.seed(seed)
+  
+  # all rows are able to be masked at this point, but every time a row gets 
+  # selected to be masked in a "round" with fewer missing values, take it
+  # out of the running
+  available_rows <- 1:nrow(exprs_mat)
+  # the 10% of rows that will be missing 10% of values
+  ten_perc_rows <- sample(available_rows, floor(nrow(exprs_mat) * 0.1))
+  # take these out of the pool of rows to mask
+  available_rows <- available_rows[-which(available_rows %in% ten_perc_rows)]
+  # repeat for 10% of rows missing 20% of values
+  twenty_perc_rows <- sample(available_rows, floor(nrow(exprs_mat) * 0.1))
+  available_rows <- available_rows[-which(available_rows %in% twenty_perc_rows)]
+  # only 5% will be missing 30% of values
+  thirty_perc_rows <- sample(available_rows, floor(nrow(exprs_mat) * 0.05))
+  
+  # let's get an indices data.frame for each of these guys -- we'll bind the
+  # rows together and then basically repeat the MCAR procedure above
+  ten_indices_df <- get_indices_df(expression_matrix = exprs_mat,
+                                   row_indices = ten_perc_rows,
+                                   percent_masked = 0.1)
+  twenty_indices_df <- get_indices_df(expression_matrix = exprs_mat,
+                                      row_indices = twenty_perc_rows,
+                                      percent_masked = 0.2)
+  thirty_indices_df <- get_indices_df(expression_matrix = exprs_mat,
+                                      row_indices = thirty_perc_rows,
+                                      percent_masked = 0.3)
+  
+  # one indices data.frame to rule them all and make sure the values are 
+  # integers
+  indices_df <- rbind(ten_indices_df, twenty_indices_df, thirty_indices_df)
+  indices_df$row <- as.integer(indices_df$row)
+  indices_df$column <- as.integer(indices_df$column)
+  
+  # we need to return a matrix that has NAs -- the values are "masked"
+  masked_exprs_mat <- exprs_mat
+  masked_exprs_mat[as.matrix(indices_df)] <- NA
+  
+  # We also want to store a data.frame that includes the row and column indices
+  # of the values that were masked and the original values. This facilitates
+  # our downstream error calculations. 
+  indices_df$original_values <- exprs_mat[as.matrix(indices_df)]
+  # let's also keep track of how many values were missing in this row, I think
+  # this will help with plotting later
+  indices_df$missingness <- c(rep(0.1, nrow(ten_indices_df)),
+                              rep(0.2, nrow(twenty_indices_df)),
+                              rep(0.3, nrow(thirty_indices_df)))
+  
+  # return the masked expression matrix (will passed to imputer of
+  # choice), the data.frame that keeps track of indices and original values,
+  # and the seed used to generate them
+  return_list <- list(exprs_mat = masked_exprs_mat,
+                      indices = indices_df,
+                      seed = seed)
+  return(return_list)
+  
+}
+```
+
+We're going to repeat these masking procedures ten times, each with different
+random seeds.
+
+```{r}
+set.seed(12345)
+seeds <- sample(1:10000, 10)
+```
+
+First, the missing completely at random examples
+
+```{r}
+# we need all the indices in the expression matrix 
+mcar_indices_df <- expand.grid(1:nrow(both_mat), 1:ncol(both_mat))
+
+# 30% values missing completely at random
+mcar_list <- 
+  lapply(seeds,
+         function(seed) mask_completely_at_random(exprs_mat = both_mat,
+                                                  indices_df = mcar_indices_df,
+                                                  seed = seed, 
+                                                  perc_masked = 0.3))
+names(mcar_list) <- as.character(seeds)
+```
+
+And now the "more realistic example"
+
+```{r}
+random_rows_list <- 
+  lapply(seeds,
+         function(seed) mask_random_rows(exprs_mat = both_mat,
+                                         seed = seed))
+names(random_rows_list) <- as.character(seeds)
+```
+
+Let's save these lists as `.RDS`.
+We'll prep this data for use with [`KNNImputer`](https://libsleipnir.bitbucket.io/KNNImputer.html)
+in another script that includes different processing.
+
+```{r}
+masked_dir <- file.path("data", "masked") 
+dir.create(masked_dir, recursive = TRUE, showWarnings = FALSE)
+saveRDS(mcar_list, file = file.path(masked_dir, "mcar_list.RDS"))
+saveRDS(random_rows_list, file = file.path(masked_dir, 
+                                           "missing_random_rows_list.RDS"))
+```
 

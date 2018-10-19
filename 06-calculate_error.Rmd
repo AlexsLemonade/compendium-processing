@@ -5,24 +5,13 @@ date: 10/19/2018
 output: html_notebook
 ---
 
-For "storage" purposes
-By missing type -- do MRR first because it's more relevant
-  By seed
-    By the processing steps
-
-      For indices in the first two columns of the `indices` item
-  
-      Split technologies -- inner join needs to be performed in order to use 
-      indices
-
 ```{r}
-install.packages("Metrics")  # Metrics::rmse(actual, predicted)
+# install.packages("Metrics")  # Metrics::rmse(actual, predicted)
 ```
 
 ```{r}
 `%>%` <- dplyr::`%>%`
 ```
-
 
 ```{r}
 # extract the seeds from the file names -- this is how we keep track of repeats
@@ -50,6 +39,26 @@ missing_types <- c("MRR", "MCAR")
 # both seq_log and seq_un and perform an inner join
 processing_files <- c("all_log", "all_un", "seq_log", "seq_un")
 ```
+
+We'll compare quantile normalized values.
+
+```{r}
+# read in QN'd matrix -- this will contain the original values
+qn_mat <- data.table::fread(file.path("data", "aggregated", 
+                                      "qn_all_zebrafish.tsv"), 
+                            data.table = FALSE) %>%
+  tibble::column_to_rownames("Gene") %>%
+  as.matrix()
+```
+
+```{r}
+# read in the target values
+target <- read.delim(file.path("data", "qn_target", 
+                               "d8gyazczr661umla1979zxu7_1538153041_target.tsv"),
+                     header = FALSE)
+target <- as.vector(as.matrix(target))
+```
+
 
 ```{r}
 # we'll store results in a "results" directory
@@ -96,14 +105,19 @@ for (missing in missing_types) {
       # exist but it's just a warning
       suppressWarnings(rm(array_imputed_df, imputed_df))
       
+      # quantile normalize the imputed matrix
+      imputed_qn_mat <- 
+        preprocessCore::normalize.quantiles.use.target(imputed_mat,
+                                                       target)
+      
       # where were the missing values?
       imputed_indices <- masked_list[[missing]][[seed]]$indices[, c(1, 2)]
       
       # what were the original values?
-      original_values <- masked_list[[missing]][[seed]]$indices$original_values
+      original_values <- qn_mat[as.matrix(imputed_indices)]
       
       # what are the imputed values?
-      imputed_values <- imputed_mat[as.matrix(imputed_indices)]
+      imputed_values <- imputed_qn_mat[as.matrix(imputed_indices)]
       
       # calculate the RMSE
       calculated_rmse <- Metrics::rmse(original_values, imputed_values)

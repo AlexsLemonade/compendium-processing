@@ -1,0 +1,147 @@
+---
+title: "Calculate RMSE"
+author: J. Taroni for ALSF CCDL
+date: 10/19/2018
+output: html_notebook
+---
+
+For "storage" purposes
+By missing type -- do MRR first because it's more relevant
+  By seed
+    By the processing steps
+
+      For indices in the first two columns of the `indices` item
+  
+      Split technologies -- inner join needs to be performed in order to use 
+      indices
+
+```{r}
+install.packages("Metrics")  # Metrics::rmse(actual, predicted)
+```
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+
+```{r}
+# extract the seeds from the file names -- this is how we keep track of repeats
+file_name_for_seeds <- list.files(file.path("imputed", "MCAR"), 
+                                  pattern = "all_log")
+seeds <- unique(stringr::word(file_name_for_seeds, 3, sep = "_"))
+rm(file_name_for_seeds)
+```
+
+```{r}
+# load in the lists from generating the masking
+mcar_list <- readr::read_rds(file.path("data", "masked", "mcar_list.RDS"))
+mrr_list <- readr::read_rds(file.path("data", "masked", 
+                                      "missing_random_rows_list.RDS"))
+# we'll combine these for easy "traversal" below
+masked_list <- list(MCAR = mcar_list,
+                    MRR = mrr_list)
+rm(mcar_list, mrr_list)
+```
+
+```{r}
+# the two types of simulated missing values 
+missing_types <- c("MRR", "MCAR")
+# we processed the data 4 ways -- we'll need to snag the microarray files for
+# both seq_log and seq_un and perform an inner join
+processing_files <- c("all_log", "all_un", "seq_log", "seq_un")
+```
+
+```{r}
+# we'll store results in a "results" directory
+dir.create("results", showWarnings = FALSE)
+```
+
+```{r}
+error_list <- list()
+# MCAR or MRR
+for (missing in missing_types) {
+  missing_list <- list()
+  # each of the ten repeats
+  for (seed in seeds) {
+    repeat_list <- list()
+    # the four ways we processed the data
+    for (processing in processing_files) {
+      # read in specified imputed file as a data.frame (helps with joining
+      # in separate technology cases)
+      input_file <- file.path("imputed", missing, 
+                              paste0(processing, "_", seed, "_", missing, 
+                                     "_knnimpute.pcl"))
+      imputed_df <- data.table::fread(input_file, data.table = FALSE)
+      
+      # for instances where technologies were imputed separately, also
+      # read in the microarray imputed results and inner join before 
+      # calculating error
+      if (grepl("seq", processing)) {
+        microarray_input_file <- file.path("imputed", missing, 
+                                           paste0("microarray_", seed, "_", 
+                                                  missing, "_knnimpute.pcl"))
+        array_imputed_df <- data.table::fread(microarray_input_file, 
+                                              data.table = FALSE)
+        imputed_df <- dplyr::inner_join(imputed_df, array_imputed_df, 
+                                        by = "Gene")
+      }
+      
+      # convert imputed data.frame to a matrix where the gene identifiers are
+      # the rownames
+      imputed_mat <- imputed_df %>%
+        tibble::column_to_rownames("Gene") %>%
+        as.matrix()
+      
+      # remove the data.frames -- this will warn us if array_imputed_df doesn't
+      # exist but it's just a warning
+      suppressWarnings(rm(array_imputed_df, imputed_df))
+      
+      # where were the missing values?
+      imputed_indices <- masked_list[[missing]][[seed]]$indices[, c(1, 2)]
+      
+      # what were the original values?
+      original_values <- masked_list[[missing]][[seed]]$indices$original_values
+      
+      # what are the imputed values?
+      imputed_values <- imputed_mat[as.matrix(imputed_indices)]
+      
+      # calculate the RMSE
+      calculated_rmse <- Metrics::rmse(original_values, imputed_values)
+      
+      repeat_list[[processing]] <- calculated_rmse
+      
+    }
+    missing_list[[seed]] <- repeat_list
+  }
+  error_list[[missing]] <- missing_list
+}
+
+```
+
+
+```{r}
+error_df <- reshape2::melt(error_list, value.name = "RMSE")
+colnames(error_df)[2:ncol(error_df)] <- c("processing_method",
+                                          "repeat", "missing_type")
+readr::write_tsv(error_df, 
+                 file.path("results", "RMSE_all.tsv"))
+error_df <- error_df %>%
+  dplyr::mutate(processing_method = as.factor(processing_method),
+                `repeat` = as.factor(`repeat`),
+                missing_type = as.factor(missing_type))
+```
+
+```{r}
+error_df %>%
+  ggplot2::ggplot(ggplot2::aes(x = processing_method, y = RMSE)) +
+  ggplot2::geom_boxplot() +
+  ggplot2::geom_jitter(width = 0.2) +
+  ggplot2::facet_wrap(~ missing_type, ncol = 1) +
+  ggplot2::theme_bw()
+```
+
+```{r}
+dir.create("plots", showWarnings = FALSE)
+ggplot2::ggsave(file.path("plots", "RMSE_all.pdf"))
+```
+

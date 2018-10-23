@@ -54,4 +54,4 @@ hs.acc <- c(unique(hs.gpl$gse$from_acc), hs.array$V1)
 
 # Write info to a csv file
 write.csv(platforms %>% filter(external_accession %in% hs.acc),
-          file = "exp_acc_human_only.csv", quote = FALSE)
+          file = "exp_acc_human_only.csv", quote = FALSE, row.names = FALSE)

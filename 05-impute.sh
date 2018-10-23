@@ -17,6 +17,7 @@ do
       echo "Processing ${input_file}"
       output_file="imputed/${miss}/${process}_${seed}_${miss}_knnimpute.pcl"
       KNNImputer -i $input_file -o $output_file -s 0 -l 20
+      python3 scripts/run_fancyimpute.py --file $input_file
     done
   done
 done

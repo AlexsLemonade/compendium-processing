@@ -183,5 +183,6 @@ error_df %>%
 ```{r}
 dir.create("plots", showWarnings = FALSE)
 ggplot2::ggsave(file.path("plots", "RMSE_all.pdf"))
+ggplot2::ggsave(file.path("plots", "RMSE_all.png"))
 ```
 

@@ -37,7 +37,9 @@ rm(mcar_list, mrr_list)
 missing_types <- c("MRR", "MCAR")
 # we processed the data 4 ways -- we'll need to snag the microarray files for
 # both seq_log and seq_un and perform an inner join
-processing_files <- c("all_log", "all_un", "seq_log", "seq_un")
+processing_files <- c("all_log", "all_qn", "all_un", "seq_log", "seq_un")
+imputer_types <- c("IterativeSVD", "KNN_fancyimpute", "knnimpute", 
+                   "softimpute")
 ```
 
 We'll compare quantile normalized values.
@@ -70,88 +72,112 @@ error_list <- list()
 # MCAR or MRR
 for (missing in missing_types) {
   missing_list <- list()
-  # each of the ten repeats
-  for (seed in seeds) {
-    repeat_list <- list()
-    # the four ways we processed the data
-    for (processing in processing_files) {
-      # read in specified imputed file as a data.frame (helps with joining
-      # in separate technology cases)
-      input_file <- file.path("imputed", missing, 
-                              paste0(processing, "_", seed, "_", missing, 
-                                     "_knnimpute.pcl"))
-      imputed_df <- data.table::fread(input_file, data.table = FALSE)
-      
-      # for instances where technologies were imputed separately, also
-      # read in the microarray imputed results and inner join before 
-      # calculating error
-      if (grepl("seq", processing)) {
-        microarray_input_file <- file.path("imputed", missing, 
-                                           paste0("microarray_", seed, "_", 
-                                                  missing, "_knnimpute.pcl"))
-        array_imputed_df <- data.table::fread(microarray_input_file, 
-                                              data.table = FALSE)
-        imputed_df <- dplyr::inner_join(imputed_df, array_imputed_df, 
-                                        by = "Gene")
+  # for each of the four types of imputation strategies
+  for (impute in imputer_types) {
+    impute_list <- list()
+    # each of the ten repeats
+    for (seed in seeds) {
+      repeat_list <- list()
+      # the four ways we processed the data
+      for (processing in processing_files) {
+        # read in specified imputed file as a data.frame (helps with joining
+        # in separate technology cases)
+        input_file <- file.path("imputed", missing, 
+                                paste0(processing, "_", seed, "_", missing, 
+                                       "_", impute, ".pcl"))
+        imputed_df <- data.table::fread(input_file, data.table = FALSE)
+        
+        # for instances where technologies were imputed separately, also
+        # read in the microarray imputed results and inner join before 
+        # calculating error
+        if (grepl("seq", processing)) {
+          microarray_input_file <- file.path("imputed", missing, 
+                                             paste0("microarray_", seed, "_", 
+                                                    missing, "_knnimpute.pcl"))
+          array_imputed_df <- data.table::fread(microarray_input_file, 
+                                                data.table = FALSE)
+          imputed_df <- dplyr::inner_join(imputed_df, array_imputed_df, 
+                                          by = "Gene")
+        }
+        
+        # convert imputed data.frame to a matrix where the gene identifiers are
+        # the rownames
+        imputed_mat <- imputed_df %>%
+          tibble::column_to_rownames("Gene") %>%
+          as.matrix()
+        
+        # remove the data.frames -- this will warn us if array_imputed_df doesn't
+        # exist but it's just a warning
+        suppressWarnings(rm(array_imputed_df, imputed_df))
+        
+        # if the data was not quantile normalized already -- e.g., not "all_qn"
+        # quantile normalize the imputed matrix
+        if (processing != "all_qn") {
+          imputed_qn_mat <- 
+            preprocessCore::normalize.quantiles.use.target(imputed_mat,
+                                                           target)
+        } else {
+          imputed_qn_mat <- imputed_mat
+        }
+        
+        # where were the missing values?
+        imputed_indices <- masked_list[[missing]][[seed]]$indices[, c(1, 2)]
+        
+        # what were the original values?
+        original_values <- qn_mat[as.matrix(imputed_indices)]
+        
+        # what are the imputed values?
+        imputed_values <- imputed_qn_mat[as.matrix(imputed_indices)]
+        
+        # calculate the RMSE
+        calculated_rmse <- Metrics::rmse(original_values, imputed_values)
+        
+        repeat_list[[processing]] <- calculated_rmse
+        
       }
-      
-      # convert imputed data.frame to a matrix where the gene identifiers are
-      # the rownames
-      imputed_mat <- imputed_df %>%
-        tibble::column_to_rownames("Gene") %>%
-        as.matrix()
-      
-      # remove the data.frames -- this will warn us if array_imputed_df doesn't
-      # exist but it's just a warning
-      suppressWarnings(rm(array_imputed_df, imputed_df))
-      
-      # quantile normalize the imputed matrix
-      imputed_qn_mat <- 
-        preprocessCore::normalize.quantiles.use.target(imputed_mat,
-                                                       target)
-      
-      # where were the missing values?
-      imputed_indices <- masked_list[[missing]][[seed]]$indices[, c(1, 2)]
-      
-      # what were the original values?
-      original_values <- qn_mat[as.matrix(imputed_indices)]
-      
-      # what are the imputed values?
-      imputed_values <- imputed_qn_mat[as.matrix(imputed_indices)]
-      
-      # calculate the RMSE
-      calculated_rmse <- Metrics::rmse(original_values, imputed_values)
-      
-      repeat_list[[processing]] <- calculated_rmse
-      
+      impute_list[[seed]] <- repeat_list
     }
-    missing_list[[seed]] <- repeat_list
+    missing_list[[impute]] <- impute_list
   }
   error_list[[missing]] <- missing_list
 }
-
 ```
-
 
 ```{r}
 error_df <- reshape2::melt(error_list, value.name = "RMSE")
 colnames(error_df)[2:ncol(error_df)] <- c("processing_method",
-                                          "repeat", "missing_type")
-readr::write_tsv(error_df, 
-                 file.path("results", "RMSE_all.tsv"))
+                                          "repeat", "imputation_method", 
+                                          "missing_type")
 error_df <- error_df %>%
   dplyr::mutate(processing_method = as.factor(processing_method),
                 `repeat` = as.factor(`repeat`),
-                missing_type = as.factor(missing_type))
+                missing_type = as.factor(missing_type),
+                imputation_method = as.factor(imputation_method)) %>%
+  dplyr::mutate(imputation_method = 
+                  dplyr::recode(
+                    imputation_method, "KNN_fancyimpute" = "KNN (fancyimpute)",
+                    "knnimpute" = "KNNImputer", "softimpute" = "SoftImpute"
+                    ),
+                processing_method = 
+                  dplyr::recode(
+                   processing_method, "all_qn" = "BOTH QN", 
+                   "all_log" = "BOTH LOG", "all_un" = "BOTH UN", 
+                   "seq_log" = "INDIV LOG", "seq_un" = "INDIV UN"
+                  )
+  )
+readr::write_tsv(error_df, 
+                 file.path("results", "RMSE_all.tsv"))
 ```
 
 ```{r}
 error_df %>%
   ggplot2::ggplot(ggplot2::aes(x = processing_method, y = RMSE)) +
   ggplot2::geom_boxplot() +
-  ggplot2::geom_jitter(width = 0.2) +
-  ggplot2::facet_wrap(~ missing_type, ncol = 1) +
-  ggplot2::theme_bw()
+  ggplot2::geom_jitter(width = 0.2, alpha = 0.3) +
+  ggplot2::facet_wrap(missing_type ~ imputation_method, ncol = 4) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(axis.text.x = ggplot2::element_text(hjust = 1, angle = 45)) +
+  ggplot2::labs(title = "Zebrafish Masking Comparison", x = "Processing Method")
 ```
 
 ```{r}

@@ -77,7 +77,9 @@ write_five_pcl <- function(exprs_mat, target, path, seed,
   all_log_mat <- as.matrix(tibble::column_to_rownames(all_log_df, "Gene"))
   all_log_qn_mat <- preprocessCore::normalize.quantiles.use.target(all_log_mat,
                                                                    target)
-  readr::write_tsv(all_log_df, file.path(path, paste0("all_qn_", seed, "_", 
+  all_qn_df <- data.frame(Gene = all_log_df$Gene, all_log_qn_mat)
+  colnames(all_qn_df) <- colnames(all_log_df)
+  readr::write_tsv(all_qn_df, file.path(path, paste0("all_qn_", seed, "_", 
                                                       missing_type, ".pcl")))
   
   # don't return all_log_df

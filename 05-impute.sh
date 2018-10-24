@@ -2,7 +2,7 @@
 
 declare -a seed_arr=("1663" "3250" "4563" "5089" "7210" "7272" "7609" "8757" "8859" "9889")
 declare -a missing_arr=("MCAR" "MRR")
-declare -a processing_arr=("all_log" "all_un" "microarray" "seq_log" "seq_un")
+declare -a processing_arr=("all_log" "all_qn" "all_un" "microarray" "seq_log" "seq_un")
 
 mkdir imputed/MCAR -p
 mkdir imputed/MRR -p
@@ -17,6 +17,7 @@ do
       echo "Processing ${input_file}"
       output_file="imputed/${miss}/${process}_${seed}_${miss}_knnimpute.pcl"
       KNNImputer -i $input_file -o $output_file -s 0 -l 20
+      python3 scripts/run_fancyimpute.py --file $input_file
     done
   done
 done

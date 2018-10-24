@@ -1,10 +1,15 @@
-FROM ubuntu:16.04
+FROM jupyter/tensorflow-notebook:6c85e4b43a26
+
+RUN pip install --ignore-installed 'numpy==1.15.2' 'cvxpy==1.0.10' 'scikit-learn==0.20.0'
+RUN pip install 'fancyimpute==0.4.0'
 
 # Adapted from Greg Way
 # https://github.com/greenelab/hgsc_subtypes/blob/9986ddd51c557bf4e1222998d7871ff635475a47/docker/Dockerfile
 
+USER root
+
 # Install Ubuntu dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN sudo apt-get update && apt-get install -y --no-install-recommends \
 		git \
 		ed \		
 		less \
@@ -21,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 		libssl-dev
 
 # Install Sleipnir
-RUN apt-get install -y --no-install-recommends \
+RUN sudo apt-get install -y --no-install-recommends \
 		mercurial \
 		gengetopt \
 		libboost-regex-dev \

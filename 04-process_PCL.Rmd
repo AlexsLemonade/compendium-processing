@@ -7,10 +7,6 @@ output: html_notebook
 
 We intend to combine microarray and RNA-seq data in our species compendia and
 we need to select an (initial) processing pipeline for our imputation.
-Originally, I intended to test the order in which we quantile normalized things,
-but after reviewing my notes, I realized that the way quantile normalization
-is implemented in our system assumes that values will be missing at random 
-and we'll want to impute prior to quantile normalization.
 
 So, here's what we're going to test:
 
@@ -19,6 +15,7 @@ separately), performing no transformations
 * Splitting by technology, `log2(x + 1)` transformation of RNA-seq data
 * Imputing technologies together, no transformation
 * Imputing technologies together, `log2(x + 1)` transformation of RNA-seq data
+* Imputing technologies, all samples are quantile normalized
 
 The rationale behind the log2 transformation is to reduce the effect of outliers
 on the KNN imputation step which will use Euclidean distance.
@@ -31,7 +28,8 @@ and a somewhat more realistic structure (we think) where 25% of rows have a
 with different random seeds.
 
 ```{r}
-write_five_pcl <- function(exprs_mat, path, seed, missing_type = "MCAR") {
+write_five_pcl <- function(exprs_mat, target, path, seed, 
+                           missing_type = "MCAR") {
   # given an expression matrix, let's get 5 PCL files that satisfy the above
   # conditions; file names TBD by the random seed used and the missing type
   # 
@@ -75,9 +73,29 @@ write_five_pcl <- function(exprs_mat, path, seed, missing_type = "MCAR") {
   readr::write_tsv(all_log_df, file.path(path, paste0("all_log_", seed, "_", 
                                                       missing_type, ".pcl")))
   
+  # both technologies, quantile normalized
+  all_log_mat <- as.matrix(tibble::column_to_rownames(all_log_df, "Gene"))
+  all_log_qn_mat <- preprocessCore::normalize.quantiles.use.target(all_log_mat,
+                                                                   target)
+  all_qn_df <- data.frame(Gene = all_log_df$Gene, all_log_qn_mat)
+  colnames(all_qn_df) <- colnames(all_log_df)
+  readr::write_tsv(all_qn_df, file.path(path, paste0("all_qn_", seed, "_", 
+                                                      missing_type, ".pcl")))
+  
   # don't return all_log_df
   return(NULL)
 }
+```
+
+### Target for quantile normalization
+
+```{r}
+target_df <- 
+  readr::read_tsv(file.path("data", "qn_target", 
+                            "d8gyazczr661umla1979zxu7_1538153041_target.tsv"),
+                  col_names = FALSE)
+target <- as.vector(as.matrix(target_df))
+rm(target_df)
 ```
 
 ### Missing completely at random
@@ -94,6 +112,7 @@ mcar_list <- readRDS(file.path("data", "masked", "mcar_list.RDS"))
 ```{r}
 mcar_pcl <- lapply(mcar_list, 
                    function(x) write_five_pcl(exprs_mat = x$exprs_mat,
+                                              target = target,
                                               path = mcar_dir,
                                               seed = x$seed,
                                               missing_type = "MCAR"))
@@ -112,6 +131,7 @@ mrr_list <- readRDS(file.path("data", "masked",
                               "missing_random_rows_list.RDS"))
 mrr_pcl <- lapply(mrr_list, 
                    function(x) write_five_pcl(exprs_mat = x$exprs_mat,
+                                              target = target,
                                               path = mrr_dir,
                                               seed = x$seed,
                                               missing_type = "MRR"))

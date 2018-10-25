@@ -1,0 +1,10 @@
+https://s3.amazonaws.com/mssm-archs4-zoo/Drosophila_melanogaster_genecount_v1.h5
+https://s3.amazonaws.com/mssm-archs4-zoo/Bos_taurus_genecount_v1.h5
+https://s3.amazonaws.com/mssm-archs4-zoo/Caenorhabditis_elegans_genecount_v1.h5
+https://s3.amazonaws.com/mssm-archs4-zoo/Danio_rerio_genecount_v1.h5
+https://s3.amazonaws.com/mssm-archs4-zoo/Gallus_gallus_genecount_v1.h5
+https://s3.amazonaws.com/mssm-archs4-zoo/Rattus_norvegicus_genecount_v1.h5
+https://s3.amazonaws.com/mssm-archs4-zoo/Saccharomyces_cerevisiae_genecount_v1.h5
+https://s3.amazonaws.com/mssm-archs4-zoo/Arabidopsis_thaliana_genecount_v1.h5
+https://s3.amazonaws.com/mssm-seq-matrix/human_matrix.h5  # version 6
+https://s3.amazonaws.com/mssm-seq-matrix/mouse_matrix.h5  # version 6

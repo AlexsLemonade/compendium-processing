@@ -13,6 +13,7 @@ get_smashable_s3_links <- function(files_df, pattern = "lengthScaledTPM.tsv") {
   if (!is.data.frame(files_df) | !all_req_col) {
     # return an empty vector
     warning("\nThe files data.frame is in an unexpected format\n")
+    return(NULL)
   } else {
     relevant_files <- files_df %>%
       dplyr::filter(is_smashable == TRUE,

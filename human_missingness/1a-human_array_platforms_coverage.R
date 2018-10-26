@@ -39,29 +39,33 @@ genes.per.affy <- lapply(id.files, function (x) {
 })
 
 #---------------------------Get Illumina Gene lists ---------------------------#
-packages <- c("illuminaHumanv1.db", "illuminaHumanv2.db", "illuminaHumanv3.db",
-              "illuminaHumanv4.db")
+# Get a list of the GPLs from the platforms list
+illum.gpls <- platforms$external_accession[grep("Illumina", platforms$internal_accession)]
 
-# For each illumina package, get out a gene list:
-genes.per.illum <- lapply(packages, function(x){
-  if (!(x %in% installed.packages())) {
-    source("https://bioconductor.org/biocLite.R")
-    biocLite(x, suppressUpdates = TRUE)
+# For each GPL, obtain gene accession ids
+genes.per.illum <- lapply(illum.gpls, function(x) {
+  
+  # Download the GPL file from GEO
+  gpl.df <- GEOquery::getGEO(x, destdir = "data")
+  
+  # Take a look at the GPL table
+  gpl.df <- gpl.df@dataTable@table
+  
+  if (!is.null(gpl.df$GB_ACC)) {
+    # If this vector exists, return it 
+    return(gpl.df$GB_ACC)
+  } else { # Otherwise, search for a column with "NM_" RefSeq ids
+    genes <- apply(gpl.df, 2, function(x) any(grepl("^NM_[0-9]{3-20}", x)))
+  
+    # Return only columnns with RefSeq "NM_" accession ids
+    return(gpl.df[, genes])
   }
-  # Load library 
-  library(x, character.only = TRUE)
-  
-  # Get the entrez gene IDs that are mapped to an Ensembl ID
-  obj <- eval(parse(text = gsub(".db$", "ENSEMBL", x)))
-  mapped.genes <- mappedkeys(obj)
-  
-  # Convert to a list
-  genes <- data.frame(obj[mapped.genes])
-  
-  # Print out ensembl IDs only
-  genes$ensembl_id
 })
+# Keep the platform names
+names(genes.per.illum) <- grep("Illumina", platforms$internal_accession, value = TRUE)
 
+genes.per.illum <- tapply(genes.per.illum, names(genes.per.illum), function(x) {
+       unique(unlist(x))
+  })
 #---------------------------Save Gene Lists to an RData -----------------------#
 save(list = c("genes.per.illum", "genes.per.affy"), file = "genes.per.array.RData")
-

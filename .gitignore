@@ -3,3 +3,6 @@ data/
 
 # imputed data are large files as well
 imputed/
+
+# randomly sampled data for requirements
+impute_requirements/sampled_data/

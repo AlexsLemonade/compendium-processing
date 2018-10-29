@@ -8,5 +8,6 @@ human_missingness/id_refinery/all_1536267482.zip
 # Ignore these really large database files
 GEOmetadb.sqlite
 human_matrix.h5
+data/
 
 

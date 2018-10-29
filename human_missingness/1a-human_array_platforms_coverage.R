@@ -55,7 +55,7 @@ genes.per.illum <- lapply(illum.gpls, function(x) {
     # If this vector exists, return it 
     return(gpl.df$GB_ACC)
   } else { # Otherwise, search for a column with "NM_" RefSeq ids
-    genes <- apply(gpl.df, 2, function(x) any(grepl("^NM_[0-9]{3-20}", x)))
+    genes <- apply(gpl.df, 2, function(x) any(grepl("^NM_[0-9]*", x)))
   
     # Return only columnns with RefSeq "NM_" accession ids
     return(gpl.df[, genes])
@@ -64,8 +64,21 @@ genes.per.illum <- lapply(illum.gpls, function(x) {
 # Keep the platform names
 names(genes.per.illum) <- grep("Illumina", platforms$internal_accession, value = TRUE)
 
-genes.per.illum <- tapply(genes.per.illum, names(genes.per.illum), function(x) {
-       unique(unlist(x))
-  })
+# For each platform id, get a list of the unique gene identifiers 
+# and convert them to ENSEMBL Ids
+genes.per.illum <- as.list(tapply(genes.per.illum, names(genes.per.illum), function(x) {
+  
+    # Need to get rid of the version decimal point
+    nm_ids <- gsub("\\.[0-9]*", "", unique(unlist(x)))
+    
+    # Convert the NM accessions to ensembl ids
+    ensembl <- mapIds(org.Hs.eg.db, keys = nm_ids, column = "ENSEMBL",
+           keytype = "REFSEQ")
+    ensembl <- unlist(ensembl)
+    
+    # Return non NA ensembl genes
+    return(ensembl[!is.na(ensembl)])
+  }))
+
 #---------------------------Save Gene Lists to an RData -----------------------#
-save(list = c("genes.per.illum", "genes.per.affy"), file = "genes.per.array.RData")
+save(list = c("genes.per.illum", "genes.per.affy", "id.files"), file = "genes.per.array.RData")

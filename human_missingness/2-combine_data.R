@@ -6,16 +6,24 @@
 # data and make graphs and tables
 # magrittr pipe
 `%>%` <- dplyr::`%>%`
+
 #-----------------------------Get genes per platform---------------------------#
+# Read in human platform list
+platforms <- read.csv("data/exp_acc_human_only.csv", stringsAsFactors = FALSE)
+
 # Read in the lists from prior
 load("genes.per.array.RData")
 load("rna.seq.genes.RData")
 
 # Combine lists
-genes.per.platform <- c(genes.per.affy, genes.per.illum, list(as.character(rna.seq.genes)))
+genes.per.platform <- c(genes.per.affy, genes.per.illum, list(as.character(rna.seq.perc.zeroes$ensembl)))
+# Keep the names of the platforms
+names(genes.per.platform ) <- c(gsub("\\.tsv.gz", "", id.files),
+                                    names(genes.per.illum), "rnaseq")
 
 # Get a list of all genes covered by over all the platforms
-all.genes <- unique(unlist(genes.per.platform))
+all.genes <- as.character(unique(unlist(genes.per.platform)))
+all.genes <- grep("ENS", all.genes, value = TRUE)
 
 # Get a list of the number of genes covered by each platform
 genes.covered <- lapply(genes.per.platform, function(x) {
@@ -26,8 +34,7 @@ perc.genes.per.platform <- unlist(genes.covered)/length(all.genes)
 
 # Keep the names of the platforms
 names(perc.genes.per.platform) <- c(gsub("\\.tsv.gz", "", id.files),
-                       gsub("\\.db", "", packages),
-                       "RNA-seq")
+                       names(genes.per.illum),"rnaseq")
 
 # Print out the stats as a barplot
 jpeg("results/Percent_genes_covered_per_platform.jpeg")
@@ -51,14 +58,14 @@ platform.samples <- hs.gpl$gsm %>%
   dplyr::filter(from_acc %in% names(acc.convert))
 
 # Recode into our internal accession codes
-platform.samples$from_acc <- recode(platform.samples$from_acc, !!!acc.convert)
+platform.samples$from_acc <- dplyr::recode(platform.samples$from_acc, !!!acc.convert)
 
 # Find out how many samples per platform
 samples.per.array <- summary(factor(platform.samples$from_acc))
 
 # Tack on RNA-seq sample count at the end of the data
 samples.per.platform <- c(samples.per.array, 133776)
-names(samples.per.platform)[length(samples.per.platform)] <- "RNA-seq"
+names(samples.per.platform)[length(samples.per.platform)] <- "rnaseq"
 
 # Print out the stats as a barplot
 jpeg("results/Number_of_samples_per_platform.jpeg")
@@ -80,18 +87,57 @@ perc.genes.per.platform  <- data.frame('num_genes' = unlist(genes.covered),
 platform.table <- samples.per.platform %>% dplyr::full_join(perc.genes.per.platform, 
                                                         by = 'platforms')
 
-# Rectify the illlumina platforms mismatch. This is very janky. There is probably 
-# a more elegant way to do it. 
-key.indices <- grep("illuminaHuman", platform.table$platforms)
-platform.table$platforms[key.indices] <- paste0(platform.table$platforms[key.indices], ".0")
-platform.table$platforms <- gsub("illuminaHuman", "", platform.table$platforms)
-
-for (x in key.indices) {
-       tmp <- grep(platform.table$platforms[x], platform.table$platforms[-x], ignore.case = TRUE)
-       platform.table[tmp, 3:4] <- platform.table[x, 3:4]
-}
-# Get rid of the version rows
-platform.table <- platform.table[-key.indices, ]
-
 # Write this info to a master table
 write.csv(platform.table, file = "results/human_master_platform_info.csv", quote = FALSE)
+
+
+
+#------------------- Make gene by percent of samples table---------------------#
+tmp <- match(names(genes.per.platform), samples.per.platform$platforms)
+samples.per.platform <- samples.per.platform[tmp, ]
+
+# Make a genes vs how many samples have them matrix
+mat <- data.frame("genes" = all.genes,
+                  "tot.samples" = 0, 
+                  stringsAsFactors = FALSE)
+
+# Run through for each platform
+for (x in 1:length(genes.per.platform))  {
+  
+  # Get number of samples in platform
+  num.samples <- samples.per.platform[x,1]
+  
+  # For RNA-seq we have to calculate it differently
+  if (names(genes.per.platform)[x] == "rnaseq") {
+    
+    # Put the perc.zeroes for rnaseq in the same order as the master matrix
+    tmp <- match(rna.seq.perc.zeroes$ensembl, mat$genes)
+    tmp <- tmp[!is.na(tmp)]
+    
+    # Add the number of samples that contain the gene in rna-seq to the running total
+    mat$tot.samples[tmp] <- mat$tot.samples[tmp] + num.samples*(1-rna.seq.perc.zeroes$perc.zeroes)
+  } else {
+    # Match the genes to the master matrix
+    tmp <- match(genes.per.platform[[x]], mat$genes)
+    tmp <- tmp[!is.na(tmp)]
+    
+    # Add the samples to the respective genes' running totals. 
+    mat$tot.samples[tmp] <- mat$tot.samples[tmp] + num.samples
+  }
+}
+
+# Calculate the percentages of samples that can detect each gene
+total.samples <- sum(samples.per.platform$samples.per.platform)
+mat$perc.samples <- mat$tot.samples/total.samples
+
+# Print the distrbution of these percentages
+jpeg("results/detection_percentage_distribution.jpeg")
+plot(density(mat$perc.samples), xlab = "Ratio of samples which have the gene", main = "Distribution of Detection Percentages for All Genes")
+dev.off()
+
+# Make it a histogram
+jpeg("results/detection_percentage_histogram.jpeg")
+hist(mat$perc.samples, xlab = "Ratio of samples which have the gene", main = "Histogram of Detection Percentages for All Genes")
+dev.off()
+
+save(mat, file = "perc_samples_per_genes.RData")

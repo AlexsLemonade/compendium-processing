@@ -41,12 +41,9 @@ H5close()
 rownames(expression) <- genes
 colnames(expression) <- metadata$sample.id[samples]
 
-perc.zeroes <- apply(expression, 1, function (x) {
+rna.seq.perc.zeroes <- apply(expression, 1, function (x) {
   (sum(x == 0)/ncol(expression))
 })
-
-# Number of genes detected in at 
-rna.seq.genes <- rownames(expression)[which(perc.zeroes < .3)]
 
 #------------------ Get RNA-Seq gene list for all samples---------------------#
 #
@@ -73,23 +70,20 @@ if (!file.exists("data/ARCHS4_human_matrix_percent_zeroes.txt")) {
 }
 
 # Read in the percent zeroes per gene table 
-perc.zeroes <- read.table("data/ARCHS4_human_matrix_percent_zeroes.txt", sep = "\t",
+rna.seq.perc.zeroes <- read.table("data/ARCHS4_human_matrix_percent_zeroes.txt", sep = "\t",
                           skip = 1, stringsAsFactors = FALSE)
 
 # Get rid of rows without a Entrez ID
-perc.zeroes <- perc.zeroes[!is.na(perc.zeroes$V1),]
+rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$V1),]
 
 # Convert to a list
-perc.zeroes <- data.frame('ensembl' = mapIds(org.Hs.eg.db, 
-                                          keys = as.character(perc.zeroes$V1),
+rna.seq.perc.zeroes <- data.frame('ensembl' = mapIds(org.Hs.eg.db, 
+                                          keys = as.character(rna.seq.perc.zeroes$V1),
                                           column = "ENSEMBL", keytype = "ENTREZID"),
-                        'perc.zeroes' = perc.zeroes$V2)
+                        'perc.zeroes' = rna.seq.perc.zeroes$V2)
 
 # Get rid of rows without an ensembl gene ID
-perc.zeroes <- perc.zeroes[!is.na(perc.zeroes$ensembl), ]
-
-# Get a list of detectable genes in 70% or more of samples 
-rna.seq.genes <- perc.zeroes$ensembl[which(perc.zeroes$perc.zeroes < .3)]
+rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$ensembl), ]
 
 # Save this info to an RData file
-save(rna.seq.genes, file = "rna.seq.genes.RData")
+save("rna.seq.perc.zeroes", file = "rna.seq.genes.RData")

@@ -53,3 +53,4 @@ platforms <- platforms %>% dplyr::filter(external_accession %in% hs.acc)
 # Write info to a csv file
 write.csv(platforms, file = "data/exp_acc_human_only.csv", quote = FALSE,
           row.names = FALSE)
+

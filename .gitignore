@@ -1,6 +1,2 @@
-# processed but not smashed data from refine.bio
-data/rnaseq
-data/microarray
-
-# qn target, too
-data/qn_target
+# turns out lots of these files will be big
+data/

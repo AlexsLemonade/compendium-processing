@@ -3,13 +3,16 @@
 # 10/22/18
 # 
 # Purpose: Obtain list of genes measured reliably on rna-seq platforms
-# This script is adapted from the example script on ARCHS4
+# This script is generally adapted from the example script on ARCHS4
+#
+# This script is intended to be ran from using the bash script:
+# `human_missingness/run_scripts.sh`
 # 
 # Objective: get an idea of the coverage of each gene in human
 library(org.Hs.eg.db)
 library(rhdf5)
 
-# magrittr pipe
+# Magrittr pipe
 `%>%` <- dplyr::`%>%`
 
 # Check if gene expression file was already downloaded, if not in current directory download file form repository
@@ -25,6 +28,9 @@ metadata <- data.frame(platform = h5read("data/human_matrix.h5", "meta/Sample_pl
                         tissue = h5read("data/human_matrix.h5", "meta/Sample_source_name_ch1"),
                         sample.id = h5read("data/human_matrix.h5", "meta/Sample_geo_accession"),
                         series = h5read("data/human_matrix.h5", "meta/Sample_series_id"))
+
+# Store how many rna.seq samples there are
+n.rna.seq.samples <- nrow(metadata)
 
 # Get a list of the genes
 genes <- h5read("data/human_matrix.h5", "meta/genes")
@@ -80,10 +86,11 @@ rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$V1),]
 rna.seq.perc.zeroes <- data.frame('ensembl' = mapIds(org.Hs.eg.db, 
                                           keys = as.character(rna.seq.perc.zeroes$V1),
                                           column = "ENSEMBL", keytype = "ENTREZID"),
-                        'perc.zeroes' = rna.seq.perc.zeroes$V2)
+                        'perc.zeroes' = rna.seq.perc.zeroes$V2, 
+                        stringsAsFactors = FALSE)
 
 # Get rid of rows without an ensembl gene ID
 rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$ensembl), ]
 
 # Save this info to an RData file
-save("rna.seq.perc.zeroes", file = "rna.seq.genes.RData")
+save(list = c("rna.seq.perc.zeroes", "n.rna.seq.samples"), file = "rna.seq.genes.RData")

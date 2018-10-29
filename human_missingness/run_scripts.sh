@@ -11,7 +11,7 @@ FILE=$data/id_refinery/all_1536267482.zip
 if [ ! -f $FILE ]; then
 wget https://zenodo.org/record/1410647/files/all_1536267482.zip \
 -P data/id_refinery
-unzip data/id_refinery/all_1536267482.zip -d data/id_refinery/
+unzip data/id_refinery/all_1536267482.zip -d data/id.refinery/
 fi
 
 # Download supported microarray list

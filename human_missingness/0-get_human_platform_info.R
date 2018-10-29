@@ -2,10 +2,13 @@
 # CCDL for ALSF 
 # 10/22/18
 # 
-# Identify which supported microarray platforms are Homo sapiens.
-#  
+# Purpose: Identify which supported microarray platforms are Homo sapiens.
+#
+# This script is intended to be ran from using the bash script:
+# `human_missingness/run_scripts.sh`
+# 
 #------------------- Get the supported platforms file from GitHub--------------#
-# magrittr pipe
+# Magrittr pipe
 `%>%` <- dplyr::`%>%`
 
 # Read in the file:
@@ -56,3 +59,4 @@ platforms <- platforms %>% dplyr::filter(external_accession %in% hs.acc)
 # Write info to a csv file
 write.csv(platforms, file = file.path("data", "exp_acc_human_only.csv"),
           quote = FALSE, row.names = FALSE)
+

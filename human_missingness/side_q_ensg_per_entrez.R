@@ -18,14 +18,14 @@ get.all <- mapIds(org.Hs.eg.db,
 # Get the number of ensg IDs per entrez ids
 genes.per.mapping <- vapply(get.all, length, FUN.VALUE = integer(1))
 
-jpeg("Distribution_genes_per_entrez.jpeg")
+jpeg("results/plots/distribution_genes_per_entrez.jpeg")
 # Plot the distribution of this
 plot(density(genes.per.mapping), main = "Distribution of Number of ENSG IDs")
 dev.off()
 
 # Get numbers on how many genes of each of these
 x <- summary(factor(genes.per.mapping))
-jpeg("genes_per_entrez.jpeg")
+jpeg("results/plots/genes_per_entrez.jpeg")
 plot(names(x), x, ylab = "How many genes with this number of ensg?",
                   xlab = "How many ensg's assoc with one entrez id?")
 dev.off()

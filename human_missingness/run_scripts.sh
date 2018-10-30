@@ -3,6 +3,7 @@
 # Make some directories
 mkdir data
 mkdir results
+mkdir results/plots
 mkdir data/id_refinery
 
 # Download id_refinery files if they aren't there

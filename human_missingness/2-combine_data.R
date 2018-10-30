@@ -16,10 +16,11 @@
 platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFactors = FALSE)
 
 # Read in the lists from prior
-load("genes.per.illumina.array.RData")
-load("genes.per.affy.array.RData")
-load("rna.seq.genes.RDS")
-load("n.rna.seq.samples.RDS")
+load("results/genes.per.illumina.array.RData")
+load("results/genes.per.affy.array.RData")
+load("results/rna.seq.genes.RDS")
+load("results/n.rna.seq.samples.RDS")
+
 # Combine lists
 genes.per.platform <- c(genes.per.affy, genes.per.illum)
 genes.per.platform[["rnaseq"]] <- list(as.character(rna.seq.perc.zeroes$ensembl))
@@ -32,7 +33,6 @@ all.genes <- grep("ENS", all.genes, value = TRUE)
 genes.covered <- lapply(genes.per.platform,
                         function(x) length(!is.na(match(x, all.genes))))
 
-
 # Make the list into a ratio
 perc.genes.per.platform <- unlist(genes.covered)/length(all.genes)
 
@@ -40,7 +40,7 @@ perc.genes.per.platform <- unlist(genes.covered)/length(all.genes)
 names(perc.genes.per.platform) <- names(genes.per.platform)
 
 # Print out the stats as a barplot
-jpeg("results/Percent_genes_covered_per_platform.jpeg")
+jpeg("results/plots/Percent_genes_covered_per_platform.jpeg")
 par(mar = c(8,4,1,1))
 barplot(perc.genes.per.platform *100, las = 2, ylab = "Percent of all array genes covered")
 dev.off()
@@ -73,7 +73,7 @@ samples.per.platform <- c(samples.per.array, n.rna.seq.samples)
 names(samples.per.platform)[length(samples.per.platform)] <- "rnaseq"
 
 # Print out the stats as a barplot
-jpeg("results/Number_of_samples_per_platform.jpeg")
+jpeg("results/plots/Number_of_samples_per_platform.jpeg")
 par(mar = c(12,6,1,1))
 barplot(samples.per.array, las = 2)
 title(ylab="Number of samples per platform", mgp = c(5,5,10))
@@ -136,17 +136,17 @@ mat$perc.samples <- mat$tot.samples/total.samples
 
 
 # Print the distrbution of these percentages
-jpeg("results/detection_percentage_distribution.jpeg")
+jpeg("results/plots/detection_percentage_distribution.jpeg")
 plot(density(mat$perc.samples), xlab = "Ratio of samples which have the gene",
      main = "Distribution of Detection Percentages for All Genes")
 dev.off()
 
 # Make it a histogram
-jpeg("results/detection_percentage_histogram.jpeg")
+jpeg("results/plots/detection_percentage_histogram.jpeg")
 hist(mat$perc.samples, xlab = "Ratio of samples which have the gene",
      main = "Histogram of Detection Percentages for All Genes")
 dev.off()
 
 # Save as an RData object
-write.csv(mat, file = "perc_samples_per_genes.csv", quote = FALSE,
+write.csv(mat, file = "results/perc_samples_per_genes.csv", quote = FALSE,
           row.names = FALSE)

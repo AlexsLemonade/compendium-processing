@@ -113,5 +113,5 @@ genes.per.illum <- as.list(tapply(genes.per.illum, names(genes.per.illum),
                                   convert.nm.ensg))
 
 #---------------------------Save Gene Lists to an RData -----------------------#
-save("genes.per.illum", file = "genes.per.illumina.array.RData")
-save("genes.per.affy", file = "genes.per.affy.array.RData")
+save("genes.per.illum", file = "results/genes.per.illumina.array.RData")
+save("genes.per.affy", file = "results/genes.per.affy.array.RData")

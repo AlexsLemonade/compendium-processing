@@ -93,5 +93,5 @@ rna.seq.perc.zeroes <- data.frame('ensembl' = mapIds(org.Hs.eg.db,
 rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$ensembl), ]
 
 # Save this info to an RData file
-saveRDS(rna.seq.perc.zeroes, file = "rna.seq.genes.RDS")
-saveRDS(n.rna.seq.samples, file = "n.rna.seq.samples.RDS")
+saveRDS(rna.seq.perc.zeroes, file = "results/rna.seq.genes.RDS")
+saveRDS(n.rna.seq.samples, file = "results/n.rna.seq.samples.RDS")

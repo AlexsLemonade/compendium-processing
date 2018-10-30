@@ -40,7 +40,7 @@ hs.gpl <- geoConvert(hs.gpl$gpl, out_type = c("gse", "gpl", "gsm"),
                      sqlite_db_name = geo.db)
 
 # Save this info for future use
-save(hs.gpl, file = "GEO_exp_info.RData")
+save(hs.gpl, file = "results/GEO_exp_info.RData")
 
 #------------------Get ArrayExpress list of human arrays-----------------------# 
 # Read in the array express human experiments meta info

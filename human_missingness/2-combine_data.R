@@ -20,10 +20,10 @@ plots.dir <- "results/plots"
 platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFactors = FALSE)
 
 # Read in the lists from previously
-readRDS(file.path(results.dir, "genes.per.illumina.array.RDS"))
-readRDS(file.path(results.dir,"genes.per.affy.array.RDS"))
-readRDS(file.path(results.dir,"rna.seq.genes.RDS"))
-readRDS(file.path(results.dir,"n.rna.seq.samples.RDS"))
+genes.per.illum <- readRDS(file.path(results.dir, "genes.per.illumina.array.RDS"))
+genes.per.affy <- readRDS(file.path(results.dir,"genes.per.affy.array.RDS"))
+rna.seq.perc.zeroes <- readRDS(file.path(results.dir,"rna.seq.genes.RDS"))
+n.rna.seq.samples <- readRDS(file.path(results.dir,"n.rna.seq.samples.RDS"))
 
 # Combine lists
 genes.per.platform <- c(genes.per.affy, genes.per.illum)
@@ -56,7 +56,7 @@ write.csv(data.frame("percent_all_genes_detected" = perc.genes.per.platform),
 
 #------------------Get number of samples per platform--------------------------#
 # Load in sample info
-readRDS(file.path(results.dir,"GEO_exp_info.RDS"))
+hs.gpl <- readRDS(file.path(results.dir,"GEO_exp_info.RDS"))
 
 # Make a recode key from the external accessions to internal accession
 acc.convert <- as.character(platforms$internal_accession)
@@ -118,7 +118,7 @@ rna.seq <- which(names(genes.per.platform) == "rnaseq")
 # in all samples on the platform if the platform measures the current gene
 # 
 # For each gene in the matrix: 
-for (i in 10434:nrow(mat)) {
+for (i in 1:nrow(mat)) {
   
   # Which platforms contain the gene? Get a binomial variable that shows which
   platforms.w.gene <- vapply(genes.per.platform[-rna.seq], 

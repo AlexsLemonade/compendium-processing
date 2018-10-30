@@ -20,10 +20,10 @@ plots.dir <- "results/plots"
 platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFactors = FALSE)
 
 # Read in the lists from previously
-readRDS(file.path(results.dir, "genes.per.illumina.array.RDS"))
-readRDS(file.path(results.dir,"genes.per.affy.array.RDS"))
-readRDS(file.path(results.dir,"rna.seq.genes.RDS"))
-readRDS(file.path(results.dir,"n.rna.seq.samples.RDS"))
+genes.per.illum <- readRDS(file.path(results.dir, "genes.per.illumina.array.RDS"))
+genes.per.affy <- readRDS(file.path(results.dir,"genes.per.affy.array.RDS"))
+rna.seq.genes <- readRDS(file.path(results.dir,"rna.seq.genes.RDS"))
+n.rna.seq.samples <- readRDS(file.path(results.dir,"n.rna.seq.samples.RDS"))
 
 # Combine lists
 genes.per.platform <- c(genes.per.affy, genes.per.illum)

@@ -13,7 +13,7 @@ rna.seq.perc.zeroes <- read.table("data/ARCHS4_human_matrix_percent_zeroes.txt",
 # Get rid of rows without a Entrez ID
 rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$V1),]
 
-# 
+# Do the mappings, but keep all ENSG's that match to each entrez IDs 
 get.all <- mapIds(org.Hs.eg.db, 
                   keys = as.character(rna.seq.perc.zeroes$V1),
                   column = "ENSEMBL", keytype = "ENTREZID", 
@@ -22,8 +22,8 @@ get.all <- mapIds(org.Hs.eg.db,
 # Get the number of ensg IDs per entrez ids
 genes.per.mapping <- vapply(get.all, length, FUN.VALUE = integer(1))
 
-jpeg(file.path(plots.dir, "distribution_genes_per_entrez.jpeg"))
 # Plot the distribution of this
+jpeg(file.path(plots.dir, "distribution_genes_per_entrez.jpeg"))
 plot(density(genes.per.mapping), main = "Distribution of Number of ENSG IDs")
 dev.off()
 

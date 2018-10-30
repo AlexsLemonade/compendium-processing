@@ -19,11 +19,11 @@ plots.dir <- "results/plots"
 # Read in human platform list
 platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFactors = FALSE)
 
-# Read in the lists from prior
-load(file.path(results.dir, "genes.per.illumina.array.RDS"))
-load(file.path(results.dir,"genes.per.affy.array.RDS"))
-load(file.path(results.dir,"rna.seq.genes.RDS"))
-load(file.path(results.dir,"n.rna.seq.samples.RDS"))
+# Read in the lists from previously
+readRDS(file.path(results.dir, "genes.per.illumina.array.RDS"))
+readRDS(file.path(results.dir,"genes.per.affy.array.RDS"))
+readRDS(file.path(results.dir,"rna.seq.genes.RDS"))
+readRDS(file.path(results.dir,"n.rna.seq.samples.RDS"))
 
 # Combine lists
 genes.per.platform <- c(genes.per.affy, genes.per.illum)
@@ -56,7 +56,7 @@ write.csv(data.frame("percent_all_genes_detected" = perc.genes.per.platform),
 
 #------------------Get number of samples per platform--------------------------#
 # Load in sample info
-load(file.path(results.dir,"GEO_exp_info.RData"))
+readRDS(file.path(results.dir,"GEO_exp_info.RDS"))
 
 # Make a recode key from the external accessions to internal accession
 acc.convert <- as.character(platforms$internal_accession)
@@ -139,7 +139,6 @@ for (i in 10434:nrow(mat)) {
 # Calculate the percentages of samples that can detect each gene
 total.samples <- sum(samples.per.platform)
 mat$perc.samples <- mat$tot.samples/total.samples
-
 
 # Print the distrbution of these percentages
 jpeg(file = file.path(plots.dir, "detection_percentage_distribution.jpeg"))

@@ -4,10 +4,10 @@
 # 
 # Purpose: Obtain list of genes measured reliably on rna-seq platforms
 # This script is generally adapted from the example script on ARCHS4
-#
+# 
 # This script is intended to be ran from using the bash script:
 # `human_missingness/run_scripts.sh`
-# 
+
 # Objective: get an idea of the coverage of each gene in human
 
 # Magrittr pipe

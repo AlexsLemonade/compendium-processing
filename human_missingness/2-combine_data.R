@@ -18,8 +18,8 @@ platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFact
 # Read in the lists from prior
 load("genes.per.illumina.array.RData")
 load("genes.per.affy.array.RData")
-load("rna.seq.genes.RData")
-
+load("rna.seq.genes.RDS")
+load("n.rna.seq.samples.RDS")
 # Combine lists
 genes.per.platform <- c(genes.per.affy, genes.per.illum)
 genes.per.platform[["rnaseq"]] <- list(as.character(rna.seq.perc.zeroes$ensembl))

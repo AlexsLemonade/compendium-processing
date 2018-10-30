@@ -84,8 +84,8 @@ rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$V1),]
 
 # Convert to a list
 rna.seq.perc.zeroes <- data.frame('ensembl' = mapIds(org.Hs.eg.db, 
-                                          keys = as.character(rna.seq.perc.zeroes$V1),
-                                          column = "ENSEMBL", keytype = "ENTREZID"),
+                        keys = as.character(rna.seq.perc.zeroes$V1),
+                        column = "ENSEMBL", keytype = "ENTREZID"),
                         'perc.zeroes' = rna.seq.perc.zeroes$V2, 
                         stringsAsFactors = FALSE)
 
@@ -93,4 +93,5 @@ rna.seq.perc.zeroes <- data.frame('ensembl' = mapIds(org.Hs.eg.db,
 rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$ensembl), ]
 
 # Save this info to an RData file
-save(list = c("rna.seq.perc.zeroes", "n.rna.seq.samples"), file = "rna.seq.genes.RData")
+saveRDS(rna.seq.perc.zeroes, file = "rna.seq.genes.RDS")
+saveRDS(n.rna.seq.samples, file = "n.rna.seq.samples.RDS")

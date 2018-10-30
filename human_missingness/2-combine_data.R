@@ -20,8 +20,8 @@ plots.dir <- "results/plots"
 platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFactors = FALSE)
 
 # Read in the lists from prior
-load(file.path(results.dir, "genes.per.illumina.array.RData"))
-load(file.path(results.dir,"genes.per.affy.array.RData"))
+load(file.path(results.dir, "genes.per.illumina.array.RDS"))
+load(file.path(results.dir,"genes.per.affy.array.RDS"))
 load(file.path(results.dir,"rna.seq.genes.RDS"))
 load(file.path(results.dir,"n.rna.seq.samples.RDS"))
 

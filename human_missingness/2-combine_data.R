@@ -11,15 +11,19 @@
 # Magrittr pipe
 `%>%` <- dplyr::`%>%`
 
+# Directory set up
+results.dir <- "results"
+plots.dir <- "results/plots"
+
 #-----------------------------Get genes per platform---------------------------#
 # Read in human platform list
 platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFactors = FALSE)
 
 # Read in the lists from prior
-load("results/genes.per.illumina.array.RData")
-load("results/genes.per.affy.array.RData")
-load("results/rna.seq.genes.RDS")
-load("results/n.rna.seq.samples.RDS")
+load(file.path(results.dir, "genes.per.illumina.array.RData"))
+load(file.path(results.dir,"genes.per.affy.array.RData"))
+load(file.path(results.dir,"rna.seq.genes.RDS"))
+load(file.path(results.dir,"n.rna.seq.samples.RDS"))
 
 # Combine lists
 genes.per.platform <- c(genes.per.affy, genes.per.illum)
@@ -40,19 +44,19 @@ perc.genes.per.platform <- unlist(genes.covered)/length(all.genes)
 names(perc.genes.per.platform) <- names(genes.per.platform)
 
 # Print out the stats as a barplot
-jpeg("results/plots/Percent_genes_covered_per_platform.jpeg")
+jpeg(file.path(plots.dir, "percent_genes_covered_per_platform.jpeg"))
 par(mar = c(8,4,1,1))
 barplot(perc.genes.per.platform *100, las = 2, ylab = "Percent of all array genes covered")
 dev.off()
 
 # Write this to a table in a csv file
 write.csv(data.frame("percent_all_genes_detected" = perc.genes.per.platform),
-          file = "results/genes_detected_per_platform.csv",
+          file = file.path(results.dir, "genes_detected_per_platform.csv"),
           quote = FALSE)
 
 #------------------Get number of samples per platform--------------------------#
 # Load in sample info
-load("GEO_exp_info.RData")
+load(file.path(results.dir,"GEO_exp_info.RData"))
 
 # Make a recode key from the external accessions to internal accession
 acc.convert <- as.character(platforms$internal_accession)
@@ -73,14 +77,14 @@ samples.per.platform <- c(samples.per.array, n.rna.seq.samples)
 names(samples.per.platform)[length(samples.per.platform)] <- "rnaseq"
 
 # Print out the stats as a barplot
-jpeg("results/plots/Number_of_samples_per_platform.jpeg")
+jpeg(file.path(plots.dir,"number_of_samples_per_platform.jpeg"))
 par(mar = c(12,6,1,1))
 barplot(samples.per.array, las = 2)
 title(ylab="Number of samples per platform", mgp = c(5,5,10))
 dev.off()
 
 write.csv(data.frame("samples_per_platform" = samples.per.platform),
-          file = "results/samples_per_platform.csv",
+          file = file.path(results.dir, "samples_per_platform.csv"),
           quote = FALSE)
 
 #------------------------ Make everything into one table-----------------------#
@@ -94,7 +98,9 @@ platform.table <- samples.per.platform %>% dplyr::full_join(perc.genes.per.platf
                                                         by = 'platforms')
 
 # Write this info to a master table
-write.csv(platform.table, file = "results/human_master_platform_info.csv", quote = FALSE)
+write.csv(platform.table, 
+          file = file.path(results.dir,"human_master_platform_info.csv"),
+          quote = FALSE)
 
 #------------------- Make gene by percent of samples table---------------------#
 tmp <- match(names(genes.per.platform), samples.per.platform$platforms)
@@ -136,17 +142,17 @@ mat$perc.samples <- mat$tot.samples/total.samples
 
 
 # Print the distrbution of these percentages
-jpeg("results/plots/detection_percentage_distribution.jpeg")
+jpeg(file = file.path(plots.dir, "detection_percentage_distribution.jpeg"))
 plot(density(mat$perc.samples), xlab = "Ratio of samples which have the gene",
      main = "Distribution of Detection Percentages for All Genes")
 dev.off()
 
 # Make it a histogram
-jpeg("results/plots/detection_percentage_histogram.jpeg")
+jpeg(file.path(plots.dir, "detection_percentage_histogram.jpeg"))
 hist(mat$perc.samples, xlab = "Ratio of samples which have the gene",
      main = "Histogram of Detection Percentages for All Genes")
 dev.off()
 
 # Save as an RData object
-write.csv(mat, file = "results/perc_samples_per_genes.csv", quote = FALSE,
-          row.names = FALSE)
+write.csv(mat, file = file.path(results.dir, "perc_samples_per_genes.csv"),
+          quote = FALSE, row.names = FALSE)

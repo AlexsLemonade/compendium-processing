@@ -7,17 +7,22 @@
 # This script is intended to be ran from using the bash script:
 # `human_missingness/run_scripts.sh`
 # 
-#----------------------------Get Affy Gene Lists-------------------------------#
+#-----------------------------------Set Up-------------------------------------#
 # Magrittr pipe
 `%>%` <- dplyr::`%>%`
 
 library(org.Hs.eg.db)
 
+# Directory set up
+results.dir <- "results"
+plots.dir <- "results/plots"
+
+#----------------------------Get Affy Gene Lists-------------------------------#
 # Read in human platform list
 platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFactors = FALSE)
 
 # Get list of id.refinery files
-id.refinery <- dir("data/id.refinery")
+id.refinery <- dir(file.path("data", "id.refinery"))
 
 # Only keep those for the platforms we care about (human in this case)
 tmp <- match(unique(platforms$internal_accession), gsub(".tsv.gz", "", id.refinery))
@@ -26,7 +31,7 @@ id.files <- id.refinery[tmp[!is.na(tmp)]]
 # Make a function to read the gzipped id.file and return the ensembl gene ids 
 get.ensg.from.gz <- function (id.file) {
   # Formulate the command to read the input file. 
-  file.cmd <- paste0('gzcat data/id.refinery/', id.file)
+  file.cmd <- paste0('gzcat ', file.path("data", "id.refinery", id.file))
   # Read the table
   suppressWarnings(file.data <- data.table::fread(
     cmd = file.cmd,
@@ -113,5 +118,5 @@ genes.per.illum <- as.list(tapply(genes.per.illum, names(genes.per.illum),
                                   convert.nm.ensg))
 
 #---------------------------Save Gene Lists to an RData -----------------------#
-save("genes.per.illum", file = "results/genes.per.illumina.array.RData")
-save("genes.per.affy", file = "results/genes.per.affy.array.RData")
+saveRDS("genes.per.illum", file = file.path(results.dir, "genes.per.illumina.array.RDS"))
+saveRDS("genes.per.affy", file = file.path(results.dir, "genes.per.affy.array.RDS"))

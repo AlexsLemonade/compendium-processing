@@ -11,6 +11,10 @@
 # Magrittr pipe
 `%>%` <- dplyr::`%>%`
 
+# Directory set up
+results.dir <- "results"
+plots.dir <- "results/plots"
+
 # Read in the file:
 platforms <- read.csv(file.path("data", "supported_microarray_platforms.csv"))
 
@@ -59,4 +63,3 @@ platforms <- platforms %>% dplyr::filter(external_accession %in% hs.acc)
 # Write info to a csv file
 write.csv(platforms, file = file.path("data", "exp_acc_human_only.csv"),
           quote = FALSE, row.names = FALSE)
-

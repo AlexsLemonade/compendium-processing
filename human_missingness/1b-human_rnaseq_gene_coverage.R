@@ -9,31 +9,44 @@
 # `human_missingness/run_scripts.sh`
 # 
 # Objective: get an idea of the coverage of each gene in human
-library(org.Hs.eg.db)
-library(rhdf5)
 
 # Magrittr pipe
 `%>%` <- dplyr::`%>%`
 
+# Attach libraries
+library(org.Hs.eg.db)
+library(rhdf5)
+
+# Directory set up
+results.dir <- "results"
+plots.dir <- "results/plots"
+
+# human file directory path
+human.file <- file.path("data", "human_matrix.h5")
+
 # Check if gene expression file was already downloaded, if not in current directory download file form repository
-if (!file.exists("data/human_matrix.h5")) {
+if (!file.exists(human.file)) {
   download.file("https://s3.amazonaws.com/mssm-seq-matrix/human_matrix.h5",
-                "data/human_matrix.h5", quiet = FALSE)
+                human.file, quiet = FALSE)
   } else {
   print("Local file already exists.")
 }
 
 # Retrieve information from compressed data
-metadata <- data.frame(platform = h5read("data/human_matrix.h5", "meta/Sample_platform_id"),
-                        tissue = h5read("data/human_matrix.h5", "meta/Sample_source_name_ch1"),
-                        sample.id = h5read("data/human_matrix.h5", "meta/Sample_geo_accession"),
-                        series = h5read("data/human_matrix.h5", "meta/Sample_series_id"))
+metadata <- data.frame(platform = h5read(human.file,
+                                         "meta/Sample_platform_id"),
+                        tissue = h5read(human.file,
+                                        "meta/Sample_source_name_ch1"),
+                        sample.id = h5read(human.file,
+                                           "meta/Sample_geo_accession"),
+                        series = h5read(human.file,
+                                        "meta/Sample_series_id"))
 
 # Store how many rna.seq samples there are
 n.rna.seq.samples <- nrow(metadata)
 
 # Get a list of the genes
-genes <- h5read("data/human_matrix.h5", "meta/genes")
+genes <- h5read(human.file, "meta/genes")
 
 #----Get RNA-Seq gene list for a subset of samples - Due to RAM constraints----#
 
@@ -41,7 +54,7 @@ genes <- h5read("data/human_matrix.h5", "meta/genes")
 samples <- runif(200, min = 1, max = nrow(metadata))
 
 # extract gene expression from compressed data
-expression <- h5read("data/human_matrix.h5", "data/expression", index = list(1:length(genes),
+expression <- h5read(human.file, "data/expression", index = list(1:length(genes),
                                                                       samples))
 H5close()
 rownames(expression) <- genes
@@ -54,30 +67,30 @@ rna.seq.perc.zeroes <- apply(expression, 1, function (x) {
 #------------------ Get RNA-Seq gene list for all samples---------------------#
 #
 ########## Don't run this unless you have to. Takes a lot of ram and time.###### 
-if (!file.exists("data/ARCHS4_human_matrix_percent_zeroes.txt")) {
+if (!file.exists(file.path("data", "ARCHS4_human_matrix_percent_zeroes.txt"))) {
 # Jackie this code in order to get the txt file we read in:  
   # Establish file name
-  human_file <- "data/human_matrix.h5"
+  human_file <- file.path("data", "human_matrix.h5")
   
   # Read in all the expression data 
-  gene_mat <- rhdf5::h5read(human_file, "/data/expression")
+  gene.mat <- rhdf5::h5read(human.file, "/data/expression")
   
   # Get the number of samples of each row that are 0's
-  gene_zero_counts <- apply(gene_mat, 1, function(x) sum(x == 0) / length(x))
+  gene.zero.counts <- apply(gene.mat, 1, function(x) sum(x == 0) / length(x))
   
-  # Retrieve the entrez_ids
-  gene_ids <- rhdf5::h5read(human_file, "/meta/gene_entrezid")
+  # Retrieve the entrez.ids
+  gene.ids <- rhdf5::h5read(human.file, "/meta/gene_entrezid")
   
   # Make a data frame with the percent zeroes and entrez ids
-  genes_df <- data.frame(entrez_id = gene_ids, percent_zero_counts = gene_zero_counts)
+  genes.df <- data.frame(entrez.id = gene.ids, percent.zero.counts = gene.zero.counts)
   
   # Write the percent of zeroes per gene to a text file
-  readr::write_tsv(genes_df, "ARCHS4_human_matrix_percent_zeroes.txt")
+  readr::write_tsv(genes.df, "ARCHS4_human_matrix_percent_zeroes.txt")
 }
 
 # Read in the percent zeroes per gene table 
-rna.seq.perc.zeroes <- read.table("data/ARCHS4_human_matrix_percent_zeroes.txt", sep = "\t",
-                          skip = 1, stringsAsFactors = FALSE)
+rna.seq.perc.zeroes <- read.table(file.path("data", "ARCHS4_human_matrix_percent_zeroes.txt"),
+                                  sep = "\t", skip = 1, stringsAsFactors = FALSE)
 
 # Get rid of rows without a Entrez ID
 rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$V1),]
@@ -93,5 +106,5 @@ rna.seq.perc.zeroes <- data.frame('ensembl' = mapIds(org.Hs.eg.db,
 rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$ensembl), ]
 
 # Save this info to an RData file
-saveRDS(rna.seq.perc.zeroes, file = "results/rna.seq.genes.RDS")
-saveRDS(n.rna.seq.samples, file = "results/n.rna.seq.samples.RDS")
+saveRDS(rna.seq.perc.zeroes, file = file.path(results.dir, "rna.seq.genes.RDS"))
+saveRDS(n.rna.seq.samples, file = file.path(results.dir, "n.rna.seq.samples.RDS"))

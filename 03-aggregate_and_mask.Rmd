@@ -34,11 +34,9 @@ First, the microarray data
 # full path to all the microarray data we obtain
 microarray_files <- list.files(file.path("data", "microarray"), 
                                full.names = TRUE)
-# initialize a list to hold the data.frames 
-df_list <- list()
-for (file_iter in seq_along(microarray_files)) {
-  df_list[[file_iter]] <- read_in_microarray_data(microarray_files[file_iter])
-}
+
+# read in a list of data.frames to be passed to be joined together
+df_list <- lapply(microarray_files, read_in_microarray_data)
 ```
 
 Now the inner join.
@@ -52,17 +50,18 @@ microarray_df <- plyr::join_all(df_list, by = "Gene", type = "inner") %>%
 readr::write_tsv(microarray_df, file.path("data", "aggregated",
                                           "microarray_zebrafish.tsv"))
 ```
+```{r}
+rm(df_list)
+```
+
 
 Now we'll repeat the process with RNA-seq data.
 
 ```{r}
 seq_files <- list.files(file.path("data", "rnaseq"), full.names = TRUE)
 
-df_list <- list()
-for (file_iter in seq_along(seq_files)) {
-  df_list[[file_iter]] <- data.table::fread(seq_files[file_iter],
-                                            data.table = FALSE)
-}
+df_list <- lapply(seq_files, 
+                  function(x) data.table::fread(x, data.table = FALSE))
 
 seq_df <- plyr::join_all(df_list, by = "Gene", type = "inner")
 readr::write_tsv(seq_df, file.path("data", "aggregated", "seq_zebrafish.tsv"))

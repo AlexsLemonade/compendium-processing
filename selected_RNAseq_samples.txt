@@ -414,9 +414,6 @@ https://s3.amazonaws.com/data-refinery-s3-circleci-prod/ikm2fwj5bz7map6cncrua350
 https://s3.amazonaws.com/data-refinery-s3-circleci-prod/fyck0ug8izm9cp9rp9mu5vup_SRR5044690_output_gene_lengthScaledTPM.tsv
 https://s3.amazonaws.com/data-refinery-s3-circleci-prod/7kaxgsulp8ns9awdssuu29ed_SRR5044691_output_gene_lengthScaledTPM.tsv
 https://s3.amazonaws.com/data-refinery-s3-circleci-prod/n7wyewnhd84ine39va3us56d_SRR5044692_output_gene_lengthScaledTPM.tsv
-
-The files data.frame is in an unexpected format
-
 https://s3.amazonaws.com/data-refinery-s3-circleci-prod/oddxbe3px9bnjrl2yefp89if_SRR4994225_output_gene_lengthScaledTPM.tsv
 https://s3.amazonaws.com/data-refinery-s3-circleci-prod/n13i5ogstxdv6l7sc9q3da5f_SRR1005529_output_gene_lengthScaledTPM.tsv
 https://s3.amazonaws.com/data-refinery-s3-circleci-prod/dlzidho9egb31ppcwp99bcb1_SRR1005530_output_gene_lengthScaledTPM.tsv

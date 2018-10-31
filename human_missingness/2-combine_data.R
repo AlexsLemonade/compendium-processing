@@ -13,17 +13,17 @@
 
 # Directory set up
 results.dir <- "results"
-plots.dir <- "results/plots"
+plots.dir <- file.path("results", "plots")
 
 #-----------------------------Get genes per platform---------------------------#
 # Read in human platform list
 platforms <- read.csv(file.path("data", "exp_acc_human_only.csv"), stringsAsFactors = FALSE)
 
 # Read in the lists from previously
-genes.per.illum <- readRDS(file.path(results.dir, "genes.per.illumina.array.RDS"))
-genes.per.affy <- readRDS(file.path(results.dir,"genes.per.affy.array.RDS"))
-rna.seq.perc.zeroes <- readRDS(file.path(results.dir,"rna.seq.genes.RDS"))
-n.rna.seq.samples <- readRDS(file.path(results.dir,"n.rna.seq.samples.RDS"))
+genes.per.illum <- readRDS(file.path(results.dir, "genes_per_illumina_array.RDS"))
+genes.per.affy <- readRDS(file.path(results.dir,"genes_per_affy_array.RDS"))
+rna.seq.perc.zeroes <- readRDS(file.path(results.dir,"rna_seq_genes.RDS"))
+n.rna.seq.samples <- readRDS(file.path(results.dir,"n_rna_seq_samples.RDS"))
 
 # Combine lists
 genes.per.platform <- c(genes.per.affy, genes.per.illum)
@@ -118,20 +118,20 @@ rna.seq <- which(names(genes.per.platform) == "rnaseq")
 # in all samples on the platform if the platform measures the current gene
 # 
 # For each gene in the matrix: 
-for (i in 1:nrow(mat)) {
+for (gene_iter in 1:nrow(mat)) {
   
   # Which platforms contain the gene? Get a binomial variable that shows which
   platforms.w.gene <- vapply(genes.per.platform[-rna.seq], 
-                             function(x) !is.na(match(mat$genes[i], x)),
+                             function(x) !is.na(match(mat$genes[gene_iter], x)),
                              logical(1))
 
   # Multiply our binomial variable by the number of samples in each platform = our total
-  mat$tot.samples[i] <- sum(samples.per.platform[-rna.seq]*platforms.w.gene)
+  mat$tot.samples[gene_iter] <- sum(samples.per.platform[-rna.seq]*platforms.w.gene)
 
   # Find which row in the RNA-seq percentage matrix contains this gene's info
-  rna.seq.ind <- match(mat$genes[i], rna.seq.perc.zeroes$ensembl)
+  rna.seq.ind <- match(mat$genes[gene_iter], rna.seq.perc.zeroes$ensembl)
   if (!is.na(rna.seq.ind)) { # Now add the number of rna-seq samples that have this gene
-    mat$tot.samples[i] <- mat$tot.samples[i] + 
+    mat$tot.samples[gene_iter] <- mat$tot.samples[gene_iter] + 
                         (1 - rna.seq.perc.zeroes$perc.zeroes[rna.seq.ind])*n.rna.seq.samples
   }
 }

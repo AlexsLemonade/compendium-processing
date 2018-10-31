@@ -13,7 +13,7 @@
 
 # Directory set up
 results.dir <- "results"
-plots.dir <- "results/plots"
+plots.dir <- file.path("results", "plots")
 
 # Read in the file:
 platforms <- read.csv(file.path("data", "supported_microarray_platforms.csv"))
@@ -37,7 +37,7 @@ if(file.exists(geo.db)){
   con <- dbConnect(SQLite(),geo.db)
 }
 # Get homo sapiens gpls
-hs.gpl <- dbGetQuery(con, paste0('SELECT gpl FROM gpl WHERE gpl.organism LIKE "%homo%"'))
+hs.gpl <- dbGetQuery(con, 'SELECT gpl FROM gpl WHERE gpl.organism LIKE "%homo%"')
 
 # Get info about these experiments
 hs.gpl <- geoConvert(hs.gpl$gpl, out_type = c("gse", "gpl", "gsm"),

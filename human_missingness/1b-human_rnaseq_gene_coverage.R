@@ -16,10 +16,11 @@
 # Attach libraries
 library(org.Hs.eg.db)
 library(rhdf5)
+#------------------Set Up Functions------------------#
 
 # Directory set up
 results.dir <- "results"
-plots.dir <- "results/plots"
+plots.dir <- file.path("results", "plots")
 
 # human file directory path
 human.file <- file.path("data", "human_matrix.h5")
@@ -68,7 +69,7 @@ rna.seq.perc.zeroes <- apply(expression, 1, function (x) {
 #
 ########## Don't run this unless you have to. Takes a lot of ram and time.###### 
 if (!file.exists(file.path("data", "ARCHS4_human_matrix_percent_zeroes.txt"))) {
-# Jackie this code in order to get the txt file we read in:  
+# Jackie used this code in order to get the txt file we read in:  
   # Establish file name
   human_file <- file.path("data", "human_matrix.h5")
   
@@ -89,7 +90,8 @@ if (!file.exists(file.path("data", "ARCHS4_human_matrix_percent_zeroes.txt"))) {
 }
 
 # Read in the percent zeroes per gene table 
-rna.seq.perc.zeroes <- read.table(file.path("data", "ARCHS4_human_matrix_percent_zeroes.txt"),
+rna.seq.perc.zeroes <- read.table(
+                        file.path("data","ARCHS4_human_matrix_percent_zeroes.txt"),
                                   sep = "\t", skip = 1, stringsAsFactors = FALSE)
 
 # Get rid of rows without a Entrez ID
@@ -106,5 +108,5 @@ rna.seq.perc.zeroes <- data.frame('ensembl' = mapIds(org.Hs.eg.db,
 rna.seq.perc.zeroes <- rna.seq.perc.zeroes[!is.na(rna.seq.perc.zeroes$ensembl), ]
 
 # Save this info to an RData file
-saveRDS(rna.seq.perc.zeroes, file = file.path(results.dir, "rna.seq.genes.RDS"))
-saveRDS(n.rna.seq.samples, file = file.path(results.dir, "n.rna.seq.samples.RDS"))
+saveRDS(rna.seq.perc.zeroes, file = file.path(results.dir, "rna_seq_genes.RDS"))
+saveRDS(n.rna.seq.samples, file = file.path(results.dir, "n_rna_seq_samples.RDS"))

@@ -27,7 +27,7 @@ n.rna.seq.samples <- readRDS(file.path(results.dir,"n_rna_seq_samples.RDS"))
 
 # Combine lists
 genes.per.platform <- c(genes.per.affy, genes.per.illum)
-genes.per.platform[["rnaseq"]] <- list(as.character(rna.seq.perc.zeroes$ensembl))
+genes.per.platform[["rnaseq"]] <- unlist(as.character(rna.seq.perc.zeroes$ensembl))
 
 # Get a list of all genes covered by over all the platforms
 all.genes <- as.character(unique(unlist(genes.per.platform)))
@@ -106,52 +106,57 @@ write.csv(platform.table,
 tmp <- match(names(genes.per.platform), samples.per.platform$platforms)
 samples.per.platform <- samples.per.platform[tmp, 1]
 
-# Make a genes vs how many samples have them matrix
-mat <- data.frame("genes" = all.genes,
-                  "tot.samples" = 0, 
+# Make a master list with the gene lists and sample numbers
+# Only keep ensembl gene ids "ENS"
+platform.list <- lapply(genes.per.platform, function (x) {
+                      x.ind <- parent.frame()$i[]
+                         list("genes" = grep("ENS", x, value = TRUE) , 
+                              "n.samples" = samples.per.platform[x.ind])
+                      })
+# Add extra thing for rna-seq
+platform.list$rnaseq$perc.detected <- (1 - rna.seq.perc.zeroes$perc.zeroes)
+
+# Make a samples per gene matrix
+samples.per.gene <- data.frame("gene" = all.genes,
+                  "tot.samples" = 0,
                   stringsAsFactors = FALSE)
 
-# Get the placement of the RNA-seq gene list in the gene lists. 
-rna.seq <- which(names(genes.per.platform) == "rnaseq")
-
-# For each microarray platform, we'll assume that the gene will be present
-# in all samples on the platform if the platform measures the current gene
-# 
-# For each gene in the matrix: 
-for (gene_iter in 1:nrow(mat)) {
-  
-  # Which platforms contain the gene? Get a binomial variable that shows which
-  platforms.w.gene <- vapply(genes.per.platform[-rna.seq], 
-                             function(x) !is.na(match(mat$genes[gene_iter], x)),
-                             logical(1))
-
-  # Multiply our binomial variable by the number of samples in each platform = our total
-  mat$tot.samples[gene_iter] <- sum(samples.per.platform[-rna.seq]*platforms.w.gene)
-
-  # Find which row in the RNA-seq percentage matrix contains this gene's info
-  rna.seq.ind <- match(mat$genes[gene_iter], rna.seq.perc.zeroes$ensembl)
-  if (!is.na(rna.seq.ind)) { # Now add the number of rna-seq samples that have this gene
-    mat$tot.samples[gene_iter] <- mat$tot.samples[gene_iter] + 
-                        (1 - rna.seq.perc.zeroes$perc.zeroes[rna.seq.ind])*n.rna.seq.samples
-  }
+# Make a loop to calculate the number of samples that have measurements for
+# each gene
+for (platform_ind in 1:length(platform.list)) {
+    # Set the platform and type variables by this index
+    platform <- platform.list[[platform_ind]]
+    type <- names(platform.list)[platform_ind]
+      
+    # Match genes of platform to genes of samples.per.gene matrix
+    gene.indices <- match(platform$genes, all.genes) 
+          
+    if (type == "rnaseq"){ # if the type of data is rnaseq,
+      add <- platform$n.samples*platform$perc.detected # multiply total samples by percent
+    } else {
+      add <- platform$n.samples # if NOT rnaseq, use sample total as is.
+    }
+    # Add number of samples to running total
+    samples.per.gene$tot.samples[gene.indices] <- 
+    samples.per.gene$tot.samples[gene.indices] + add
 }
 
 # Calculate the percentages of samples that can detect each gene
 total.samples <- sum(samples.per.platform)
-mat$perc.samples <- mat$tot.samples/total.samples
+samples.per.gene$perc.samples <- samples.per.gene$tot.samples/total.samples
 
 # Print the distrbution of these percentages
 jpeg(file = file.path(plots.dir, "detection_percentage_distribution.jpeg"))
-plot(density(mat$perc.samples), xlab = "Ratio of samples which have the gene",
+plot(density(samples.per.gene$perc.samples), xlab = "Ratio of samples which have the gene",
      main = "Distribution of Detection Percentages for All Genes")
 dev.off()
 
 # Make it a histogram
 jpeg(file.path(plots.dir, "detection_percentage_histogram.jpeg"))
-hist(mat$perc.samples, xlab = "Ratio of samples which have the gene",
+hist(samples.per.gene$perc.samples, xlab = "Ratio of samples which have the gene",
      main = "Histogram of Detection Percentages for All Genes")
 dev.off()
 
 # Save as an RData object
-write.csv(mat, file = file.path(results.dir, "perc_samples_per_genes.csv"),
+write.csv(samples.per.gene, file = file.path(results.dir, "perc_samples_per_genes.csv"),
           quote = FALSE, row.names = FALSE)

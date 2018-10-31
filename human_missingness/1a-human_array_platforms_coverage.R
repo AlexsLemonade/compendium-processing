@@ -116,7 +116,7 @@ id.files <- file.path("data", "id.refinery", id.refinery[tmp[!is.na(tmp)]])
 genes.per.affy <- lapply(id.files, getEnsgFromGz)
 
 # Bring the names of the platforms
-names(genes.per.affy) <- gsub(".tsv.gz", "", id.files)
+names(genes.per.affy) <- gsub(".tsv.gz", "", id.refinery[tmp[!is.na(tmp)]])
 
 #-------------------Get Illumina Gene lists from GPL files --------------------#
 # Get a list of the GPLs from the platforms list

@@ -58,29 +58,45 @@ scaled = pd.DataFrame(scaler.transform(transposed),
                       columns=transposed.columns
 )
 
+print("\tROW...")
 # perform the imputation, setting k=10 as is standard for gene expression data
-imputed_knn = KNN(k=10).fit_transform(scaled)
+imputed_knn_row = KNN(k=10).fit_transform(scaled)
 
 # inverse transformation -- we don't want the standard scores
-inverse_knn = scaler.inverse_transform(imputed_knn)
+inverse_knn_row = scaler.inverse_transform(imputed_knn_row)
 
 # columns are samples
-untransposed_knn = inverse_knn.transpose()
+untransposed_knn_row = inverse_knn_row.transpose()
 
 # write to file
-knn_df = pd.DataFrame(untransposed_knn)
-knn_df.index = data.index
-knn_df.columns = data.columns.values
+knn_row_df = pd.DataFrame(untransposed_knn_row)
+knn_row_df.index = data.index
+knn_row_df.columns = data.columns.values
 # not to be confused with the Sleipnir KNNImputer output
-knn_outfile = outfile + "_KNN_fancyimpute.pcl"
-knn_df.to_csv(knn_outfile, sep='\t')
+knn_row_outfile = outfile + "_KNN_fancyimpute_row.pcl"
+knn_row_df.to_csv(knn_row_outfile, sep='\t')
+
+print("\tCOLUMN...")
+# perform the imputation, setting k=10 as is standard for gene expression data
+imputed_knn_col = KNN(k=10, orientation="columns").fit_transform(scaled)
+
+# inverse transformation -- we don't want the standard scores
+inverse_knn_col = scaler.inverse_transform(imputed_knn_col)
+
+# columns are samples
+untransposed_knn_col = inverse_knn_col.transpose()
+
+# write to file
+knn_col_df = pd.DataFrame(untransposed_knn_col)
+knn_col_df.index = data.index
+knn_col_df.columns = data.columns.values
+# not to be confused with the Sleipnir KNNImputer output
+knn_col_outfile = outfile + "_KNN_fancyimpute_column.pcl"
+knn_col_df.to_csv(knn_col_outfile, sep='\t')
 
 print("IterativeSVD...")
-# standard scaled
+# no transformation
 imputed_svd = IterativeSVD(rank=10).fit_transform(transposed)
-
-# inverse transform
-inverse_svd = scaler.inverse_transform(imputed_svd)
 
 # columns are samples
 untransposed_svd = imputed_svd.transpose()

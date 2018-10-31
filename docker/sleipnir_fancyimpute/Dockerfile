@@ -39,3 +39,5 @@ RUN sudo apt-get install -y --no-install-recommends \
 RUN hg clone https://bitbucket.org/libsleipnir/sleipnir
 RUN cd sleipnir  && ./gen_auto && ./gen_tools_am
 RUN cd sleipnir && ./configure && make && make install
+
+USER $NB_UID

@@ -38,8 +38,8 @@ missing_types <- c("MRR", "MCAR")
 # we processed the data 4 ways -- we'll need to snag the microarray files for
 # both seq_log and seq_un and perform an inner join
 processing_files <- c("all_log", "all_qn", "all_un", "seq_log", "seq_un")
-imputer_types <- c("IterativeSVD", "KNN_fancyimpute", "knnimpute", 
-                   "softimpute")
+imputer_types <- c("IterativeSVD", "KNN_fancyimpute_row", 
+                   "KNN_fancyimpute_column", "knnimpute", "softimpute")
 ```
 
 We'll compare quantile normalized values.
@@ -155,7 +155,9 @@ error_df <- error_df %>%
                 imputation_method = as.factor(imputation_method)) %>%
   dplyr::mutate(imputation_method = 
                   dplyr::recode(
-                    imputation_method, "KNN_fancyimpute" = "KNN (fancyimpute)",
+                    imputation_method, 
+                    "KNN_fancyimpute_row" = "KNN by row",
+                    "KNN_fancyimpute_column" = "KNN by column",
                     "knnimpute" = "KNNImputer", "softimpute" = "SoftImpute"
                     ),
                 processing_method = 
@@ -174,7 +176,7 @@ error_df %>%
   ggplot2::ggplot(ggplot2::aes(x = processing_method, y = RMSE)) +
   ggplot2::geom_boxplot() +
   ggplot2::geom_jitter(width = 0.2, alpha = 0.3) +
-  ggplot2::facet_wrap(missing_type ~ imputation_method, ncol = 4) +
+  ggplot2::facet_wrap(missing_type ~ imputation_method, ncol = 5) +
   ggplot2::theme_bw() +
   ggplot2::theme(axis.text.x = ggplot2::element_text(hjust = 1, angle = 45)) +
   ggplot2::labs(title = "Zebrafish Masking Comparison", x = "Processing Method")

@@ -95,11 +95,8 @@ knn_col_outfile = outfile + "_KNN_fancyimpute_column.pcl"
 knn_col_df.to_csv(knn_col_outfile, sep='\t')
 
 print("IterativeSVD...")
-# standard scaled
+# no transformation
 imputed_svd = IterativeSVD(rank=10).fit_transform(transposed)
-
-# inverse transform
-inverse_svd = scaler.inverse_transform(imputed_svd)
 
 # columns are samples
 untransposed_svd = imputed_svd.transpose()

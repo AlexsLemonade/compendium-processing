@@ -33,6 +33,18 @@ write_five_pcl <- function(exprs_mat, target, path, seed,
   # given an expression matrix, let's get 5 PCL files that satisfy the above
   # conditions; file names TBD by the random seed used and the missing type
   # 
+  # Args:
+  #   exprs_mat: gene expression matrix where rows are genes and columns are
+  #              samples -- rownames are gene identifiers
+  #   target: vector or matrix of values to be used as target distribution
+  #           for quantile normalization
+  #   path: path for output files
+  #   seed: the random seed used to generate the masked data -- this is used in
+  #         filenames to distinguish different repeats
+  #   missing_type: "MCAR" (default) or "MRR"
+  # 
+  # Output:
+  #   expression PCL processed 5 ways (in directory specified by path argument)
   #   all_un: both technologies, no transformation
   #   all_log: both technologies, RNA-seq is log2(x + 1)
   #   microarray: microarray data only, no transformation
@@ -88,6 +100,9 @@ write_five_pcl <- function(exprs_mat, target, path, seed,
 ```
 
 ### Target for quantile normalization
+
+Generated from refine.bio-processed samples; see [docs](https://github.com/AlexsLemonade/refinebio-docs/blob/84da7ac50537e42d4a1a2507816984e362181674/docs/main_text.md#quantile-normalization)
+for more information.
 
 ```{r}
 target_df <- 

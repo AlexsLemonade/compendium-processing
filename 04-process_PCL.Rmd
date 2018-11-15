@@ -1,0 +1,154 @@
+---
+title: "Processing data for imputation four ways"
+author: J. Taroni for ALSF CCDL
+date: 10/17/2018
+output: html_notebook
+---
+
+We intend to combine microarray and RNA-seq data in our species compendia and
+we need to select an (initial) processing pipeline for our imputation.
+
+So, here's what we're going to test:
+
+* Splitting by technology (e.g., imputing microarray and RNA-seq data 
+separately), performing no transformations
+* Splitting by technology, `log2(x + 1)` transformation of RNA-seq data
+* Imputing technologies together, no transformation
+* Imputing technologies together, `log2(x + 1)` transformation of RNA-seq data
+* Imputing technologies, all samples are quantile normalized
+
+The rationale behind the log2 transformation is to reduce the effect of outliers
+on the KNN imputation step which will use Euclidean distance.
+By imputing technologies together, you have more samples, which has been shown
+to be helpful in prior work and is likely to be helpful here.
+
+In `03-aggregate_and_mask`, we generated missing completely at random data
+and a somewhat more realistic structure (we think) where 25% of rows have a
+"significant" portion of values missing (10%, 20%, or 30%) for 10 repeats
+with different random seeds.
+
+```{r}
+write_five_pcl <- function(exprs_mat, target, path, seed, 
+                           missing_type = "MCAR") {
+  # given an expression matrix, let's get 5 PCL files that satisfy the above
+  # conditions; file names TBD by the random seed used and the missing type
+  # 
+  # Args:
+  #   exprs_mat: gene expression matrix where rows are genes and columns are
+  #              samples -- rownames are gene identifiers
+  #   target: vector or matrix of values to be used as target distribution
+  #           for quantile normalization
+  #   path: path for output files
+  #   seed: the random seed used to generate the masked data -- this is used in
+  #         filenames to distinguish different repeats
+  #   missing_type: "MCAR" (default) or "MRR"
+  # 
+  # Output:
+  #   expression PCL processed 5 ways (in directory specified by path argument)
+  #   all_un: both technologies, no transformation
+  #   all_log: both technologies, RNA-seq is log2(x + 1)
+  #   microarray: microarray data only, no transformation
+  #   seq_log: RNA-seq data only, log2(x + 1)
+  #   seq_un: RNA-seq data only, no transformation
+
+  # the Ensembl gene IDs are the rownames, we'll want them in their own 
+  # column
+  exprs_df <- tibble::rownames_to_column(data.frame(exprs_mat), var = "Gene")
+  # write both technologies, no transformation to file
+  readr::write_tsv(exprs_df, file.path(path, paste0("all_un_", seed, "_", 
+                                                    missing_type, ".pcl")))
+  
+  # the sample names tell us where the sample came from and therefore the
+  # technology 
+  seq_sample_patterns <- "DRR|ERR|SRR"
+  
+  # split by technology
+  microarray_df <- exprs_df[, -grep(seq_sample_patterns, colnames(exprs_df))]
+  seq_df <- exprs_df[, c(1, grep(seq_sample_patterns, colnames(exprs_df)))]
+  
+  # write the individual technologies to file
+  readr::write_tsv(microarray_df, file.path(path, 
+                                            paste0("microarray_", seed, "_", 
+                                                   missing_type, ".pcl")))
+  readr::write_tsv(seq_df, file.path(path, paste0("seq_un_", seed, "_", 
+                                                  missing_type, ".pcl")))  
+  
+  # now let's log transform the seq data only
+  log_seq_df <- data.frame(Gene = seq_df$Gene,
+                           log2(seq_df[, 2:ncol(seq_df)] + 1))
+  readr::write_tsv(log_seq_df, file.path(path, paste0("seq_log_", seed, "_", 
+                                                      missing_type, ".pcl")))
+  
+  # both technologies, with the RNA-seq data log transformed
+  all_log_df <- suppressMessages(dplyr::inner_join(microarray_df, log_seq_df, 
+                                                   by = "Gene"))
+  readr::write_tsv(all_log_df, file.path(path, paste0("all_log_", seed, "_", 
+                                                      missing_type, ".pcl")))
+  
+  # both technologies, quantile normalized
+  all_log_mat <- as.matrix(tibble::column_to_rownames(all_log_df, "Gene"))
+  all_log_qn_mat <- preprocessCore::normalize.quantiles.use.target(all_log_mat,
+                                                                   target)
+  all_qn_df <- data.frame(Gene = all_log_df$Gene, all_log_qn_mat)
+  colnames(all_qn_df) <- colnames(all_log_df)
+  readr::write_tsv(all_qn_df, file.path(path, paste0("all_qn_", seed, "_", 
+                                                      missing_type, ".pcl")))
+  
+  # don't return all_log_df
+  return(NULL)
+}
+```
+
+### Target for quantile normalization
+
+Generated from refine.bio-processed samples; see [docs](https://github.com/AlexsLemonade/refinebio-docs/blob/84da7ac50537e42d4a1a2507816984e362181674/docs/main_text.md#quantile-normalization)
+for more information.
+
+```{r}
+target_df <- 
+  readr::read_tsv(file.path("data", "qn_target", 
+                            "d8gyazczr661umla1979zxu7_1538153041_target.tsv"),
+                  col_names = FALSE)
+target <- as.vector(as.matrix(target_df))
+rm(target_df)
+```
+
+### Missing completely at random
+
+```{r}
+mcar_dir <- file.path("data", "masked", "MCAR")
+dir.create(mcar_dir, recursive = TRUE, showWarnings = FALSE)
+```
+
+```{r}
+mcar_list <- readRDS(file.path("data", "masked", "mcar_list.RDS"))
+```
+
+```{r}
+mcar_pcl <- lapply(mcar_list, 
+                   function(x) write_five_pcl(exprs_mat = x$exprs_mat,
+                                              target = target,
+                                              path = mcar_dir,
+                                              seed = x$seed,
+                                              missing_type = "MCAR"))
+rm(mcar_pcl, mcar_dir, mcar_list)
+```
+
+### Missing random rows
+
+```{r}
+mrr_dir <- file.path("data", "masked", "MRR")
+dir.create(mrr_dir, recursive = TRUE, showWarnings = FALSE)
+```
+
+```{r}
+mrr_list <- readRDS(file.path("data", "masked", 
+                              "missing_random_rows_list.RDS"))
+mrr_pcl <- lapply(mrr_list, 
+                   function(x) write_five_pcl(exprs_mat = x$exprs_mat,
+                                              target = target,
+                                              path = mrr_dir,
+                                              seed = x$seed,
+                                              missing_type = "MRR"))
+```
+

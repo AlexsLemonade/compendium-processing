@@ -1,2 +1,5 @@
 # turns out lots of these files will be big
 data/
+
+# imputed data are large files as well
+imputed/

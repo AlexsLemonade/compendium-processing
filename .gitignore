@@ -9,3 +9,6 @@ imputed/
 quality_check/transcriptome_index
 quality_check/quants
 quality_check/data/fastq
+
+# refine.bio test compendium is too big!
+quality_check/refinebio-data/

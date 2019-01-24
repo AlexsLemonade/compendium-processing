@@ -3,3 +3,9 @@ data/
 
 # imputed data are large files as well
 imputed/
+
+# salmon output, transcriptome indices, and fastq files from the quality check
+# analyses
+quality_check/transcriptome_index
+quality_check/quants
+quality_check/data/fastq

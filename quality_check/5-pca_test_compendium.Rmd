@@ -115,6 +115,14 @@ ggsave(filename = file.path(plot_dir, "test_compendium_PCA.png"),
        plot = last_plot(), width = 7, height = 5)
 ```
 
+```{r}
+png(file.path(plot_dir, "test_compendium_PCA_pairs_plot.png"))
+pairs(pca_results$x[, 1:5], col = dplyr::recode(compendium_technology_labels,
+                                                `MICROARRAY` = "#E69F00",
+                                                `RNA-SEQ` = "#56B4E9"))
+dev.off()
+```
+
 ## Session info
 
 ```{r}

@@ -1,0 +1,116 @@
+---
+title: "PCA on zebrafish test compendium"
+output: html_notebook
+author: J. Taroni for CCDL
+date: 2019
+---
+
+The test compendium we have for zebrafish is approximately 50-50 microarray and
+RNA-seq. 
+In work in the top directory of this repo, we looked into what imputation 
+methodology to use for the species compendium.
+To do so, we grabbed all the available RNA-seq data at the time and then 
+randomly selected around the same number of processed microarray samples.
+This is not really representative of what will happen in production.
+It does allow us to look at any technology differences.
+First, we'll do a quick visualization with PCA.
+
+## Setup
+
+#### Packages and functions
+
+```{r}
+# install.packages("ggfortify")
+library(ggfortify)
+```
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+#### Directories/files
+
+```{r}
+test_compendium_dir <- file.path("refinebio-data", "DANIO_RERIO")
+compendium_exprs_file <- file.path(test_compendium_dir, "DANIO_RERIO.tsv")
+```
+
+Directory for plots
+
+```{r}
+plot_dir <- "plots"
+dir.create(plot_dir, showWarnings = FALSE)
+```
+
+## Main
+
+Reading in the compendium expression data
+
+```{r}
+compendium_exprs_df <- readr::read_tsv(compendium_exprs_file)
+```
+
+We can _infer_ which technology a sample is "part of" from the column names
+of this `data.frame`.
+
+```{r}
+set.seed(123)
+colnames(compendium_exprs_df)[sample(2:ncol(compendium_exprs_df), 6)]
+```
+
+Microarray data will end in `.PCL` and the RNA-seq data ends in 
+`lengthScaledTPM.tsv`.
+Let's generate _labels_ for the samples using this information.
+
+```{r}
+sample_names <- colnames(compendium_exprs_df)[-1]  # don't want gene id column
+compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
+compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNA-SEQ"
+```
+
+Get expression values as a matrix 
+
+```{r}
+exprs_mat <- compendium_exprs_df %>%
+  as.data.frame() %>%
+  tibble::column_to_rownames("X1") %>%
+  as.matrix()
+```
+
+### PCA
+
+```{r}
+pca_results <- prcomp(t(exprs_mat))
+```
+
+### Plotting
+
+```{r}
+# get the technology labels as a data.frame for plotting
+technology_df <- as.data.frame(compendium_technology_labels) 
+
+# plotting with autoplot for PCA
+autoplot(pca_results, data = technology_df, alpha = 0.5, 
+         colour = 'compendium_technology_labels') +
+  scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
+                     values = c("#E69F00", "#56B4E9")) +
+  theme_bw() +
+  ggtitle("Test Compendium by Technology") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  guides(colour = guide_legend(title = "technology"))
+```
+
+I'll note here that because of the way we process RNA-seq data in refine.bio,
+these RNA-seq samples with _necessarily_ be part of the same experiments. 
+There are no such guarantees for the microarray samples.
+We can see that there are some "clumps" in the RNA-seq, which, if I had to 
+guess, likely correspond to samples from an individual experiment.
+_Here, I'm using the term "experiment" to refer to what is called a study (e.g., 
+`SRP`, `ERP`, or `DRP`) in SRA._
+
+Save the plot to file.
+
+```{r}
+ggsave(filename = file.path(plot_dir, "test_compendium_PCA.png"),
+       plot = last_plot(), width = 7, height = 5)
+```

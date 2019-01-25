@@ -1,0 +1,132 @@
+---
+title: "What genes are differentially expressed between technologies?"
+output: html_notebook
+author: J. Taroni for CCDL
+date: 2019
+---
+
+We'll use `limma` to identify genes that are differentially expressed between
+microarray and RNA-seq samples in the test compendium.
+
+### Packages and directory set up
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+```{r}
+# BiocManager::install("limma", update = FALSE)
+library(limma)
+```
+
+```{r}
+results_dir <- "results"
+dir.create(results_dir, showWarnings = FALSE)
+```
+
+### Read in data
+
+Test compendium expression matrix
+
+```{r}
+exprs_mat_file <- file.path("data", "refinebio_test_compendium_exprs_mat.RDS")
+exprs_mat <- readRDS(exprs_mat_file)
+```
+
+Generate technology labels using the sample names
+
+```{r}
+sample_names <- colnames(exprs_mat)
+compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
+compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNASEQ"
+```
+
+### Differential expression
+
+Test for genes that are differentially expressed between technologies
+
+```{r}
+design_matrix <- model.matrix(~ compendium_technology_labels)
+fit <- lmFit(exprs_mat, design = design_matrix)
+fit2 <- eBayes(fit)
+diff_exp_stats <- topTable(fit2, number = nrow(exprs_mat)) %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("Gene")
+```
+
+Save to file
+
+```{r}
+readr::write_tsv(diff_exp_stats, 
+                 file.path(results_dir, 
+                           "test_compendium_diff_exprs_technologies.tsv"))
+```
+
+Genes with negative `t` values have lower values in RNA-seq samples.
+Let's take a peak at the "top" differentially expressed genes.
+
+```{r}
+diff_exp_stats %>%
+  dplyr::filter(adj.P.Val < 0.00001) %>%
+  dplyr::arrange(`t`) %>%
+  head()
+```
+
+And the genes that have higher values in microarray samples.
+
+```{r}
+diff_exp_stats %>%
+  dplyr::filter(adj.P.Val < 0.00001) %>%
+  dplyr::arrange(`t`) %>%
+  tail()
+```
+
+### Relationship with gene lengths?
+
+Here's how I got the gene lengths after obtaining and unzipping 
+
+```
+# https://github.com/stephenturner/oneliners/tree/3233f3cc6c835cc3f70aaf0462f2d2b31244069d#gff3-annotations
+grep $'\tgene\t' Danio_rerio.GRCz11.95.gff3 | cut -s -f 4,5 | perl -ne '@v = split(/\t/); printf("%d\n", $v[1] - $v[0] + 1)'
+```
+
+```{r}
+gene_lengths_df <- 
+  readr::read_tsv(file.path("data", "GRCz11", 
+                            "Danio_rerio.GRCz11_gene_names_and_lengths.tsv"),
+                  col_names = FALSE) %>%
+  dplyr::mutate(X1 = sub("gene:", "", X1))
+```
+
+Join the t-statistic with the gene lengths and make a scatterplot
+
+```{r}
+dplyr::inner_join(diff_exp_stats, gene_lengths_df, 
+                                        by = c("Gene" = "X1")) %>%
+  dplyr::select(c("Gene", "t", "X2")) %>%
+  dplyr::mutate(gene_length = X2) %>%
+  dplyr::select(-X2) %>%
+  ggplot2::ggplot(ggplot2::aes(x = `t`, y = gene_length)) +
+  ggplot2::geom_point(alpha = 0.2) +
+  ggplot2::geom_smooth() +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x = "t statistic", y = "gene length")
+```
+
+As noted above:
+
+> Genes with negative `t` values have lower values in RNA-seq samples.
+
+So shorter genes tend to have lower expression values in RNA-seq data.
+
+```{r}
+ggplot2::ggsave(filename = file.path("plots", "tstat_length_scatter.png"),
+                plot = ggplot2::last_plot())
+```
+
+### Session info
+
+```{r}
+sessionInfo()
+```
+

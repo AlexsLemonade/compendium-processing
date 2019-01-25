@@ -212,3 +212,9 @@ array_avg_exprs_df %>%
   ggplot2::scale_fill_manual(values = c("#000000", "#FFFFFF"))
 ```
 
+## Session info
+
+```{r}
+sessionInfo()
+```
+

@@ -50,6 +50,10 @@ exprs_mat <- compendium_exprs_df %>%
   as.data.frame() %>%
   tibble::column_to_rownames("X1") %>%
   as.matrix()
+
+# save the expression matrix as an RDS file -- this will be compressed enough
+# to track with regular ol' git
+saveRDS(exprs_mat, file.path("data", "refinebio_test_compendium_exprs_mat.RDS"))
 ```
 
 Split by technology, they have different distributions.

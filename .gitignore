@@ -1,5 +1,7 @@
 # turns out lots of these files will be big
 data/
+# but keep the quality check data
+!quality_check/data
 
 # imputed data are large files as well
 imputed/

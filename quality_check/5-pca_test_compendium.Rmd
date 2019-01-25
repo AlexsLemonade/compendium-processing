@@ -91,7 +91,7 @@ technology_df <- as.data.frame(compendium_technology_labels)
 
 # plotting with autoplot for PCA
 autoplot(pca_results, data = technology_df, alpha = 0.5, 
-         colour = 'compendium_technology_labels') +
+         colour = 'compendium_technology_labels', scale = 0) +
   scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
                      values = c("#E69F00", "#56B4E9")) +
   theme_bw() +
@@ -114,3 +114,10 @@ Save the plot to file.
 ggsave(filename = file.path(plot_dir, "test_compendium_PCA.png"),
        plot = last_plot(), width = 7, height = 5)
 ```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
+

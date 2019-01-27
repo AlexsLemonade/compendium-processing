@@ -18,7 +18,7 @@ Function for calculating the mode from
 https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode
 
 ```{r}
-CalculateMode <- function(x) {
+calculate_mode <- function(x) {
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
 }
@@ -96,7 +96,7 @@ we can dig into this more later.
 Let's take a look at our example, adding a dotted line for the mode.
 
 ```{r}
-example_mode <- CalculateMode(seq_mat[, 34])
+example_mode <- calculate_mode(seq_mat[, 34])
 example_ecdf_plot + ggplot2::geom_vline(xintercept = example_mode,
                                         lty = "dotted")
 ```
@@ -110,7 +110,7 @@ data.frame(x = seq_mat[, another_random_index]) %>%
   ggplot2::stat_ecdf(geom = "point", size = 0.75, alpha = 0.75) +
   ggplot2::labs(y = "ecdf(x)", x = "expression value (x)") +
   ggplot2::theme_bw() +
-  ggplot2::geom_vline(xintercept = CalculateMode(seq_mat[, another_random_index]),
+  ggplot2::geom_vline(xintercept = calculate_mode(seq_mat[, another_random_index]),
                       lty = "dotted")
 ```
 
@@ -144,7 +144,7 @@ So what are they and do they tend to be the same genes in many RNA-seq samples?
 ### RNA-seq
 
 ```{r}
-seq_col_modes <- apply(seq_mat, 2, CalculateMode)
+seq_col_modes <- apply(seq_mat, 2, calculate_mode)
 ```
 
 Find the indices of each of the "used-to-be-zero" values

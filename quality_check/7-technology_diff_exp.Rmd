@@ -15,6 +15,7 @@ microarray and RNA-seq samples in the test compendium.
 ```
 
 ```{r}
+# install.packages("BiocManager")
 # BiocManager::install("limma", update = FALSE)
 library(limma)
 ```
@@ -88,11 +89,13 @@ Here's how I got the gene lengths after obtaining and unzipping
 ```
 # https://github.com/stephenturner/oneliners/tree/3233f3cc6c835cc3f70aaf0462f2d2b31244069d#gff3-annotations
 grep $'\tgene\t' Danio_rerio.GRCz11.95.gff3 | cut -s -f 4,5 | perl -ne '@v = split(/\t/); printf("%d\n", $v[1] - $v[0] + 1)'
+# gene identifiers
+grep $'\tgene\t' yourannots.gff3 | perl -ne '/ID=([^;]+)/ and printf("%s\n", $1)'
 ```
 
 ```{r}
 gene_lengths_df <- 
-  readr::read_tsv(file.path("data", "GRCz11", 
+  readr::read_tsv(file.path("data", 
                             "Danio_rerio.GRCz11_gene_names_and_lengths.tsv"),
                   col_names = FALSE) %>%
   dplyr::mutate(X1 = sub("gene:", "", X1))

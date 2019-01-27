@@ -1,0 +1,160 @@
+---
+title: "Zebrafish gene lengths"
+output: html_notebook
+---
+
+In `7-technology_diff_exp`, we observed that genes that are shorter tend to have
+lower expression values in RNA-seq data in the test compendium.
+
+Here, we're interested in if short genes tend to be unobserved (e.g., have
+counts/count-scale data that are zero) in the RNA-seq data used in the test 
+compendium.
+We'll go back to the `lengthScaledTPM.tsv` that has not yet been through
+the aggregation process to explore this.
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+```{r}
+library(ggfortify)
+```
+
+```{r}
+compendium_exprs_file <- file.path("refinebio-data", "DANIO_RERIO", 
+                                   "DANIO_RERIO.tsv")
+compendium_genes <- readr::read_tsv(compendium_exprs_file) %>%
+  dplyr::pull(X1)
+```
+
+```{r}
+list_of_rnaseq_files <- list.files(file.path("..", "data", "rnaseq/"),
+                                   full.names = TRUE)
+```
+
+```{r}
+rnaseq_df_list <- lapply(list_of_rnaseq_files, readr::read_tsv)
+```
+
+```{r}
+# bind all the individual sample data.frame together
+rnaseq_df <- dplyr::bind_cols(rnaseq_df_list)
+# we end up with a bunch of "extra" gene columns this way, but they should be
+# in the same order
+all.equal(rnaseq_df$Gene1, rnaseq_df$Gene112)
+```
+
+```{r}
+# drop the extra gene columns and set the rownames to gene identifiers -- this
+# will help with calculating the proportion of zeros, etc.
+rnaseq_df <- 
+  rnaseq_df[, c(TRUE, !grepl("Gene", colnames(rnaseq_df))[2:ncol(rnaseq_df)])]
+rnaseq_df <- rnaseq_df %>%
+  as.data.frame() %>%
+  tibble::column_to_rownames("Gene")
+# remove the list of individual sample data.frame
+rm(rnaseq_df_list)
+```
+
+```{r}
+# read in gene lengths
+gene_lengths_df <- 
+  readr::read_tsv(file.path("data", 
+                            "Danio_rerio.GRCz11_gene_names_and_lengths.tsv"),
+                  col_names = FALSE) %>%
+  dplyr::mutate(X1 = sub("gene:", "", X1))
+colnames(gene_lengths_df) <- c("Gene", "Length")
+```
+
+```{r}
+# calculate the proportion of samples a gene is zero for
+gene_zeroes_proportion <- data.frame(
+  "Gene" = rownames(rnaseq_df),
+  "Zero_proportion" = apply(rnaseq_df, 1, 
+                            function(x) sum(x == 0) / length(x))
+)
+```
+
+```{r}
+zeroes_df <- dplyr::inner_join(gene_lengths_df, gene_zeroes_proportion,
+                              by = "Gene")
+```
+
+```{r}
+# there are some really long genes that will probably make it difficult to
+# visualize what is going on
+summary(zeroes_df$Length)
+```
+
+```{r}
+# filtering genes based on length to get a clearer picture
+zeroes_df %>%
+  dplyr::filter(Length <= 35000) %>%
+  ggplot(aes(x = Length, y = Zero_proportion)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth() +
+  theme_bw() +
+  labs(x = "gene length", y = "proportion of samples with zero count",
+       subtitle = "All genes", title = "Gene length and observations")
+```
+
+```{r}
+# subset just to genes that are in the compendium
+zeroes_df %>%
+  dplyr::filter(Gene %in% compendium_genes, 
+                Length <= 35000) %>%
+  ggplot(aes(x = Length, y = Zero_proportion)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth() +
+  theme_bw() +
+  labs(x = "gene length", y = "proportion of samples with zero count",
+       subtitle = "Test compendium genes only", 
+       title = "Gene length and observations")
+```
+
+```{r}
+exprs_mat_file <- file.path("data", "refinebio_test_compendium_exprs_mat.RDS")
+exprs_mat <- readRDS(exprs_mat_file)
+```
+
+```{r}
+sample_names <- colnames(exprs_mat)
+compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
+compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNASEQ"
+```
+
+```{r}
+short_genes <- zeroes_df %>%
+  dplyr::filter(Length < 5784) %>%
+  dplyr::pull(Gene)
+```
+
+```{r}
+length_filtered_exprs_mat <- exprs_mat[!rownames(exprs_mat) %in% short_genes, ]
+dim(length_filtered_exprs_mat)
+```
+
+```{r}
+# PCA on the length filtered exprs mat
+pca_results <- prcomp(t(length_filtered_exprs_mat))
+
+# get the technology labels as a data.frame for plotting
+technology_df <- as.data.frame(compendium_technology_labels) 
+
+# plotting with autoplot for PCA
+autoplot(pca_results, data = technology_df, alpha = 0.5, 
+         colour = 'compendium_technology_labels', scale = 0) +
+  scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
+                     values = c("#E69F00", "#56B4E9")) +
+  theme_bw() +
+  ggtitle("Test Compendium by Technology") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  guides(colour = guide_legend(title = "technology"))
+```
+
+```{r}
+pairs(pca_results$x[, 1:5], col = dplyr::recode(compendium_technology_labels,
+                                                `MICROARRAY` = "#E69F00",
+                                                `RNASEQ` = "#56B4E9"))
+```
+

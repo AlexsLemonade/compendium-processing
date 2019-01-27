@@ -1,0 +1,156 @@
+---
+title: "Construct _Danio rerio_ prior information matrices"
+output: html_notebook
+---
+
+If we want to use `PLIER`, we need to construct prior information matrices
+for zebrafish.
+We'll do that using two sources: 
+[WikiPathways](https://www.wikipathways.org/index.php/WikiPathways) and 
+[ZFIN](https://zfin.org/)
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+```{r}
+# BiocManager::install("rWikiPathways", "GSA", "org.Dr.eg.db", update = FALSE)
+# install.packages("XML")
+library(rWikiPathways)
+library(XML)
+library(org.Dr.eg.db)
+```
+
+```{r}
+pathway_dir <- file.path("data", "pathways")
+dir.create(pathway_dir, showWarnings = FALSE, recursive = TRUE)
+```
+
+## WikiPathways
+
+```{r}
+# download current version of WikiPathway pathways
+# this is CC0
+downloadPathwayArchive(organism = "Danio rerio", format = "gmt",
+                       destpath = pathway_dir, date = "20190110")
+```
+
+Read the `.gmt` file in and convert to binary matrix
+
+```{r}
+zebrafish_wp_list <- 
+  GSA::GSA.read.gmt(file.path(pathway_dir, 
+                              "wikipathways-20190110-gmt-Danio_rerio.gmt"))
+```
+
+```{r}
+names(zebrafish_wp_list$genesets) <- make.names(  # remove hyphens
+  gsub(" ", "_",  # convert spaces to underscores
+       gsub("%WikiPathways_20190110%", " ",  # remove date, WP information 
+            gsub("%Danio rerio", "",  # remove species information
+                 zebrafish_wp_list$geneset.names))
+  )
+)
+# remove pathway names and descriptions
+zebrafish_wp_list <- zebrafish_wp_list$genesets
+```
+
+We're going to use ZFIN identifiers instead of Entrez IDs, which are what are
+used in WikiPathways.
+
+```{r}
+# our goal is to get a binary matrix that represents gene-pathway relationships
+# to do this, we first need to melt the list into a data.frame
+zebrafish_wp_binary_df <- reshape2::melt(zebrafish_wp_list) %>%
+  # get sensible column names
+  dplyr::mutate(Gene = value, Pathway = L1) %>%
+  dplyr::select(Gene:Pathway) %>%
+  # conversion from Entrez IDs to ZFIN IDs with mapIds -- this should be 1:1
+  dplyr::mutate(ZFIN = mapIds(org.Dr.eg.db, 
+                              keys = as.character(Gene), 
+                              keytype = "ENTREZID", column = "ZFIN")) %>%
+  # drop Entrez IDs
+  dplyr::select(-Gene) %>%
+  # drop records missing ZFIN ids
+  dplyr::filter(!is.na(ZFIN)) %>%
+  # unique records only, just in case
+  dplyr::distinct() %>%
+  # get binary matrix, where the first column will be gene and the columns are
+  # pathways
+  reshape2::dcast(ZFIN ~ Pathway, fun.aggregate = length)
+```
+
+```{r}
+# now a more PLIER friendly format
+zebrafish_wp_binary_mat <- zebrafish_wp_binary_df %>%
+  tibble::column_to_rownames("ZFIN") %>%
+  as.matrix()
+saveRDS(zebrafish_wp_binary_mat, 
+        file.path(pathway_dir, "Danio_rerio_wikipathways_prior_info.RDS"))
+```
+
+## ZFIN
+
+Given the [licensing of the ZFIN resource](https://zfin.org/warranty.html) and 
+the fact that downloading via the web interface has the advantage of including 
+the archive date in the file name/header and including the column names, we've 
+obtained these files via the 
+[downloads webpage](https://zfin.org/downloads/archive/2019.01.25) using the
+date that is currently the most recent archive (`2019-01-25`).
+
+
+```{r}
+wildtype_expression_file <- 
+  file.path(pathway_dir, "wildtype-expression_fish_2019.01.25.txt")
+# we're only going to use the in situ data
+wildtype_expression_df <- readr::read_tsv(wildtype_expression_file, skip = 1) %>%
+  dplyr::filter(Assay == "mRNA in situ hybridization") %>%
+  dplyr::select(-X15)
+```
+
+We're hoping to get two gene sets from this ZFIN information: 1) anatomical
+structure and 2) developmental stage.
+
+```{r}
+stage_file <- file.path(pathway_dir, "stage_ontology_2019.01.25.txt")
+stage_df <- readr::read_tsv(stage_file, skip = 1) %>%
+  # drop column associated with parsing error
+  dplyr::select(-X6)
+```
+
+```{r}
+stage_ordered_factor <- factor(stage_df$`Stage Name`[-1],  # drop unknown
+                               levels = stage_df$`Stage Name`[-1],
+                               ordered = TRUE)
+stage_ordered_factor
+```
+
+For the tissue part, let's filter to only those genes that are expressed in
+adult
+
+```{r}
+# filter to only adult
+adult_wt_df <- wildtype_expression_df %>%
+  dplyr::filter(`End Stage` == "Adult")
+
+# then we can get a list by tissue -> binary matrix
+adult_tissue_wt_binary_mat <- 
+  reshape2::melt(
+    # this gives us a list that we're melting into a data.frame
+    split(adult_wt_df$`Gene ID`,
+          adult_wt_df$`Super Structure Name`)) %>%
+  # setting informative column names
+  dplyr::mutate(Gene = value, Tissue = L1) %>%
+  dplyr::select(Gene:Tissue) %>%
+  # filtering out any duplicate records
+  dplyr::distinct() %>%
+  # and finally, get a PLIER-friendly binary matrix
+  reshape2::dcast(Gene ~ Tissue, fun.aggregate = length) %>%
+  tibble::column_to_rownames("Gene") %>%
+  as.matrix()
+
+# save the RDS to file
+saveRDS(adult_tissue_wt_binary_mat, 
+        file.path(pathway_dir, "ZFIN_adult_tissue_prior_info.RDS"))
+```
+

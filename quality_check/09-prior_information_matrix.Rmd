@@ -1,6 +1,11 @@
 ---
 title: "Construct _Danio rerio_ prior information matrices"
-output: html_notebook
+output: 
+  html_notebook:
+    toc: TRUE
+    toc_float: TRUE
+author: J. Taroni for CCDL
+date: 2019
 ---
 
 If we want to use `PLIER`, we need to construct prior information matrices
@@ -8,6 +13,8 @@ for zebrafish.
 We'll do that using two sources: 
 [WikiPathways](https://www.wikipathways.org/index.php/WikiPathways) and 
 [ZFIN](https://zfin.org/)
+
+## Setup
 
 ```{r}
 `%>%` <- dplyr::`%>%`
@@ -42,6 +49,9 @@ zebrafish_wp_list <-
   GSA::GSA.read.gmt(file.path(pathway_dir, 
                               "wikipathways-20190110-gmt-Danio_rerio.gmt"))
 ```
+
+Clean up the list to make it more amenable to the binary prior information
+matrix we'll need for use with PLIER.
 
 ```{r}
 names(zebrafish_wp_list$genesets) <- make.names(  # remove hyphens
@@ -139,7 +149,7 @@ for (current_gene in unique(wildtype_expression_df$`Gene ID`)) {
   current_gene_df <- wildtype_expression_df %>%
     dplyr::filter(`Gene ID` == current_gene)
   
-    # all rows in current_gene_df
+  # all rows in current_gene_df
   for (gene_row_iter in 1:nrow(current_gene_df)) {
     # pull pertinent stage information from this row
     start_stage <- current_gene_df$`Start Stage`[gene_row_iter]
@@ -153,7 +163,6 @@ for (current_gene in unique(wildtype_expression_df$`Gene ID`)) {
     current_gene_stages <- append(current_gene_stages,
                                   covered_stages)
   }
-  
   gene_stages_list[[current_gene]] <- current_gene_stages
 }
 ```
@@ -171,6 +180,7 @@ gene_stages_binary_mat <- reshape2::melt(gene_stages_list) %>%
   reshape2::dcast(Gene ~ Stage, fun.aggregate = length) %>%
   tibble::column_to_rownames("Gene") %>%
   as.matrix()
+# save to file
 saveRDS(gene_stages_binary_mat,
         file = file.path(pathway_dir, 
                          "ZFIN_stages_prior_info.RDS"))
@@ -204,5 +214,11 @@ adult_tissue_wt_binary_mat <-
 # save the RDS to file
 saveRDS(adult_tissue_wt_binary_mat, 
         file.path(pathway_dir, "ZFIN_adult_tissue_prior_info.RDS"))
+```
+
+## Session info
+
+```{r}
+sessionInfo()
 ```
 

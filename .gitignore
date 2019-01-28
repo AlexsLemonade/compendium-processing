@@ -17,6 +17,7 @@ quality_check/data/GRCz11
 quality_check/data/pathways/stage_ontology_2019.01.25.txt
 quality_check/data/pathways/wildtype-expression_fish_2019.01.25.txt
 quality_check/data/pathways/ZFIN_adult_tissue_prior_info.RDS
+quality_check/data/pathways/ZFIN_stages_prior_info.RDS
 
 # refine.bio test compendium is too big!
 quality_check/refinebio-data/

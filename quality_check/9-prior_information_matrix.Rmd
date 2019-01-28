@@ -110,6 +110,10 @@ wildtype_expression_df <- readr::read_tsv(wildtype_expression_file, skip = 1) %>
 
 We're hoping to get two gene sets from this ZFIN information: 1) anatomical
 structure and 2) developmental stage.
+Parsing this by stage-tissue pairs ends up being extremely sparse, so we can't
+approach it that way and get anything useful.
+
+### Stages
 
 ```{r}
 stage_file <- file.path(pathway_dir, "stage_ontology_2019.01.25.txt")
@@ -124,9 +128,57 @@ stage_ordered_factor <- factor(stage_df$`Stage Name`[-1],  # drop unknown
                                ordered = TRUE)
 stage_ordered_factor
 ```
+```{r}
+gene_stages_list <- list()
+for (current_gene in unique(wildtype_expression_df$`Gene ID`)) {
+  
+  # initialize vector to hold _all_ the stages for the current gene
+  current_gene_stages <- vector()
+  
+  # data.frame filtered to current gene only
+  current_gene_df <- wildtype_expression_df %>%
+    dplyr::filter(`Gene ID` == current_gene)
+  
+    # all rows in current_gene_df
+  for (gene_row_iter in 1:nrow(current_gene_df)) {
+    # pull pertinent stage information from this row
+    start_stage <- current_gene_df$`Start Stage`[gene_row_iter]
+    end_stage <- current_gene_df$`End Stage`[gene_row_iter]
+    
+    # find the indices corresponding to the stages and extract the stage
+    # names from the ordered factor vector
+    start_index <- which(stage_ordered_factor == start_stage)
+    end_index <- which(stage_ordered_factor == end_stage)
+    covered_stages <- as.character(stage_ordered_factor[start_index:end_index])
+    current_gene_stages <- append(current_gene_stages,
+                                  covered_stages)
+  }
+  
+  gene_stages_list[[current_gene]] <- current_gene_stages
+}
+```
 
-For the tissue part, let's filter to only those genes that are expressed in
-adult
+We want to go from this list to a binary matrix for use with PLIER
+
+```{r}
+gene_stages_binary_mat <- reshape2::melt(gene_stages_list) %>%
+  # remove any duplicate stages
+  dplyr::distinct() %>%
+  # sensible column names
+  dplyr::mutate(Stage = value, Gene = L1) %>%
+  dplyr::select(Stage:Gene) %>%
+  # and finally, get a PLIER-friendly binary matrix
+  reshape2::dcast(Gene ~ Stage, fun.aggregate = length) %>%
+  tibble::column_to_rownames("Gene") %>%
+  as.matrix()
+saveRDS(gene_stages_binary_mat,
+        file = file.path(pathway_dir, 
+                         "ZFIN_stages_prior_info.RDS"))
+```
+
+### Tissues
+
+We'll use the adult stage _only_ to do the gene-tissue mapping.
 
 ```{r}
 # filter to only adult

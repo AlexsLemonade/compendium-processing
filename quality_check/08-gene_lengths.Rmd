@@ -1,6 +1,11 @@
 ---
 title: "Zebrafish gene lengths"
-output: html_notebook
+output: 
+  html_notebook:
+    toc: TRUE
+    toc_float: TRUE
+author: J. Taroni for CCDL
+date: 2019
 ---
 
 In `7-technology_diff_exp`, we observed that genes that are shorter tend to have
@@ -12,25 +17,44 @@ compendium.
 We'll go back to the `lengthScaledTPM.tsv` that has not yet been through
 the aggregation process to explore this.
 
+## Set up
+
 ```{r}
 `%>%` <- dplyr::`%>%`
 ```
 
 ```{r}
+# we'll need ggfortify to do the PCA plots
 library(ggfortify)
 ```
 
 ```{r}
+# directory to hold the plots
+plot_dir <- "plots"
+```
+
+#### Compendium genes
+
+We will explore this gene lengths-observations/expression levels relationship in
+_all_ genes and also subset to only the genes in the test compendium, so we 
+need to pull those gene identifiers out of the test compendium expression
+matrix.
+
+```{r}
 compendium_exprs_file <- file.path("refinebio-data", "DANIO_RERIO", 
                                    "DANIO_RERIO.tsv")
-compendium_genes <- readr::read_tsv(compendium_exprs_file) %>%
+compendium_genes <- readr::read_tsv(compendium_exprs_file, progress = FALSE) %>%
   dplyr::pull(X1)
 ```
+
+#### Read in `lengthScaledTPM.tsv` files
 
 ```{r}
 list_of_rnaseq_files <- list.files(file.path("..", "data", "rnaseq/"),
                                    full.names = TRUE)
 ```
+
+Read in the files such that they are individual `data.frame` in a list
 
 ```{r}
 rnaseq_df_list <- lapply(list_of_rnaseq_files, readr::read_tsv)
@@ -66,6 +90,10 @@ gene_lengths_df <-
 colnames(gene_lengths_df) <- c("Gene", "Length")
 ```
 
+## Gene zero counts and expression levels
+
+### For each gene, how many samples have a count-scale expression value of zero?
+
 ```{r}
 # calculate the proportion of samples a gene is zero for
 gene_zeroes_proportion <- data.frame(
@@ -76,6 +104,8 @@ gene_zeroes_proportion <- data.frame(
 ```
 
 ```{r}
+# bind to lengths, this will be used for plotting the relationship between
+# gene length and number of zeroes
 zeroes_df <- dplyr::inner_join(gene_lengths_df, gene_zeroes_proportion,
                               by = "Gene")
 ```
@@ -85,6 +115,8 @@ zeroes_df <- dplyr::inner_join(gene_lengths_df, gene_zeroes_proportion,
 # visualize what is going on
 summary(zeroes_df$Length)
 ```
+
+#### All genes
 
 ```{r}
 # filtering genes based on length to get a clearer picture
@@ -97,6 +129,14 @@ zeroes_df %>%
   labs(x = "gene length", y = "proportion of samples with zero count",
        subtitle = "All genes", title = "Gene length and observations")
 ```
+
+```{r}
+ggsave(filename = file.path(plot_dir, 
+                            "gene_length_vs_zero_count_all_genes.png"),
+       plot = last_plot())
+```
+
+#### Compendium genes only
 
 ```{r}
 # subset just to genes that are in the compendium
@@ -113,26 +153,54 @@ zeroes_df %>%
 ```
 
 ```{r}
+ggsave(filename = file.path(plot_dir, 
+                            "gene_length_vs_zero_count_compendium_genes.png"),
+       plot = last_plot())
+```
+
+#### Takeaway
+
+Shorter genes do tend to have a larger proportion of samples where they have
+zero values. 
+It stands to reason that if we do not _observe_ shorter genes, we can not
+correct for length-bias effective. 
+(Recall that `lengthScaledTPM` are calculated using the average tx length
+observed across samples.)
+
+### Removing "short" genes from the test species compendium
+
+Does removing shorter genes from the species compendium remove evidence of a
+technology bias?
+
+```{r}
+# read in the compressed version of the test species compendium
 exprs_mat_file <- file.path("data", "refinebio_test_compendium_exprs_mat.RDS")
 exprs_mat <- readRDS(exprs_mat_file)
 ```
 
 ```{r}
+# derive the technology labels from the sample names
 sample_names <- colnames(exprs_mat)
 compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
 compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNASEQ"
 ```
 
 ```{r}
+# what genes are short? using 
 short_genes <- zeroes_df %>%
-  dplyr::filter(Length < 5784) %>%
+  dplyr::filter(Length <= quantile(zeroes_df$Length, 0.25)) %>%
   dplyr::pull(Gene)
 ```
+Drop the "short" genes from the expression matrix
 
 ```{r}
 length_filtered_exprs_mat <- exprs_mat[!rownames(exprs_mat) %in% short_genes, ]
 dim(length_filtered_exprs_mat)
 ```
+
+#### PCA
+
+PC1 and PC2
 
 ```{r}
 # PCA on the length filtered exprs mat
@@ -147,14 +215,41 @@ autoplot(pca_results, data = technology_df, alpha = 0.5,
   scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
                      values = c("#E69F00", "#56B4E9")) +
   theme_bw() +
-  ggtitle("Test Compendium by Technology") +
+  ggtitle("Test Compendium by Technology: Short genes removed") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
   guides(colour = guide_legend(title = "technology"))
 ```
 
 ```{r}
+ggsave(filename = file.path(plot_dir, 
+                            "gene_lengths_test_compendium_PCA.png"),
+       plot = last_plot())
+```
+
+Pairs plot (PC1-5)
+
+```{r}
+png(file.path(plot_dir, "gene_lengths_test_compendium_pairs_plot.png"))
 pairs(pca_results$x[, 1:5], col = dplyr::recode(compendium_technology_labels,
                                                 `MICROARRAY` = "#E69F00",
-                                                `RNASEQ` = "#56B4E9"))
+                                                `RNASEQ` = "#56B4E9"),
+      main = "Test Compendium by Technology: Short genes removed")
+dev.off()
+```
+
+#### Takeaway
+
+Removing short genes from the test species compendium does not remove 
+technology bias, but there are some considerations:
+
+* These data have already been quantile normalized -- if the gene length
+contributes to the expression values prior to quantile normalization, this 
+bias could possibly "leak into" the quantile normalized values for all the
+genes.
+
+## Session Info
+
+```{r}
+sessionInfo()
 ```
 

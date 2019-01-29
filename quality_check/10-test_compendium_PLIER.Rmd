@@ -61,6 +61,7 @@ PLIERWrapper <- function(exprs_mat, common_genes, pathway_mat, seed = 123) {
 # devtools::install_github('wgmao/PLIER', 
 #                          ref = 'a2d4a2aa343f9ed4b9b945c04326bebd31533d4d', 
 #                          dependencies = TRUE)
+# install.packages("cowplot")
 ```
 
 ```{r}
@@ -141,6 +142,14 @@ if (all.equal(rownames(exprs_mat), names(zfin_ids))) {
 
 ## PLIER
 
+We're going to do five repeats.
+
+```{r}
+set.seed(123)
+seeds <- sample(1:100000, 5)
+names(seeds) <- seeds
+```
+
 ### Both technologies
 
 ```{r}
@@ -149,47 +158,145 @@ if (all.equal(rownames(exprs_mat), names(zfin_ids))) {
 common_genes <- PLIER::commonRows(exprs_mat, combine_path_mat)
 
 # this expression matrix includes samples from both technologies
-both_tech_plier <- PLIERWrapper(exprs_mat = exprs_mat,
-                                common_genes = common_genes,
-                                pathway_mat = combine_path_mat)
+both_tech_plier_list <- 
+  lapply(seeds,
+         function(x) PLIERWrapper(exprs_mat = exprs_mat,
+                                  common_genes = common_genes,
+                                  pathway_mat = combine_path_mat,
+                                  seed = x)
+  )
 ```
 
-Check the pathway coverage for this model
+Check the pathway coverage for these models
 
 ```{r}
-both_tech_pathway_coverage <- GetPathwayCoverage(both_tech_plier)
+both_tech_pathway_coverage <- reshape2::melt(lapply(both_tech_plier_list, 
+                                                    GetPathwayCoverage))
 ```
 
 ### Microarray only
 
 ```{r}
 microarray_mat <- exprs_mat[, grep(".PCL", colnames(exprs_mat))]
-microarray_plier <- PLIERWrapper(exprs_mat = microarray_mat,
-                                 common_genes = common_genes,
-                                 pathway_mat = combine_path_mat)
-microarray_pathway_coverage <- GetPathwayCoverage(microarray_plier)
+microarray_plier_list <-
+  lapply(seeds, 
+         function(x) PLIERWrapper(exprs_mat = microarray_mat,
+                                  common_genes = common_genes,
+                                  pathway_mat = combine_path_mat,
+                                  seed = x)
+  )
+microarray_pathway_coverage <- reshape2::melt(lapply(microarray_plier_list,
+                                                     GetPathwayCoverage))
 ```
 
 ### RNA-seq only
 
 ```{r}
 rnaseq_mat <- exprs_mat[, grep("lengthScaledTPM", colnames(exprs_mat))]
-rnaseq_plier <- PLIERWrapper(exprs_mat = rnaseq_mat,
-                             common_genes = common_genes,
-                             pathway_mat = combine_path_mat)
-rnaseq_pathway_coverage <- GetPathwayCoverage(rnaseq_plier)
+rnaseq_plier_list <- 
+  lapply(seeds, 
+         function(x) PLIERWrapper(exprs_mat = rnaseq_mat,
+                                  common_genes = common_genes,
+                                  pathway_mat = combine_path_mat,
+                                  seed = x )
+         )
+rnaseq_pathway_coverage <- reshape2::melt(lapply(rnaseq_plier_list, 
+                                                 GetPathwayCoverage))
 ```
+
+#### Wrangle pathway coverage results 
+
+And write to file
+
+```{r}
+coverage_df <- dplyr::bind_rows(list(
+  "all" = both_tech_pathway_coverage,
+  "microarray" = microarray_pathway_coverage,
+  "rnaseq"= rnaseq_pathway_coverage),
+  .id = "technology"
+) %>%
+  dplyr::mutate(metric = L2, seed = L1) %>%
+  dplyr::select(c(-L2, -L1)) %>%
+  dplyr::filter(metric != "sig.pathway.by.lv") %>%
+  dplyr::mutate(metric = dplyr::case_when(
+    metric == "pathway" ~ "Pathway Coverage",
+    metric == "lv" ~ "LV Proportion"
+  ))
+```
+
+Number of latent variables
+
+```{r}
+get_num_lvs_df <- function(plier_list, technology = "all") {
+  reshape2::melt(lapply(plier_list, function(x) nrow(x$B))) %>%
+    dplyr::mutate(seed = L1, metric = rep("Number of LVs", 
+                                          length(plier_list)),
+                  technology = rep(technology, length(plier_list))) %>%
+    dplyr::select(-L1)
+}
+```
+
+
+```{r}
+num_lvs_df <- dplyr::bind_rows(
+  "all" = get_num_lvs_df(both_tech_plier_list),
+  "microarray" = get_num_lvs_df(microarray_plier_list, "microarray"),
+  "rnaseq" = get_num_lvs_df(rnaseq_plier_list, "rnaseq")
+)
+
+coverage_df <- coverage_df %>%
+  dplyr::bind_rows(num_lvs_df) 
+
+readr::write_tsv(coverage_df, 
+                 file.path(result_dir,
+                           "test_compendium_pathway_coverage.tsv"))
+```
+
 
 #### Save models to file
 
 ```{r}
-saveRDS(both_tech_plier, file = file.path(plier_result_dir,
-                                          "both_technologies_PLIER.RDS"))
-saveRDS(microarray_plier, file = file.path(plier_result_dir,
-                                           "microarray_PLIER.RDS"))
-saveRDS(rnaseq_plier, file = file.path(plier_result_dir,
-                                       "rnaseq_PLIER.RDS"))
+saveRDS(both_tech_plier_list, 
+        file = file.path(plier_result_dir,"both_technologies_PLIER_list.RDS"))
+saveRDS(microarray_plier_list, 
+        file = file.path(plier_result_dir, "microarray_PLIER_list.RDS"))
+saveRDS(rnaseq_plier_list, 
+        file = file.path(plier_result_dir, "rnaseq_PLIER_list.RDS"))
 ```
+
+## Plotting
+
+```{r}
+# these metrics are on different scales, so we'll plot them separately and
+# then assemble them into a single, multipanel plot
+plot_list <- 
+  lapply(c("Number of LVs", "Pathway Coverage", "LV Proportion"),
+         function(x) 
+           coverage_df %>%
+           dplyr::mutate(technology = toupper(technology)) %>%
+           dplyr::filter(metric == x) %>%
+           ggplot2::ggplot(ggplot2::aes(x = technology, y = value)) +
+           ggplot2::geom_boxplot() +
+           ggplot2::geom_jitter(alpha = 0.2) +
+           ggplot2::theme_bw() +
+           ggplot2::ggtitle(x) +
+           ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5,
+                                                             face = "bold"),
+                          text = ggplot2::element_text(size = 12),
+                          axis.text.x = ggplot2::element_text(
+                            angle = 45, vjust = 0.5
+                          )))
+
+cowplot::plot_grid(plotlist = plot_list, ncol = 3)
+```
+
+```{r}
+ggplot2::ggsave(file.path(plot_dir, 
+                          "test_compendium_plier_metrics_by_tech.png"),
+                height = 8.5, width = 11,
+                plot = ggplot2::last_plot()) 
+```
+
 
 ## Session info
 

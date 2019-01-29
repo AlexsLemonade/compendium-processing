@@ -21,3 +21,7 @@ quality_check/data/pathways/ZFIN_stages_prior_info.RDS
 
 # refine.bio test compendium is too big!
 quality_check/refinebio-data/
+
+# the lists of PLIER models (i.e., multiple PLIER results store as a list)
+# will be too large to track with git
+*_PLIER_list.RDS

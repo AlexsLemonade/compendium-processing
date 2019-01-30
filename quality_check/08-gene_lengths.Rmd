@@ -84,10 +84,7 @@ rm(rnaseq_df_list)
 # read in gene lengths
 gene_lengths_df <- 
   readr::read_tsv(file.path("data", 
-                            "Danio_rerio.GRCz11_gene_names_and_lengths.tsv"),
-                  col_names = FALSE) %>%
-  dplyr::mutate(X1 = sub("gene:", "", X1))
-colnames(gene_lengths_df) <- c("Gene", "Length")
+                            "Danio_rerio.GRCz11_gene_lengths_exons.tsv"))
 ```
 
 ## Gene zero counts and expression levels
@@ -107,13 +104,13 @@ gene_zeroes_proportion <- data.frame(
 # bind to lengths, this will be used for plotting the relationship between
 # gene length and number of zeroes
 zeroes_df <- dplyr::inner_join(gene_lengths_df, gene_zeroes_proportion,
-                              by = "Gene")
+                               by = "Gene")
 ```
 
 ```{r}
 # there are some really long genes that will probably make it difficult to
 # visualize what is going on
-summary(zeroes_df$Length)
+summary(zeroes_df$gene_length)
 ```
 
 #### All genes
@@ -121,8 +118,8 @@ summary(zeroes_df$Length)
 ```{r}
 # filtering genes based on length to get a clearer picture
 zeroes_df %>%
-  dplyr::filter(Length <= 35000) %>%
-  ggplot(aes(x = Length, y = Zero_proportion)) +
+  dplyr::filter(gene_length <= 20000) %>%
+  ggplot(aes(x = gene_length, y = Zero_proportion)) +
   geom_point(alpha = 0.2) +
   geom_smooth() +
   theme_bw() +
@@ -142,8 +139,8 @@ ggsave(filename = file.path(plot_dir,
 # subset just to genes that are in the compendium
 zeroes_df %>%
   dplyr::filter(Gene %in% compendium_genes, 
-                Length <= 35000) %>%
-  ggplot(aes(x = Length, y = Zero_proportion)) +
+                gene_length <= 20000) %>%
+  ggplot(aes(x = gene_length, y = Zero_proportion)) +
   geom_point(alpha = 0.2) +
   geom_smooth() +
   theme_bw() +
@@ -188,7 +185,7 @@ compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNASEQ"
 ```{r}
 # what genes are short? using 
 short_genes <- zeroes_df %>%
-  dplyr::filter(Length <= quantile(zeroes_df$Length, 0.25)) %>%
+  dplyr::filter(gene_length <= quantile(zeroes_df$gene_length, 0.25)) %>%
   dplyr::pull(Gene)
 ```
 Drop the "short" genes from the expression matrix

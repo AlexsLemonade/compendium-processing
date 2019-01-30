@@ -21,7 +21,8 @@ We'll do that using two sources:
 ```
 
 ```{r}
-# BiocManager::install("rWikiPathways", "GSA", "org.Dr.eg.db", update = FALSE)
+# BiocManager::install(c("rWikiPathways", "GSA", "org.Dr.eg.db"),
+#                      update = FALSE)
 # install.packages("XML")
 library(rWikiPathways)
 library(XML)

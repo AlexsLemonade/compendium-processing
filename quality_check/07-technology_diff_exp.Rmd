@@ -8,6 +8,9 @@ date: 2019
 We'll use `limma` to identify genes that are differentially expressed between
 microarray and RNA-seq samples in the test compendium.
 
+Note that I had to roll back the R version here to get `Rsamtools` to install.
+This will be captured by `sessionInfo()` below.
+
 ### Packages and directory set up
 
 ```{r}
@@ -15,9 +18,12 @@ microarray and RNA-seq samples in the test compendium.
 ```
 
 ```{r}
-# install.packages("BiocManager")
-# BiocManager::install("limma", update = FALSE)
+# BiocInstaller::biocLite(c("limma", "rtracklayer", "GenomicRanges", "Rsamtools"),
+#                         suppressUpdates = TRUE)
 library(limma)
+library(GenomicRanges)
+library(rtracklayer)
+library(Rsamtools)
 ```
 
 ```{r}
@@ -84,31 +90,51 @@ diff_exp_stats %>%
 
 ### Relationship with gene lengths?
 
-Here's how I got the gene lengths after obtaining and unzipping 
+`GRCz11` related files were obtained in `00-data_download.sh`
 
+Adapted from:
+https://github.com/dpryan79/Answers/blob/d2d7366fec907fd92ccf03e77c2d53cfe45b02c9/SEQanswers_42420/GTF2LengthGC.R
+
+See also: https://bioinformatics.stackexchange.com/questions/2567/how-can-i-calculate-gene-length-for-rpkm-calculation-from-counts-data
+
+```{r}
+gtf_file <- file.path("data", "GRCz11", "Danio_rerio.GRCz11.95.gtf")
+
+#Load the annotation and reduce it
+gtf <- import.gff(gtf_file, format = "gtf", genome = "GRCz11.95", 
+                  feature.type = "exon")
+grl <- reduce(split(gtf, elementMetadata(gtf)$gene_id))
+reduced_gtf <- unlist(grl, use.names = TRUE)
+elementMetadata(reduced_gtf)$gene_id <- rep(names(grl), elementNROWS(grl))
+elementMetadata(reduced_gtf)$widths <- width(reduced_gtf)
+output <- t(sapply(split(reduced_gtf, elementMetadata(reduced_gtf)$gene_id), 
+                   function(x) sum(elementMetadata(x)$widths)))
+output[, 1:5]
 ```
-# https://github.com/stephenturner/oneliners/tree/3233f3cc6c835cc3f70aaf0462f2d2b31244069d#gff3-annotations
-grep $'\tgene\t' Danio_rerio.GRCz11.95.gff3 | cut -s -f 4,5 | perl -ne '@v = split(/\t/); printf("%d\n", $v[1] - $v[0] + 1)'
-# gene identifiers
-grep $'\tgene\t' yourannots.gff3 | perl -ne '/ID=([^;]+)/ and printf("%s\n", $1)'
+
+
+```{r}
+# gene_lengths_df <-
+#   readr::read_tsv(file.path("data", 
+#                             "Danio_rerio.GRCz11_gene_names_and_lengths.tsv"),
+#                   col_names = FALSE) %>%
+#   dplyr::mutate(X1 = sub("gene:", "", X1))
 ```
 
 ```{r}
-gene_lengths_df <- 
-  readr::read_tsv(file.path("data", 
-                            "Danio_rerio.GRCz11_gene_names_and_lengths.tsv"),
-                  col_names = FALSE) %>%
-  dplyr::mutate(X1 = sub("gene:", "", X1))
+gene_lengths_df <- data.frame(Gene = colnames(output),
+                              gene_length = output[1, ])
+readr::write_tsv(gene_lengths_df, 
+                 file.path("data", 
+                           "Danio_rerio.GRCz11_gene_lengths_exons.tsv"))
 ```
 
 Join the t-statistic with the gene lengths and make a scatterplot
 
 ```{r}
 dplyr::inner_join(diff_exp_stats, gene_lengths_df, 
-                                        by = c("Gene" = "X1")) %>%
-  dplyr::select(c("Gene", "t", "X2")) %>%
-  dplyr::mutate(gene_length = X2) %>%
-  dplyr::select(-X2) %>%
+                  by = "Gene") %>%
+  dplyr::select(c("Gene", "t", "gene_length")) %>%
   ggplot2::ggplot(ggplot2::aes(x = `t`, y = gene_length)) +
   ggplot2::geom_point(alpha = 0.2) +
   ggplot2::geom_smooth() +

@@ -36,10 +36,7 @@ do
 	ascp -QT -l 1000m -P33001 -i ~/.aspera/connect/etc/asperaweb_id_dsa.openssh era-fasp@fasp.sra.ebi.ac.uk:vol1/fastq/DRR067/DRR067${i} .
 done
 
-# FASTA file for GRCz11
+# GTF file for GRCz11
 cd ../.. && mkdir GRCz11 && cd GRCz11
-wget ftp://ftp.ensembl.org/pub/release-95/gff3/danio_rerio/Danio_rerio.GRCz11.95.gff3.gz
-gunzip Danio_rerio.GRCz11.95.gff3.gz
-# this should get the transcript lengths
-# from: https://github.com/stephenturner/oneliners/tree/3233f3cc6c835cc3f70aaf0462f2d2b31244069d#gff3-annotations
-# grep $'\tgene\t' Danio_rerio.GRCz11.95.gff3 | cut -s -f 4,5 | perl -ne '@v = split(/\t/); printf("%d\n", $v[1] - $v[0] + 1)'
+wget ftp://ftp.ensembl.org/pub/release-95/gtf/danio_rerio/Danio_rerio.GRCz11.95.gtf.gz
+gunzip Danio_rerio.GRCz11.95.gtf.gz

@@ -31,7 +31,8 @@ library(ggfortify)
 #### Directories/files
 
 ```{r}
-test_compendium_dir <- file.path("refinebio-data", "DANIO_RERIO")
+test_compendium_dir <- file.path("refinebio-data", "larger-compendium", 
+                                 "DANIO_RERIO")
 compendium_exprs_file <- file.path(test_compendium_dir, "DANIO_RERIO.tsv")
 ```
 
@@ -58,14 +59,14 @@ set.seed(123)
 colnames(compendium_exprs_df)[sample(2:ncol(compendium_exprs_df), 6)]
 ```
 
-Microarray data will end in `.PCL` and the RNA-seq data ends in 
-`lengthScaledTPM.tsv`.
+RNA-seq samples will have `ERR`, `SRR`, or `DRR` in their identifiers (column
+names).
 Let's generate _labels_ for the samples using this information.
 
 ```{r}
 sample_names <- colnames(compendium_exprs_df)[-1]  # don't want gene id column
 compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
-compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNA-SEQ"
+compendium_technology_labels[grep("ERR|DRR|SRR", sample_names)] <- "RNA-SEQ"
 ```
 
 Get expression values as a matrix 
@@ -95,7 +96,7 @@ autoplot(pca_results, data = technology_df, alpha = 0.5,
   scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
                      values = c("#E69F00", "#56B4E9")) +
   theme_bw() +
-  ggtitle("Test Compendium by Technology") +
+  ggtitle("Larger Test Compendium by Technology") +
   theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
   guides(colour = guide_legend(title = "technology"))
 ```
@@ -111,12 +112,12 @@ _Here, I'm using the term "experiment" to refer to what is called a study (e.g.,
 Save the plot to file.
 
 ```{r}
-ggsave(filename = file.path(plot_dir, "test_compendium_PCA.png"),
+ggsave(filename = file.path(plot_dir, "larger_test_compendium_PCA.png"),
        plot = last_plot(), width = 7, height = 5)
 ```
 
 ```{r}
-png(file.path(plot_dir, "test_compendium_PCA_pairs_plot.png"))
+png(file.path(plot_dir, "larger_test_compendium_PCA_pairs_plot.png"))
 pairs(pca_results$x[, 1:5], col = dplyr::recode(compendium_technology_labels,
                                                 `MICROARRAY` = "#E69F00",
                                                 `RNA-SEQ` = "#56B4E9"))

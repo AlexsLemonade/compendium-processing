@@ -76,6 +76,7 @@ exprs_mat <- compendium_exprs_df %>%
   as.data.frame() %>%
   tibble::column_to_rownames("X1") %>%
   as.matrix()
+saveRDS(exprs_mat, file.path("data", "larger_compendium_exprs_mat.RDS"))
 ```
 
 ### PCA

@@ -5,7 +5,13 @@ mkdir refinebio-data && cd refinebio-data
 wget https://s3.amazonaws.com/data-refinery-test-assets/8d102523-af99-4c45-9693-5e9fcb469198_compendia.zip
 unzip 8d102523-af99-4c45-9693-5e9fcb469198_compendia.zip
 rm 8d102523-af99-4c45-9693-5e9fcb469198_compendia.zip
-cd ..
+
+# BIGGER refinebio test compendium!
+mkdir larger-compendium && cd larger-compendium
+wget https://s3.amazonaws.com/data-refinery-s3-compendia-circleci-prod/5dc0e6ad-3724-451b-93c3-f36b8a6fc231_compendia.zip
+unzip 5dc0e6ad-3724-451b-93c3-f36b8a6fc231_compendia.zip
+rm 5dc0e6ad-3724-451b-93c3-f36b8a6fc231_compendia.zip
+cd ../..
 
 # get data for building salmon indices -- we'll use the cdna data
 # this is a bit different from what we do in refine.bio proper

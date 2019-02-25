@@ -58,8 +58,8 @@ PLIERWrapper <- function(exprs_mat, common_genes, pathway_mat, seed = 123) {
 ```{r}
 # PLIER installation
 # BiocManager::install("qvalue", update = FALSE)
-# devtools::install_github('wgmao/PLIER', 
-#                          ref = 'a2d4a2aa343f9ed4b9b945c04326bebd31533d4d', 
+# devtools::install_github('wgmao/PLIER',
+#                          ref = 'a2d4a2aa343f9ed4b9b945c04326bebd31533d4d',
 #                          dependencies = TRUE)
 # install.packages("cowplot")
 ```
@@ -118,7 +118,7 @@ data match.
 
 ```{r}
 # first we need to read in the 
-exprs_file <- file.path("data", "refinebio_test_compendium_exprs_mat.RDS")
+exprs_file <- file.path("data", "larger_compendium_exprs_mat.RDS")
 exprs_mat <- readRDS(exprs_file)
 ```
 
@@ -177,7 +177,7 @@ both_tech_pathway_coverage <- reshape2::melt(lapply(both_tech_plier_list,
 ### Microarray only
 
 ```{r}
-microarray_mat <- exprs_mat[, grep(".PCL", colnames(exprs_mat))]
+microarray_mat <- exprs_mat[, -grep("SRR|ERR|DRR", colnames(exprs_mat))]
 microarray_plier_list <-
   lapply(seeds, 
          function(x) PLIERWrapper(exprs_mat = microarray_mat,
@@ -192,7 +192,7 @@ microarray_pathway_coverage <- reshape2::melt(lapply(microarray_plier_list,
 ### RNA-seq only
 
 ```{r}
-rnaseq_mat <- exprs_mat[, grep("lengthScaledTPM", colnames(exprs_mat))]
+rnaseq_mat <- exprs_mat[, grep("SRR|ERR|DRR", colnames(exprs_mat))]
 rnaseq_plier_list <- 
   lapply(seeds, 
          function(x) PLIERWrapper(exprs_mat = rnaseq_mat,
@@ -249,7 +249,7 @@ coverage_df <- coverage_df %>%
 
 readr::write_tsv(coverage_df, 
                  file.path(result_dir,
-                           "test_compendium_pathway_coverage.tsv"))
+                           "larger_compendium_pathway_coverage.tsv"))
 ```
 
 
@@ -257,11 +257,13 @@ readr::write_tsv(coverage_df,
 
 ```{r}
 saveRDS(both_tech_plier_list, 
-        file = file.path(plier_result_dir,"both_technologies_PLIER_list.RDS"))
+        file = file.path(plier_result_dir,
+                         "larger_both_technologies_PLIER_list.RDS"))
 saveRDS(microarray_plier_list, 
-        file = file.path(plier_result_dir, "microarray_PLIER_list.RDS"))
+        file = file.path(plier_result_dir, 
+                         "larger_microarray_PLIER_list.RDS"))
 saveRDS(rnaseq_plier_list, 
-        file = file.path(plier_result_dir, "rnaseq_PLIER_list.RDS"))
+        file = file.path(plier_result_dir, "larger_rnaseq_PLIER_list.RDS"))
 ```
 
 ## Plotting
@@ -292,7 +294,7 @@ cowplot::plot_grid(plotlist = plot_list, ncol = 3)
 
 ```{r}
 ggplot2::ggsave(file.path(plot_dir, 
-                          "test_compendium_plier_metrics_by_tech.png"),
+                          "larger_compendium_plier_metrics_by_tech.png"),
                 height = 8.5, width = 11,
                 plot = ggplot2::last_plot()) 
 ```

@@ -330,21 +330,24 @@ PLIERWrapper &lt;- function(exprs_mat, common_genes, pathway_mat, seed = 123) {
 <h4>Libraries</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBQTElFUiBpbnN0YWxsYXRpb25cbiMgQmlvY01hbmFnZXI6Omluc3RhbGwoXCJxdmFsdWVcIiwgdXBkYXRlID0gRkFMU0UpXG4jIGRldnRvb2xzOjppbnN0YWxsX2dpdGh1Yignd2dtYW8vUExJRVInLCBcbiMgICAgICAgICAgICAgICAgICAgICAgICAgIHJlZiA9ICdhMmQ0YTJhYTM0M2Y5ZWQ0YjliOTQ1YzA0MzI2YmViZDMxNTMzZDRkJywgXG4jICAgICAgICAgICAgICAgICAgICAgICAgICBkZXBlbmRlbmNpZXMgPSBUUlVFKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBQTElFUiBpbnN0YWxsYXRpb25cbiMgQmlvY01hbmFnZXI6Omluc3RhbGwoXCJxdmFsdWVcIiwgdXBkYXRlID0gRkFMU0UpXG4jIGRldnRvb2xzOjppbnN0YWxsX2dpdGh1Yignd2dtYW8vUExJRVInLFxuIyAgICAgICAgICAgICAgICAgICAgICAgICAgcmVmID0gJ2EyZDRhMmFhMzQzZjllZDRiOWI5NDVjMDQzMjZiZWJkMzE1MzNkNGQnLFxuIyAgICAgICAgICAgICAgICAgICAgICAgICAgZGVwZW5kZW5jaWVzID0gVFJVRSlcbiMgaW5zdGFsbC5wYWNrYWdlcyhcImNvd3Bsb3RcIilcbmBgYCJ9 -->
 <pre class="r"><code># PLIER installation
 # BiocManager::install(&quot;qvalue&quot;, update = FALSE)
-# devtools::install_github('wgmao/PLIER', 
-#                          ref = 'a2d4a2aa343f9ed4b9b945c04326bebd31533d4d', 
-#                          dependencies = TRUE)</code></pre>
+# devtools::install_github('wgmao/PLIER',
+#                          ref = 'a2d4a2aa343f9ed4b9b945c04326bebd31533d4d',
+#                          dependencies = TRUE)
+# install.packages(&quot;cowplot&quot;)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShQTElFUilcbmxpYnJhcnkob3JnLkRyLmVnLmRiKVxuYGBgIn0= -->
-<pre class="r"><code>library(PLIER)
-library(org.Dr.eg.db)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShQTElFUilcbmBgYCJ9 -->
+<pre class="r"><code>library(PLIER)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gbGlicmFyeShQTElFUikgOiB0aGVyZSBpcyBubyBwYWNrYWdlIGNhbGxlZCDigJhQTElFUuKAmVxuIn0= -->
+<pre><code>Error in library(PLIER) : there is no package called ‘PLIER’</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -352,19 +355,19 @@ library(org.Dr.eg.db)</code></pre>
 <h4>Directories</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGF0aHdheV9kaXIgPC0gZmlsZS5wYXRoKFwiZGF0YVwiLCBcInBhdGh3YXlzXCIpXG5yZXN1bHRfZGlyIDwtIFwicmVzdWx0c1wiXG5wbG90X2RpciA8LSBcInBsb3RzXCJcbmBgYCJ9 -->
-<pre class="r"><code>pathway_dir &lt;- file.path(&quot;data&quot;, &quot;pathways&quot;)
-result_dir &lt;- &quot;results&quot;
-plot_dir &lt;- &quot;plots&quot;</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucGF0aHdheV9kaXIgPC0gZmlsZS5wYXRoKFxcZGF0YVxcLCBcXHBhdGh3YXlzXFwpXG5yZXN1bHRfZGlyIDwtIFxccmVzdWx0c1xcXG5wbG90X2RpciA8LSBcXHBsb3RzXFxcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r pathway_dir &lt;- file.path(, ) result_dir &lt;- <br />
+plot_dir &lt;- <br />
+<code></code></p>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Results directory specifically for holding the PLIER models</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxpZXJfcmVzdWx0X2RpciA8LSBmaWxlLnBhdGgocmVzdWx0X2RpciwgXCJQTElFUl9tb2RlbHNcIilcbmRpci5jcmVhdGUocGxpZXJfcmVzdWx0X2Rpciwgc2hvd1dhcm5pbmdzID0gRkFMU0UsIHJlY3Vyc2l2ZSA9IFRSVUUpXG5gYGAifQ== -->
-<pre class="r"><code>plier_result_dir &lt;- file.path(result_dir, &quot;PLIER_models&quot;)
-dir.create(plier_result_dir, showWarnings = FALSE, recursive = TRUE)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucGxpZXJfcmVzdWx0X2RpciA8LSBmaWxlLnBhdGgocmVzdWx0X2RpciwgXFxQTElFUl9tb2RlbHNcXClcbmRpci5jcmVhdGUocGxpZXJfcmVzdWx0X2Rpciwgc2hvd1dhcm5pbmdzID0gRkFMU0UsIHJlY3Vyc2l2ZSA9IFRSVUUpXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r plier_result_dir &lt;- file.path(result_dir, _models) dir.create(plier_result_dir, showWarnings = FALSE, recursive = TRUE)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -377,21 +380,9 @@ dir.create(plier_result_dir, showWarnings = FALSE, recursive = TRUE)</code></pre
 <p>We need to get the 3 pathway prior information matrices we have: developmental stage, tissues (based on adult only), and the wikipathways into a single matrix. We can do this with the <code>PLIER::combinePaths</code> function.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyByZWFkIGluIHRoZSB0aHJlZSBpbmRpdmlkdWFsIG1hdHJpY2VzIHdlIHByZXBwZWQgaW4gXG4jIDA5LXByaW9yX2luZm9ybWF0aW9uX21hdHJpeFxud2lraXBhdGh3YXlfbWF0IDwtIHJlYWRSRFMoZmlsZS5wYXRoKHBhdGh3YXlfZGlyLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcIkRhbmlvX3JlcmlvX3dpa2lwYXRod2F5c19wcmlvcl9pbmZvLlJEU1wiKSlcbmFkdWx0X3Rpc3N1ZV9tYXQgPC0gcmVhZFJEUyhmaWxlLnBhdGgocGF0aHdheV9kaXIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwiWkZJTl9hZHVsdF90aXNzdWVfcHJpb3JfaW5mby5SRFNcIikpXG5kZXZfc3RhZ2VfbWF0IDwtIHJlYWRSRFMoZmlsZS5wYXRoKHBhdGh3YXlfZGlyLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcIlpGSU5fc3RhZ2VzX3ByaW9yX2luZm8uUkRTXCIpKVxuIyBjb21iaW5lIGludG8gYSBzaW5nbGUgbWF0cml4IGZvciB1c2Ugd2l0aCBQTElFUlxuY29tYmluZV9wYXRoX21hdCA8LSBQTElFUjo6Y29tYmluZVBhdGhzKGFkdWx0X3Rpc3N1ZV9tYXQsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGV2X3N0YWdlX21hdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB3aWtpcGF0aHdheV9tYXQpXG4jIHdlIG5vIGxvbmdlciBuZWVkIHRoZSBpbmRpdmlkdWFsIG1hdHJpY2VzXG5ybShhZHVsdF90aXNzdWVfbWF0LCBkZXZfc3RhZ2VfbWF0LCB3aWtpcGF0aHdheV9tYXQpXG5gYGAifQ== -->
-<pre class="r"><code># read in the three individual matrices we prepped in 
-# 09-prior_information_matrix
-wikipathway_mat &lt;- readRDS(file.path(pathway_dir, 
-                                     &quot;Danio_rerio_wikipathways_prior_info.RDS&quot;))
-adult_tissue_mat &lt;- readRDS(file.path(pathway_dir,
-                                      &quot;ZFIN_adult_tissue_prior_info.RDS&quot;))
-dev_stage_mat &lt;- readRDS(file.path(pathway_dir,
-                                   &quot;ZFIN_stages_prior_info.RDS&quot;))
-# combine into a single matrix for use with PLIER
-combine_path_mat &lt;- PLIER::combinePaths(adult_tissue_mat,
-                                        dev_stage_mat,
-                                        wikipathway_mat)
-# we no longer need the individual matrices
-rm(adult_tissue_mat, dev_stage_mat, wikipathway_mat)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyByZWFkIGluIHRoZSB0aHJlZSBpbmRpdmlkdWFsIG1hdHJpY2VzIHdlIHByZXBwZWQgaW4gXG4jIDA5LXByaW9yX2luZm9ybWF0aW9uX21hdHJpeFxud2lraXBhdGh3YXlfbWF0IDwtIHJlYWRSRFMoZmlsZS5wYXRoKHBhdGh3YXlfZGlyLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcXERhbmlvX3JlcmlvX3dpa2lwYXRod2F5c19wcmlvcl9pbmZvLlJEU1xcKSlcbmFkdWx0X3Rpc3N1ZV9tYXQgPC0gcmVhZFJEUyhmaWxlLnBhdGgocGF0aHdheV9kaXIsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFxcWkZJTl9hZHVsdF90aXNzdWVfcHJpb3JfaW5mby5SRFNcXCkpXG5kZXZfc3RhZ2VfbWF0IDwtIHJlYWRSRFMoZmlsZS5wYXRoKHBhdGh3YXlfZGlyLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBcXFpGSU5fc3RhZ2VzX3ByaW9yX2luZm8uUkRTXFwpKVxuIyBjb21iaW5lIGludG8gYSBzaW5nbGUgbWF0cml4IGZvciB1c2Ugd2l0aCBQTElFUlxuY29tYmluZV9wYXRoX21hdCA8LSBQTElFUjo6Y29tYmluZVBhdGhzKGFkdWx0X3Rpc3N1ZV9tYXQsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGV2X3N0YWdlX21hdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB3aWtpcGF0aHdheV9tYXQpXG4jIHdlIG5vIGxvbmdlciBuZWVkIHRoZSBpbmRpdmlkdWFsIG1hdHJpY2VzXG5ybShhZHVsdF90aXNzdWVfbWF0LCBkZXZfc3RhZ2VfbWF0LCB3aWtpcGF0aHdheV9tYXQpXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r # read in the three individual matrices we prepped in # 09-prior_information_matrix wikipathway_mat &lt;- readRDS(file.path(pathway_dir, _rerio_wikipathways_prior_info.RDS)) adult_tissue_mat &lt;- readRDS(file.path(pathway_dir, _adult_tissue_prior_info.RDS)) dev_stage_mat &lt;- readRDS(file.path(pathway_dir, _stages_prior_info.RDS)) # combine into a single matrix for use with PLIER combine_path_mat &lt;- PLIER::combinePaths(adult_tissue_mat, dev_stage_mat, wikipathway_mat) # we no longer need the individual matrices rm(adult_tissue_mat, dev_stage_mat, wikipathway_mat)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -401,32 +392,25 @@ rm(adult_tissue_mat, dev_stage_mat, wikipathway_mat)</code></pre>
 <p>We need to convert the test compendium gene identifiers from Ensembl gene IDs to ZFIN identifiers so that the IDs in the prior information and the expression data match.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBmaXJzdCB3ZSBuZWVkIHRvIHJlYWQgaW4gdGhlIFxuZXhwcnNfZmlsZSA8LSBmaWxlLnBhdGgoXCJkYXRhXCIsIFwicmVmaW5lYmlvX3Rlc3RfY29tcGVuZGl1bV9leHByc19tYXQuUkRTXCIpXG5leHByc19tYXQgPC0gcmVhZFJEUyhleHByc19maWxlKVxuYGBgIn0= -->
-<pre class="r"><code># first we need to read in the 
-exprs_file &lt;- file.path(&quot;data&quot;, &quot;refinebio_test_compendium_exprs_mat.RDS&quot;)
-exprs_mat &lt;- readRDS(exprs_file)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBmaXJzdCB3ZSBuZWVkIHRvIHJlYWQgaW4gdGhlIFxuZXhwcnNfZmlsZSA8LSBmaWxlLnBhdGgoXFxkYXRhXFwsIFxcbGFyZ2VyX2NvbXBlbmRpdW1fZXhwcnNfbWF0LlJEU1xcKVxuZXhwcnNfbWF0IDwtIHJlYWRSRFMoZXhwcnNfZmlsZSlcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r # first we need to read in the exprs_file &lt;- file.path(, _compendium_exprs_mat.RDS) exprs_mat &lt;- readRDS(exprs_file)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>We expect that there will be a 1:many mapping here, so we’ll use the option where only the first thing that comes back is returned by setting <code>multiVals = &quot;first&quot;</code> (note that this is the default behavior).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBFTlNEQVJHIC0+IFpEQi1HRU5FXG56ZmluX2lkcyA8LSBtYXBJZHMob3JnLkRyLmVnLmRiLCBrZXlzID0gcm93bmFtZXMoZXhwcnNfbWF0KSxcbiAgICAgICAgICAgICAgICAgICBjb2x1bW4gPSBcIlpGSU5cIiwga2V5dHlwZSA9IFwiRU5TRU1CTFwiLFxuICAgICAgICAgICAgICAgICAgIG11bHRpVmFscyA9IFwiZmlyc3RcIilcbmBgYCJ9 -->
-<pre class="r"><code># ENSDARG -&gt; ZDB-GENE
-zfin_ids &lt;- mapIds(org.Dr.eg.db, keys = rownames(exprs_mat),
-                   column = &quot;ZFIN&quot;, keytype = &quot;ENSEMBL&quot;,
-                   multiVals = &quot;first&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBFTlNEQVJHIC0+IFpEQi1HRU5FXG56ZmluX2lkcyA8LSBtYXBJZHMob3JnLkRyLmVnLmRiLCBrZXlzID0gcm93bmFtZXMoZXhwcnNfbWF0KSxcbiAgICAgICAgICAgICAgICAgICBjb2x1bW4gPSBcXFpGSU5cXCwga2V5dHlwZSA9IFxcRU5TRU1CTFxcLFxuICAgICAgICAgICAgICAgICAgIG11bHRpVmFscyA9IFxcZmlyc3RcXClcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r # ENSDARG -&gt; ZDB-GENE zfin_ids &lt;- mapIds(org.Dr.eg.db, keys = rownames(exprs_mat), column = , keytype = , multiVals = )</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiJ3NlbGVjdCgpJyByZXR1cm5lZCAxOm1hbnkgbWFwcGluZyBiZXR3ZWVuIGtleXMgYW5kIGNvbHVtbnNcbiJ9 -->
 <pre><code>'select()' returned 1:many mapping between keys and columns</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB0aGVzZSBzaG91bGQgYmUgaW4gdGhlIHNhbWUgb3JkZXIsIGJ1dCBvdXQgb2YgYW4gYWJ1bmRhbmNlIG9mIGNhdXRpb24hXG5pZiAoYWxsLmVxdWFsKHJvd25hbWVzKGV4cHJzX21hdCksIG5hbWVzKHpmaW5faWRzKSkpIHtcbiAgcm93bmFtZXMoZXhwcnNfbWF0KSA8LSB6ZmluX2lkc1xufSBlbHNlIHtcbiAgc3RvcChcIlNvbWV0aGluZyB3ZW50IHdyb25nIVwiKVxufVxuYGBgIn0= -->
-<pre class="r"><code># these should be in the same order, but out of an abundance of caution!
-if (all.equal(rownames(exprs_mat), names(zfin_ids))) {
-  rownames(exprs_mat) &lt;- zfin_ids
-} else {
-  stop(&quot;Something went wrong!&quot;)
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyB0aGVzZSBzaG91bGQgYmUgaW4gdGhlIHNhbWUgb3JkZXIsIGJ1dCBvdXQgb2YgYW4gYWJ1bmRhbmNlIG9mIGNhdXRpb24hXG5pZiAoYWxsLmVxdWFsKHJvd25hbWVzKGV4cHJzX21hdCksIG5hbWVzKHpmaW5faWRzKSkpIHtcbiAgcm93bmFtZXMoZXhwcnNfbWF0KSA8LSB6ZmluX2lkc1xufSBlbHNlIHtcbiAgc3RvcChcXFNvbWV0aGluZyB3ZW50IHdyb25nIVxcKVxufVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r # these should be in the same order, but out of an abundance of caution! if (all.equal(rownames(exprs_mat), names(zfin_ids))) { rownames(exprs_mat) &lt;- zfin_ids } else { stop(went wrong!) }</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -437,10 +421,9 @@ if (all.equal(rownames(exprs_mat), names(zfin_ids))) {
 <p>We’re going to do five repeats.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0LnNlZWQoMTIzKVxuc2VlZHMgPC0gc2FtcGxlKDE6MTAwMDAwLCA1KVxubmFtZXMoc2VlZHMpIDwtIHNlZWRzXG5gYGAifQ== -->
-<pre class="r"><code>set.seed(123)
-seeds &lt;- sample(1:100000, 5)
-names(seeds) &lt;- seeds</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuc2V0LnNlZWQoMTIzKVxuc2VlZHMgPC0gc2FtcGxlKDE6MTAwMDAwLCA1KVxubmFtZXMoc2VlZHMpIDwtIHNlZWRzXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r set.seed(123) seeds &lt;- sample(1:100000, 5) names(seeds) &lt;- seeds</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -448,32 +431,19 @@ names(seeds) &lt;- seeds</code></pre>
 <h3>Both technologies</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBmaW5kIHRoZSBjb21tb24gZ2VuZXMgYmV0d2VlbiB0aGUgZXhwcmVzc2lvbiBtYXRyaXggYW5kIHRoZSBwcmlvciBpbmZvcm1hdGlvblxuIyBtYXRyaXhcbmNvbW1vbl9nZW5lcyA8LSBQTElFUjo6Y29tbW9uUm93cyhleHByc19tYXQsIGNvbWJpbmVfcGF0aF9tYXQpXG4jIHRoaXMgZXhwcmVzc2lvbiBtYXRyaXggaW5jbHVkZXMgc2FtcGxlcyBmcm9tIGJvdGggdGVjaG5vbG9naWVzXG5ib3RoX3RlY2hfcGxpZXJfbGlzdCA8LSBcbiAgbGFwcGx5KHNlZWRzLFxuICAgICAgICAgZnVuY3Rpb24oeCkgUExJRVJXcmFwcGVyKGV4cHJzX21hdCA9IGV4cHJzX21hdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb21tb25fZ2VuZXMgPSBjb21tb25fZ2VuZXMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlZWQgPSB4KVxuICApXG5gYGAifQ== -->
-<pre class="r"><code># find the common genes between the expression matrix and the prior information
-# matrix
-common_genes &lt;- PLIER::commonRows(exprs_mat, combine_path_mat)
-# this expression matrix includes samples from both technologies
-both_tech_plier_list &lt;- 
-  lapply(seeds,
-         function(x) PLIERWrapper(exprs_mat = exprs_mat,
-                                  common_genes = common_genes,
-                                  pathway_mat = combine_path_mat,
-                                  seed = x)
-  )</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuIyBmaW5kIHRoZSBjb21tb24gZ2VuZXMgYmV0d2VlbiB0aGUgZXhwcmVzc2lvbiBtYXRyaXggYW5kIHRoZSBwcmlvciBpbmZvcm1hdGlvblxuIyBtYXRyaXhcbmNvbW1vbl9nZW5lcyA8LSBQTElFUjo6Y29tbW9uUm93cyhleHByc19tYXQsIGNvbWJpbmVfcGF0aF9tYXQpXG4jIHRoaXMgZXhwcmVzc2lvbiBtYXRyaXggaW5jbHVkZXMgc2FtcGxlcyBmcm9tIGJvdGggdGVjaG5vbG9naWVzXG5ib3RoX3RlY2hfcGxpZXJfbGlzdCA8LSBcbiAgbGFwcGx5KHNlZWRzLFxuICAgICAgICAgZnVuY3Rpb24oeCkgUExJRVJXcmFwcGVyKGV4cHJzX21hdCA9IGV4cHJzX21hdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb21tb25fZ2VuZXMgPSBjb21tb25fZ2VuZXMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlZWQgPSB4KVxuICApXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r # find the common genes between the expression matrix and the prior information # matrix common_genes &lt;- PLIER::commonRows(exprs_mat, combine_path_mat) # this expression matrix includes samples from both technologies both_tech_plier_list &lt;- lapply(seeds, function(x) PLIERWrapper(exprs_mat = exprs_mat, common_genes = common_genes, pathway_mat = combine_path_mat, seed = x) )</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcblVzaW5nIHJzdmQ6IHNldCBzZWVkIGZvciBjb25zaXN0ZW50IHJlc3VsdHNcbkRvbmVcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcblVzaW5nIHJzdmQ6IHNldCBzZWVkIGZvciBjb25zaXN0ZW50IHJlc3VsdHNcbkRvbmVcblsxXSA2Ni44MDYxMlxuWzFdIFxcTDIgaXMgc2V0IHRvIDY2LjgwNjEyNDM1MDQxNTdcXFxuWzFdIFxcTDEgaXMgc2V0IHRvIDMzLjQwMzA2MjE3NTIwNzhcXFxuZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjEyMjNcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43ODY0LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42NjAyLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDg3LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc5NiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk5LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA4NywgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDE1NlxuVGhlcmUgYXJlIDUxICBMVnMgd2l0aCBBVUM+MC43MFxuVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcblVzaW5nIHJzdmQ6IHNldCBzZWVkIGZvciBjb25zaXN0ZW50IHJlc3VsdHNcbkRvbmVcblsxXSA2Ni44MTU5NlxuWzFdIFxcTDIgaXMgc2V0IHRvIDY2LjgxNTk1NTEzNjk5MjRcXFxuWzFdIFxcTDEgaXMgc2V0IHRvIDMzLjQwNzk3NzU2ODQ5NjJcXFxuZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjEyMjNcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTksIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43Mzc5LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42ODkzLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDg3LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzE4NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc5NiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg5MywgdGFyZ2V0PTAuN1xuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMTcwXG5UaGVyZSBhcmUgNDggIExWcyB3aXRoIEFVQz4wLjcwXG5Vc2luZyByc3ZkOiBzZXQgc2VlZCBmb3IgY29uc2lzdGVudCByZXN1bHRzXG5SZW1vdmluZyAzOTcgcGF0aHdheXMgd2l0aCB0b28gZmV3IGdlbmVzQ29tcHV0aW5nIFNWRFxuVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuRG9uZVxuWzFdIDY2LjgwMzUxXG5bMV0gXFxMMiBpcyBzZXQgdG8gNjYuODAzNTEyNDcxMDgwN1xcXG5bMV0gXFxMMSBpcyBzZXQgdG8gMzMuNDAxNzU2MjM1NTQwNFxcXG5lcnJvclkgKFNWRCBiYXNlZDpiZXN0IHBvc3NpYmxlKSA9IDAuMTIyM1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjc0NzYsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwODcsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MjgyLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42Njk5LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42ODkzLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDg3LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA4NywgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDE3MCBCZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuVGhlcmUgYXJlIDUzICBMVnMgd2l0aCBBVUM+MC43MFxuVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcblVzaW5nIHJzdmQ6IHNldCBzZWVkIGZvciBjb25zaXN0ZW50IHJlc3VsdHNcbkRvbmVcblsxXSA3Ny4yMTk4XG5bMV0gXFxMMiBpcyBzZXQgdG8gNzcuMjE5Nzk1NDA1MjUwNlxcXG5bMV0gXFxMMSBpcyBzZXQgdG8gMzguNjA5ODk3NzAyNjI1M1xcXG5lcnJvclkgKFNWRCBiYXNlZDpiZXN0IHBvc3NpYmxlKSA9IDAuMTQyXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk4OCwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjc0NywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk4OCwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY4NjcsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjczNDksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODgsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTg4LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMTcxXG5UaGVyZSBhcmUgMzggIExWcyB3aXRoIEFVQz4wLjcwXG5Vc2luZyByc3ZkOiBzZXQgc2VlZCBmb3IgY29uc2lzdGVudCByZXN1bHRzXG5SZW1vdmluZyAzOTcgcGF0aHdheXMgd2l0aCB0b28gZmV3IGdlbmVzQ29tcHV0aW5nIFNWRFxuVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuRG9uZVxuWzFdIDY2LjgwNDQ0XG5bMV0gXFxMMiBpcyBzZXQgdG8gNjYuODA0NDM3MzE1MDExMlxcXG5bMV0gXFxMMSBpcyBzZXQgdG8gMzMuNDAyMjE4NjU3NTA1NlxcXG5lcnJvclkgKFNWRCBiYXNlZDpiZXN0IHBvc3NpYmxlKSA9IDAuMTIyM1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcxODQsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwODcsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42ODkzLCB0YXJnZXQ9MC43XG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxMzFcblRoZXJlIGFyZSA0NyAgTFZzIHdpdGggQVVDPjAuNzBcbiJ9 -->
 <pre><code>Using rsvd: set seed for consistent results
 Removing 397 pathways with too few genesComputing SVD
 Using rsvd: set seed for consistent results
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDY2LjgwNjEyXG5bMV0gXCJMMiBpcyBzZXQgdG8gNjYuODA2MTI0MzUwNDE1N1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMzMuNDAzMDYyMTc1MjA3OFwiXG4ifQ== -->
-<pre><code>[1] 66.80612
-[1] &quot;L2 is set to 66.8061243504157&quot;
-[1] &quot;L1 is set to 33.4030621752078&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjEyMjNcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43ODY0LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42NjAyLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDg3LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc5NiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk5LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA4NywgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDE1NlxuVGhlcmUgYXJlIDUxICBMVnMgd2l0aCBBVUM+MC43MFxuVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcblVzaW5nIHJzdmQ6IHNldCBzZWVkIGZvciBjb25zaXN0ZW50IHJlc3VsdHNcbkRvbmVcbiJ9 -->
-<pre><code>errorY (SVD based:best possible) = 0.1223
+Done
+[1] 66.80612
+[1] \L2 is set to 66.8061243504157\
+[1] \L1 is set to 33.4030621752078\
+errorY (SVD based:best possible) = 0.1223
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.7864, target=0.7
 Updating L3, current fraction= 0.6602, target=0.7
@@ -489,15 +459,11 @@ There are 51  LVs with AUC&gt;0.70
 Using rsvd: set seed for consistent results
 Removing 397 pathways with too few genesComputing SVD
 Using rsvd: set seed for consistent results
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDY2LjgxNTk2XG5bMV0gXCJMMiBpcyBzZXQgdG8gNjYuODE1OTU1MTM2OTkyNFwiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMzMuNDA3OTc3NTY4NDk2MlwiXG4ifQ== -->
-<pre><code>[1] 66.81596
-[1] &quot;L2 is set to 66.8159551369924&quot;
-[1] &quot;L1 is set to 33.4079775684962&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjEyMjNcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTksIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43Mzc5LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42ODkzLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDg3LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzE4NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc5NiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg5MywgdGFyZ2V0PTAuN1xuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMTcwXG5UaGVyZSBhcmUgNDggIExWcyB3aXRoIEFVQz4wLjcwXG5Vc2luZyByc3ZkOiBzZXQgc2VlZCBmb3IgY29uc2lzdGVudCByZXN1bHRzXG5SZW1vdmluZyAzOTcgcGF0aHdheXMgd2l0aCB0b28gZmV3IGdlbmVzQ29tcHV0aW5nIFNWRFxuVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuRG9uZVxuIn0= -->
-<pre><code>errorY (SVD based:best possible) = 0.1223
+Done
+[1] 66.81596
+[1] \L2 is set to 66.8159551369924\
+[1] \L1 is set to 33.4079775684962\
+errorY (SVD based:best possible) = 0.1223
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.699, target=0.7
 L3 not changed
@@ -513,15 +479,11 @@ There are 48  LVs with AUC&gt;0.70
 Using rsvd: set seed for consistent results
 Removing 397 pathways with too few genesComputing SVD
 Using rsvd: set seed for consistent results
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDY2LjgwMzUxXG5bMV0gXCJMMiBpcyBzZXQgdG8gNjYuODAzNTEyNDcxMDgwN1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMzMuNDAxNzU2MjM1NTQwNFwiXG4ifQ== -->
-<pre><code>[1] 66.80351
-[1] &quot;L2 is set to 66.8035124710807&quot;
-[1] &quot;L1 is set to 33.4017562355404&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjEyMjNcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43NDc2LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDg3LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI4MiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjY5OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg5MywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA4NywgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwODcsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxNzAgQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcblRoZXJlIGFyZSA1MyAgTFZzIHdpdGggQVVDPjAuNzBcblVzaW5nIHJzdmQ6IHNldCBzZWVkIGZvciBjb25zaXN0ZW50IHJlc3VsdHNcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Vc2luZyByc3ZkOiBzZXQgc2VlZCBmb3IgY29uc2lzdGVudCByZXN1bHRzXG5Eb25lXG4ifQ== -->
-<pre><code>errorY (SVD based:best possible) = 0.1223
+Done
+[1] 66.80351
+[1] \L2 is set to 66.8035124710807\
+[1] \L1 is set to 33.4017562355404\
+errorY (SVD based:best possible) = 0.1223
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.7476, target=0.7
 Updating L3, current fraction= 0.7087, target=0.7
@@ -544,15 +506,11 @@ There are 53  LVs with AUC&gt;0.70
 Using rsvd: set seed for consistent results
 Removing 397 pathways with too few genesComputing SVD
 Using rsvd: set seed for consistent results
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDc3LjIxOThcblsxXSBcIkwyIGlzIHNldCB0byA3Ny4yMTk3OTU0MDUyNTA2XCJcblsxXSBcIkwxIGlzIHNldCB0byAzOC42MDk4OTc3MDI2MjUzXCJcbiJ9 -->
-<pre><code>[1] 77.2198
-[1] &quot;L2 is set to 77.2197954052506&quot;
-[1] &quot;L1 is set to 38.6098977026253&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjE0MlxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODgsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43NDcsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODgsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42ODY3LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MzQ5LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTg4LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk4OCwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDE3MVxuVGhlcmUgYXJlIDM4ICBMVnMgd2l0aCBBVUM+MC43MFxuVXNpbmcgcnN2ZDogc2V0IHNlZWQgZm9yIGNvbnNpc3RlbnQgcmVzdWx0c1xuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcblVzaW5nIHJzdmQ6IHNldCBzZWVkIGZvciBjb25zaXN0ZW50IHJlc3VsdHNcbkRvbmVcbiJ9 -->
-<pre><code>errorY (SVD based:best possible) = 0.142
+Done
+[1] 77.2198
+[1] \L2 is set to 77.2197954052506\
+[1] \L1 is set to 38.6098977026253\
+errorY (SVD based:best possible) = 0.142
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.6988, target=0.7
 L3 not changed
@@ -570,15 +528,11 @@ There are 38  LVs with AUC&gt;0.70
 Using rsvd: set seed for consistent results
 Removing 397 pathways with too few genesComputing SVD
 Using rsvd: set seed for consistent results
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDY2LjgwNDQ0XG5bMV0gXCJMMiBpcyBzZXQgdG8gNjYuODA0NDM3MzE1MDExMlwiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMzMuNDAyMjE4NjU3NTA1NlwiXG4ifQ== -->
-<pre><code>[1] 66.80444
-[1] &quot;L2 is set to 66.8044373150112&quot;
-[1] &quot;L1 is set to 33.4022186575056&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjEyMjNcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTksIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MTg0LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTksIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDg3LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg5MywgdGFyZ2V0PTAuN1xuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMTMxXG5UaGVyZSBhcmUgNDcgIExWcyB3aXRoIEFVQz4wLjcwXG4ifQ== -->
-<pre><code>errorY (SVD based:best possible) = 0.1223
+Done
+[1] 66.80444
+[1] \L2 is set to 66.8044373150112\
+[1] \L1 is set to 33.4022186575056\
+errorY (SVD based:best possible) = 0.1223
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.699, target=0.7
 L3 not changed
@@ -596,9 +550,9 @@ There are 47  LVs with AUC&gt;0.70</code></pre>
 <p>Check the pathway coverage for these models</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYm90aF90ZWNoX3BhdGh3YXlfY292ZXJhZ2UgPC0gcmVzaGFwZTI6Om1lbHQobGFwcGx5KGJvdGhfdGVjaF9wbGllcl9saXN0LCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKVxuYGBgIn0= -->
-<pre class="r"><code>both_tech_pathway_coverage &lt;- reshape2::melt(lapply(both_tech_plier_list, 
-                                                    GetPathwayCoverage))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYm90aF90ZWNoX3BhdGh3YXlfY292ZXJhZ2UgPC0gcmVzaGFwZTI6Om1lbHQobGFwcGx5KGJvdGhfdGVjaF9wbGllcl9saXN0LCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r both_tech_pathway_coverage &lt;- reshape2::melt(lapply(both_tech_plier_list, GetPathwayCoverage))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -607,27 +561,17 @@ There are 47  LVs with AUC&gt;0.70</code></pre>
 <h3>Microarray only</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWljcm9hcnJheV9tYXQgPC0gZXhwcnNfbWF0WywgZ3JlcChcIi5QQ0xcIiwgY29sbmFtZXMoZXhwcnNfbWF0KSldXG5taWNyb2FycmF5X3BsaWVyX2xpc3QgPC1cbiAgbGFwcGx5KHNlZWRzLCBcbiAgICAgICAgIGZ1bmN0aW9uKHgpIFBMSUVSV3JhcHBlcihleHByc19tYXQgPSBtaWNyb2FycmF5X21hdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb21tb25fZ2VuZXMgPSBjb21tb25fZ2VuZXMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlZWQgPSB4KVxuICApXG5gYGAifQ== -->
-<pre class="r"><code>microarray_mat &lt;- exprs_mat[, grep(&quot;.PCL&quot;, colnames(exprs_mat))]
-microarray_plier_list &lt;-
-  lapply(seeds, 
-         function(x) PLIERWrapper(exprs_mat = microarray_mat,
-                                  common_genes = common_genes,
-                                  pathway_mat = combine_path_mat,
-                                  seed = x)
-  )</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubWljcm9hcnJheV9tYXQgPC0gZXhwcnNfbWF0WywgZ3JlcChcXC5QQ0xcXCwgY29sbmFtZXMoZXhwcnNfbWF0KSldXG5taWNyb2FycmF5X3BsaWVyX2xpc3QgPC1cbiAgbGFwcGx5KHNlZWRzLCBcbiAgICAgICAgIGZ1bmN0aW9uKHgpIFBMSUVSV3JhcHBlcihleHByc19tYXQgPSBtaWNyb2FycmF5X21hdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb21tb25fZ2VuZXMgPSBjb21tb25fZ2VuZXMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlZWQgPSB4KVxuICApXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r microarray_mat &lt;- exprs_mat[, grep(.PCL, colnames(exprs_mat))] microarray_plier_list &lt;- lapply(seeds, function(x) PLIERWrapper(exprs_mat = microarray_mat, common_genes = common_genes, pathway_mat = combine_path_mat, seed = x) )</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcbkRvbmVcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcbkRvbmVcblsxXSAzNS4yMzIyMVxuWzFdIFxcTDIgaXMgc2V0IHRvIDM1LjIzMjIwNjExMjUxMDdcXFxuWzFdIFxcTDEgaXMgc2V0IHRvIDE3LjYxNjEwMzA1NjI1NTRcXFxuZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA0Njg4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzIwNiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA1OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcxMzIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwNTksIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MjA2LCB0YXJnZXQ9MC43XG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxNzdcblRoZXJlIGFyZSA1NyAgTFZzIHdpdGggQVVDPjAuNzBcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Eb25lXG5bMV0gMzUuMjMyMjFcblsxXSBcXEwyIGlzIHNldCB0byAzNS4yMzIyMDYxMTI1MTA3XFxcblsxXSBcXEwxIGlzIHNldCB0byAxNy42MTYxMDMwNTYyNTU0XFxcbmVycm9yWSAoU1ZEIGJhc2VkOmJlc3QgcG9zc2libGUpID0gMC4wNDY4OFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcyMDYsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcyNzksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcyNzksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5MTIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcyNzksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5MTIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjczNTMsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY2MTgsIHRhcmdldD0wLjdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk4NSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMjEzIEJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5UaGVyZSBhcmUgNTUgIExWcyB3aXRoIEFVQz4wLjcwXG5SZW1vdmluZyAzOTcgcGF0aHdheXMgd2l0aCB0b28gZmV3IGdlbmVzQ29tcHV0aW5nIFNWRFxuRG9uZVxuWzFdIDM1LjIzMjIxXG5bMV0gXFxMMiBpcyBzZXQgdG8gMzUuMjMyMjA2MTEyNTEwN1xcXG5bMV0gXFxMMSBpcyBzZXQgdG8gMTcuNjE2MTAzMDU2MjU1NFxcXG5lcnJvclkgKFNWRCBiYXNlZDpiZXN0IHBvc3NpYmxlKSA9IDAuMDQ2ODhcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MTMyLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42ODM4LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43NTc0LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42NzY1LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDU5LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA1OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODUsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MTMyLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTEyLCB0YXJnZXQ9MC43XG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAyMzMgQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcblRoZXJlIGFyZSA1NSAgTFZzIHdpdGggQVVDPjAuNzBcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Eb25lXG5bMV0gMzUuMjMyMjFcblsxXSBcXEwyIGlzIHNldCB0byAzNS4yMzIyMDYxMTI1MTA3XFxcblsxXSBcXEwxIGlzIHNldCB0byAxNy42MTYxMDMwNTYyNTU0XFxcbmVycm9yWSAoU1ZEIGJhc2VkOmJlc3QgcG9zc2libGUpID0gMC4wNDY4OFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcxMzIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcyMDYsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjczNTMsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcyNzksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODUsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTg1LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA1OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwNTksIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxODlcblRoZXJlIGFyZSA1OSAgTFZzIHdpdGggQVVDPjAuNzBcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Eb25lXG5bMV0gMzUuMjMyMjFcblsxXSBcXEwyIGlzIHNldCB0byAzNS4yMzIyMDYxMTI1MTA3XFxcblsxXSBcXEwxIGlzIHNldCB0byAxNy42MTYxMDMwNTYyNTU0XFxcbmVycm9yWSAoU1ZEIGJhc2VkOmJlc3QgcG9zc2libGUpID0gMC4wNDY4OFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjczNTMsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODUsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43NSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA1OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcyMDYsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODUsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MTMyLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42ODM4LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTg1LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk4NSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDIzMSBCZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuVGhlcmUgYXJlIDU3ICBMVnMgd2l0aCBBVUM+MC43MFxuIn0= -->
 <pre><code>Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDM1LjIzMjIxXG5bMV0gXCJMMiBpcyBzZXQgdG8gMzUuMjMyMjA2MTEyNTEwN1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMTcuNjE2MTAzMDU2MjU1NFwiXG4ifQ== -->
-<pre><code>[1] 35.23221
-[1] &quot;L2 is set to 35.2322061125107&quot;
-[1] &quot;L1 is set to 17.6161030562554&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA0Njg4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzIwNiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA1OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcxMzIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwNTksIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MjA2LCB0YXJnZXQ9MC43XG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxNzdcblRoZXJlIGFyZSA1NyAgTFZzIHdpdGggQVVDPjAuNzBcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Eb25lXG4ifQ== -->
-<pre><code>errorY (SVD based:best possible) = 0.04688
+Done
+[1] 35.23221
+[1] \L2 is set to 35.2322061125107\
+[1] \L1 is set to 17.6161030562554\
+errorY (SVD based:best possible) = 0.04688
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.7279, target=0.7
 Updating L3, current fraction= 0.7279, target=0.7
@@ -641,15 +585,11 @@ Updating L3, current fraction= 0.7206, target=0.7
 converged at  iteration 177
 There are 57  LVs with AUC&gt;0.70
 Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDM1LjIzMjIxXG5bMV0gXCJMMiBpcyBzZXQgdG8gMzUuMjMyMjA2MTEyNTEwN1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMTcuNjE2MTAzMDU2MjU1NFwiXG4ifQ== -->
-<pre><code>[1] 35.23221
-[1] &quot;L2 is set to 35.2322061125107&quot;
-[1] &quot;L1 is set to 17.6161030562554&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA0Njg4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzIwNiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjkxMiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjkxMiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzM1MywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjYxOCwgdGFyZ2V0PTAuN1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTg1LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAyMTMgQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcblRoZXJlIGFyZSA1NSAgTFZzIHdpdGggQVVDPjAuNzBcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Eb25lXG4ifQ== -->
-<pre><code>errorY (SVD based:best possible) = 0.04688
+Done
+[1] 35.23221
+[1] \L2 is set to 35.2322061125107\
+[1] \L1 is set to 17.6161030562554\
+errorY (SVD based:best possible) = 0.04688
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.7206, target=0.7
 Updating L3, current fraction= 0.7279, target=0.7
@@ -674,15 +614,11 @@ Bdiff is not decreasing
 converged at  iteration 213 Bdiff is not decreasing
 There are 55  LVs with AUC&gt;0.70
 Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDM1LjIzMjIxXG5bMV0gXCJMMiBpcyBzZXQgdG8gMzUuMjMyMjA2MTEyNTEwN1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMTcuNjE2MTAzMDU2MjU1NFwiXG4ifQ== -->
-<pre><code>[1] 35.23221
-[1] &quot;L2 is set to 35.2322061125107&quot;
-[1] &quot;L1 is set to 17.6161030562554&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA0Njg4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEzMiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjgzOCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzU3NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc2NSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA1OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcyNzksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwNTksIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTg1LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEzMiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjkxMiwgdGFyZ2V0PTAuN1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMjMzIEJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5UaGVyZSBhcmUgNTUgIExWcyB3aXRoIEFVQz4wLjcwXG5SZW1vdmluZyAzOTcgcGF0aHdheXMgd2l0aCB0b28gZmV3IGdlbmVzQ29tcHV0aW5nIFNWRFxuRG9uZVxuIn0= -->
-<pre><code>errorY (SVD based:best possible) = 0.04688
+Done
+[1] 35.23221
+[1] \L2 is set to 35.2322061125107\
+[1] \L1 is set to 17.6161030562554\
+errorY (SVD based:best possible) = 0.04688
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.7132, target=0.7
 Updating L3, current fraction= 0.6838, target=0.7
@@ -706,15 +642,11 @@ Bdiff is not decreasing
 converged at  iteration 233 Bdiff is not decreasing
 There are 55  LVs with AUC&gt;0.70
 Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDM1LjIzMjIxXG5bMV0gXCJMMiBpcyBzZXQgdG8gMzUuMjMyMjA2MTEyNTEwN1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMTcuNjE2MTAzMDU2MjU1NFwiXG4ifQ== -->
-<pre><code>[1] 35.23221
-[1] &quot;L2 is set to 35.2322061125107&quot;
-[1] &quot;L1 is set to 17.6161030562554&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA0Njg4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEzMiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzIwNiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzM1MywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzI3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk4NSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODUsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDU5LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzA1OSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDE4OVxuVGhlcmUgYXJlIDU5ICBMVnMgd2l0aCBBVUM+MC43MFxuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcbkRvbmVcbiJ9 -->
-<pre><code>errorY (SVD based:best possible) = 0.04688
+Done
+[1] 35.23221
+[1] \L2 is set to 35.2322061125107\
+[1] \L1 is set to 17.6161030562554\
+errorY (SVD based:best possible) = 0.04688
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.7132, target=0.7
 Updating L3, current fraction= 0.7206, target=0.7
@@ -731,15 +663,11 @@ L3 not changed
 converged at  iteration 189
 There are 59  LVs with AUC&gt;0.70
 Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDM1LjIzMjIxXG5bMV0gXCJMMiBpcyBzZXQgdG8gMzUuMjMyMjA2MTEyNTEwN1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMTcuNjE2MTAzMDU2MjU1NFwiXG4ifQ== -->
-<pre><code>[1] 35.23221
-[1] &quot;L2 is set to 35.2322061125107&quot;
-[1] &quot;L1 is set to 17.6161030562554&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA0Njg4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzM1MywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk4NSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjc1LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MDU5LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzIwNiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjk4NSwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcxMzIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY4MzgsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5ODUsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTg1LCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMjMxIEJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5UaGVyZSBhcmUgNTcgIExWcyB3aXRoIEFVQz4wLjcwXG4ifQ== -->
-<pre><code>errorY (SVD based:best possible) = 0.04688
+Done
+[1] 35.23221
+[1] \L2 is set to 35.2322061125107\
+[1] \L1 is set to 17.6161030562554\
+errorY (SVD based:best possible) = 0.04688
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.7353, target=0.7
 Updating L3, current fraction= 0.6985, target=0.7
@@ -765,10 +693,9 @@ Bdiff is not decreasing
 converged at  iteration 231 Bdiff is not decreasing
 There are 57  LVs with AUC&gt;0.70</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVmlldyhib3RoX3RlY2hfcGF0aHdheV9jb3ZlcmFnZSlcbm1pY3JvYXJyYXlfcGF0aHdheV9jb3ZlcmFnZSA8LSByZXNoYXBlMjo6bWVsdChsYXBwbHkobWljcm9hcnJheV9wbGllcl9saXN0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKVxuYGBgIn0= -->
-<pre class="r"><code>View(both_tech_pathway_coverage)
-microarray_pathway_coverage &lt;- reshape2::melt(lapply(microarray_plier_list,
-                                                     GetPathwayCoverage))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuVmlldyhib3RoX3RlY2hfcGF0aHdheV9jb3ZlcmFnZSlcbm1pY3JvYXJyYXlfcGF0aHdheV9jb3ZlcmFnZSA8LSByZXNoYXBlMjo6bWVsdChsYXBwbHkobWljcm9hcnJheV9wbGllcl9saXN0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r View(both_tech_pathway_coverage) microarray_pathway_coverage &lt;- reshape2::melt(lapply(microarray_plier_list, GetPathwayCoverage))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -777,27 +704,17 @@ microarray_pathway_coverage &lt;- reshape2::melt(lapply(microarray_plier_list,
 <h3>RNA-seq only</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm5hc2VxX21hdCA8LSBleHByc19tYXRbLCBncmVwKFwibGVuZ3RoU2NhbGVkVFBNXCIsIGNvbG5hbWVzKGV4cHJzX21hdCkpXVxucm5hc2VxX3BsaWVyX2xpc3QgPC0gXG4gIGxhcHBseShzZWVkcywgXG4gICAgICAgICBmdW5jdGlvbih4KSBQTElFUldyYXBwZXIoZXhwcnNfbWF0ID0gcm5hc2VxX21hdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb21tb25fZ2VuZXMgPSBjb21tb25fZ2VuZXMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlZWQgPSB4IClcbiAgICAgICAgIClcbmBgYCJ9 -->
-<pre class="r"><code>rnaseq_mat &lt;- exprs_mat[, grep(&quot;lengthScaledTPM&quot;, colnames(exprs_mat))]
-rnaseq_plier_list &lt;- 
-  lapply(seeds, 
-         function(x) PLIERWrapper(exprs_mat = rnaseq_mat,
-                                  common_genes = common_genes,
-                                  pathway_mat = combine_path_mat,
-                                  seed = x )
-         )</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucm5hc2VxX21hdCA8LSBleHByc19tYXRbLCBncmVwKFxcbGVuZ3RoU2NhbGVkVFBNXFwsIGNvbG5hbWVzKGV4cHJzX21hdCkpXVxucm5hc2VxX3BsaWVyX2xpc3QgPC0gXG4gIGxhcHBseShzZWVkcywgXG4gICAgICAgICBmdW5jdGlvbih4KSBQTElFUldyYXBwZXIoZXhwcnNfbWF0ID0gcm5hc2VxX21hdCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb21tb25fZ2VuZXMgPSBjb21tb25fZ2VuZXMsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNlZWQgPSB4IClcbiAgICAgICAgIClcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r rnaseq_mat &lt;- exprs_mat[, grep(, colnames(exprs_mat))] rnaseq_plier_list &lt;- lapply(seeds, function(x) PLIERWrapper(exprs_mat = rnaseq_mat, common_genes = common_genes, pathway_mat = combine_path_mat, seed = x ) )</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcbkRvbmVcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcbkRvbmVcblsxXSA0Ni4zMTczNVxuWzFdIFxcTDIgaXMgc2V0IHRvIDQ2LjMxNzM0ODc2NzY5NjNcXFxuWzFdIFxcTDEgaXMgc2V0IHRvIDIzLjE1ODY3NDM4Mzg0ODFcXFxuZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA5MDk4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjY2NywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzcxOSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEwNSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjQ5MSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEwNSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEwNSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg0MiwgdGFyZ2V0PTAuN1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMTczIEJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5UaGVyZSBhcmUgNDMgIExWcyB3aXRoIEFVQz4wLjcwXG5SZW1vdmluZyAzOTcgcGF0aHdheXMgd2l0aCB0b28gZmV3IGdlbmVzQ29tcHV0aW5nIFNWRFxuRG9uZVxuWzFdIDQ2LjMxNzM1XG5bMV0gXFxMMiBpcyBzZXQgdG8gNDYuMzE3MzQ4NzY3Njk2M1xcXG5bMV0gXFxMMSBpcyBzZXQgdG8gMjMuMTU4Njc0MzgzODQ4MVxcXG5lcnJvclkgKFNWRCBiYXNlZDpiZXN0IHBvc3NpYmxlKSA9IDAuMDkwOThcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42NzU0LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43NjMyLCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42NzU0LCB0YXJnZXQ9MC43XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTMsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTMsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42OTMsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxNTFcblRoZXJlIGFyZSA1MSAgTFZzIHdpdGggQVVDPjAuNzBcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Eb25lXG5bMV0gNDYuMzE3MzVcblsxXSBcXEwyIGlzIHNldCB0byA0Ni4zMTczNDg3Njc2OTYzXFxcblsxXSBcXEwxIGlzIHNldCB0byAyMy4xNTg2NzQzODM4NDgxXFxcbmVycm9yWSAoU1ZEIGJhc2VkOmJlc3QgcG9zc2libGUpID0gMC4wOTA5OFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY1NzksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjc1NDQsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY4NDIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY4NDIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwMTgsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC43MTkzLCB0YXJnZXQ9MC43XG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY3NTQsIHRhcmdldD0wLjdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxNjMgQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcblRoZXJlIGFyZSA1NCAgTFZzIHdpdGggQVVDPjAuNzBcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Eb25lXG5bMV0gNDYuMzE3MzVcblsxXSBcXEwyIGlzIHNldCB0byA0Ni4zMTczNDg3Njc2OTYzXFxcblsxXSBcXEwxIGlzIHNldCB0byAyMy4xNTg2NzQzODM4NDgxXFxcbmVycm9yWSAoU1ZEIGJhc2VkOmJlc3QgcG9zc2libGUpID0gMC4wOTA5OFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY2NjcsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjc0NTYsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcxMDUsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY5MywgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY3NTQsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwMTgsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMC42ODQyLCB0YXJnZXQ9MC43XG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxNjUgQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcblRoZXJlIGFyZSA0OSAgTFZzIHdpdGggQVVDPjAuNzBcblJlbW92aW5nIDM5NyBwYXRod2F5cyB3aXRoIHRvbyBmZXcgZ2VuZXNDb21wdXRpbmcgU1ZEXG5Eb25lXG5bMV0gNDYuMzE3MzVcblsxXSBcXEwyIGlzIHNldCB0byA0Ni4zMTczNDg3Njc2OTYzXFxcblsxXSBcXEwxIGlzIHNldCB0byAyMy4xNTg2NzQzODM4NDgxXFxcbmVycm9yWSAoU1ZEIGJhc2VkOmJlc3QgcG9zc2libGUpID0gMC4wOTA5OFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY1NzksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjc3MTksIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY3NTQsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY4NDIsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcxOTMsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY3NTQsIHRhcmdldD0wLjdcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcwMTgsIHRhcmdldD0wLjdcbkwzIG5vdCBjaGFuZ2VkXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5jb252ZXJnZWQgYXQgIGl0ZXJhdGlvbiAxNzUgQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcblRoZXJlIGFyZSA0NSAgTFZzIHdpdGggQVVDPjAuNzBcbiJ9 -->
 <pre><code>Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQ2LjMxNzM1XG5bMV0gXCJMMiBpcyBzZXQgdG8gNDYuMzE3MzQ4NzY3Njk2M1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMjMuMTU4Njc0MzgzODQ4MVwiXG4ifQ== -->
-<pre><code>[1] 46.31735
-[1] &quot;L2 is set to 46.3173487676963&quot;
-[1] &quot;L1 is set to 23.1586743838481&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA5MDk4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjY2NywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzcxOSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEwNSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjQ5MSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEwNSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEwNSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg0MiwgdGFyZ2V0PTAuN1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMTczIEJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5UaGVyZSBhcmUgNDMgIExWcyB3aXRoIEFVQz4wLjcwXG5SZW1vdmluZyAzOTcgcGF0aHdheXMgd2l0aCB0b28gZmV3IGdlbmVzQ29tcHV0aW5nIFNWRFxuRG9uZVxuIn0= -->
-<pre><code>errorY (SVD based:best possible) = 0.09098
+Done
+[1] 46.31735
+[1] \L2 is set to 46.3173487676963\
+[1] \L1 is set to 23.1586743838481\
+errorY (SVD based:best possible) = 0.09098
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.6667, target=0.7
 Updating L3, current fraction= 0.7719, target=0.7
@@ -815,15 +732,11 @@ Bdiff is not decreasing
 converged at  iteration 173 Bdiff is not decreasing
 There are 43  LVs with AUC&gt;0.70
 Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQ2LjMxNzM1XG5bMV0gXCJMMiBpcyBzZXQgdG8gNDYuMzE3MzQ4NzY3Njk2M1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMjMuMTU4Njc0MzgzODQ4MVwiXG4ifQ== -->
-<pre><code>[1] 46.31735
-[1] &quot;L2 is set to 46.3173487676963&quot;
-[1] &quot;L1 is set to 23.1586743838481&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA5MDk4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc1NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzYzMiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc1NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjkzLCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjkzLCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjkzLCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuY29udmVyZ2VkIGF0ICBpdGVyYXRpb24gMTUxXG5UaGVyZSBhcmUgNTEgIExWcyB3aXRoIEFVQz4wLjcwXG5SZW1vdmluZyAzOTcgcGF0aHdheXMgd2l0aCB0b28gZmV3IGdlbmVzQ29tcHV0aW5nIFNWRFxuRG9uZVxuIn0= -->
-<pre><code>errorY (SVD based:best possible) = 0.09098
+Done
+[1] 46.31735
+[1] \L2 is set to 46.3173487676963\
+[1] \L1 is set to 23.1586743838481\
+errorY (SVD based:best possible) = 0.09098
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.6754, target=0.7
 Updating L3, current fraction= 0.7632, target=0.7
@@ -837,15 +750,11 @@ L3 not changed
 converged at  iteration 151
 There are 51  LVs with AUC&gt;0.70
 Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQ2LjMxNzM1XG5bMV0gXCJMMiBpcyBzZXQgdG8gNDYuMzE3MzQ4NzY3Njk2M1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMjMuMTU4Njc0MzgzODQ4MVwiXG4ifQ== -->
-<pre><code>[1] 46.31735
-[1] &quot;L2 is set to 46.3173487676963&quot;
-[1] &quot;L1 is set to 23.1586743838481&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA5MDk4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjU3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzU0NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg0MiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg0MiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzAxOCwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjcxOTMsIHRhcmdldD0wLjdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc1NCwgdGFyZ2V0PTAuN1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDE2MyBCZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuVGhlcmUgYXJlIDU0ICBMVnMgd2l0aCBBVUM+MC43MFxuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcbkRvbmVcbiJ9 -->
-<pre><code>errorY (SVD based:best possible) = 0.09098
+Done
+[1] 46.31735
+[1] \L2 is set to 46.3173487676963\
+[1] \L1 is set to 23.1586743838481\
+errorY (SVD based:best possible) = 0.09098
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.6579, target=0.7
 Updating L3, current fraction= 0.7544, target=0.7
@@ -864,15 +773,11 @@ Bdiff is not decreasing
 converged at  iteration 163 Bdiff is not decreasing
 There are 54  LVs with AUC&gt;0.70
 Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQ2LjMxNzM1XG5bMV0gXCJMMiBpcyBzZXQgdG8gNDYuMzE3MzQ4NzY3Njk2M1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMjMuMTU4Njc0MzgzODQ4MVwiXG4ifQ== -->
-<pre><code>[1] 46.31735
-[1] &quot;L2 is set to 46.3173487676963&quot;
-[1] &quot;L1 is set to 23.1586743838481&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA5MDk4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjY2NywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzQ1NiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzEwNSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjkzLCB0YXJnZXQ9MC43XG5MMyBub3QgY2hhbmdlZFxuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc1NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzAxOCwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcblVwZGF0aW5nIEwzLCBjdXJyZW50IGZyYWN0aW9uPSAwLjY4NDIsIHRhcmdldD0wLjdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDE2NSBCZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuVGhlcmUgYXJlIDQ5ICBMVnMgd2l0aCBBVUM+MC43MFxuUmVtb3ZpbmcgMzk3IHBhdGh3YXlzIHdpdGggdG9vIGZldyBnZW5lc0NvbXB1dGluZyBTVkRcbkRvbmVcbiJ9 -->
-<pre><code>errorY (SVD based:best possible) = 0.09098
+Done
+[1] 46.31735
+[1] \L2 is set to 46.3173487676963\
+[1] \L1 is set to 23.1586743838481\
+errorY (SVD based:best possible) = 0.09098
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.6667, target=0.7
 Updating L3, current fraction= 0.7456, target=0.7
@@ -892,15 +797,11 @@ Bdiff is not decreasing
 converged at  iteration 165 Bdiff is not decreasing
 There are 49  LVs with AUC&gt;0.70
 Removing 397 pathways with too few genesComputing SVD
-Done</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQ2LjMxNzM1XG5bMV0gXCJMMiBpcyBzZXQgdG8gNDYuMzE3MzQ4NzY3Njk2M1wiXG5bMV0gXCJMMSBpcyBzZXQgdG8gMjMuMTU4Njc0MzgzODQ4MVwiXG4ifQ== -->
-<pre><code>[1] 46.31735
-[1] &quot;L2 is set to 46.3173487676963&quot;
-[1] &quot;L1 is set to 23.1586743838481&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXJyb3JZIChTVkQgYmFzZWQ6YmVzdCBwb3NzaWJsZSkgPSAwLjA5MDk4XG5VcGRhdGluZyBMMywgY3VycmVudCBmcmFjdGlvbj0gMCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjU3OSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzcxOSwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc1NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjg0MiwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzE5MywgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNjc1NCwgdGFyZ2V0PTAuN1xuVXBkYXRpbmcgTDMsIGN1cnJlbnQgZnJhY3Rpb249IDAuNzAxOCwgdGFyZ2V0PTAuN1xuTDMgbm90IGNoYW5nZWRcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbkJkaWZmIGlzIG5vdCBkZWNyZWFzaW5nXG5CZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuQmRpZmYgaXMgbm90IGRlY3JlYXNpbmdcbmNvbnZlcmdlZCBhdCAgaXRlcmF0aW9uIDE3NSBCZGlmZiBpcyBub3QgZGVjcmVhc2luZ1xuVGhlcmUgYXJlIDQ1ICBMVnMgd2l0aCBBVUM+MC43MFxuIn0= -->
-<pre><code>errorY (SVD based:best possible) = 0.09098
+Done
+[1] 46.31735
+[1] \L2 is set to 46.3173487676963\
+[1] \L1 is set to 23.1586743838481\
+errorY (SVD based:best possible) = 0.09098
 Updating L3, current fraction= 0, target=0.7
 Updating L3, current fraction= 0.6579, target=0.7
 Updating L3, current fraction= 0.7719, target=0.7
@@ -919,9 +820,9 @@ Bdiff is not decreasing
 converged at  iteration 175 Bdiff is not decreasing
 There are 45  LVs with AUC&gt;0.70</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm5hc2VxX3BhdGh3YXlfY292ZXJhZ2UgPC0gcmVzaGFwZTI6Om1lbHQobGFwcGx5KHJuYXNlcV9wbGllcl9saXN0LCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKVxuYGBgIn0= -->
-<pre class="r"><code>rnaseq_pathway_coverage &lt;- reshape2::melt(lapply(rnaseq_plier_list, 
-                                                 GetPathwayCoverage))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxucm5hc2VxX3BhdGh3YXlfY292ZXJhZ2UgPC0gcmVzaGFwZTI6Om1lbHQobGFwcGx5KHJuYXNlcV9wbGllcl9saXN0LCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r rnaseq_pathway_coverage &lt;- reshape2::melt(lapply(rnaseq_plier_list, GetPathwayCoverage))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -930,52 +831,28 @@ There are 45  LVs with AUC&gt;0.70</code></pre>
 <p>And write to file</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY292ZXJhZ2VfZGYgPC0gZHBseXI6OmJpbmRfcm93cyhsaXN0KFxuICBcImFsbFwiID0gYm90aF90ZWNoX3BhdGh3YXlfY292ZXJhZ2UsXG4gIFwibWljcm9hcnJheVwiID0gbWljcm9hcnJheV9wYXRod2F5X2NvdmVyYWdlLFxuICBcInJuYXNlcVwiPSBybmFzZXFfcGF0aHdheV9jb3ZlcmFnZSksXG4gIC5pZCA9IFwidGVjaG5vbG9neVwiXG4pICU+JVxuICBkcGx5cjo6bXV0YXRlKG1ldHJpYyA9IEwyLCBzZWVkID0gTDEpICU+JVxuICBkcGx5cjo6c2VsZWN0KGMoLUwyLCAtTDEpKSAlPiVcbiAgZHBseXI6OmZpbHRlcihtZXRyaWMgIT0gXCJzaWcucGF0aHdheS5ieS5sdlwiKSAlPiVcbiAgZHBseXI6Om11dGF0ZShtZXRyaWMgPSBkcGx5cjo6Y2FzZV93aGVuKFxuICAgIG1ldHJpYyA9PSBcInBhdGh3YXlcIiB+IFwiUGF0aHdheSBDb3ZlcmFnZVwiLFxuICAgIG1ldHJpYyA9PSBcImx2XCIgfiBcIkxWIFByb3BvcnRpb25cIlxuICApKVxucmVhZHI6OndyaXRlX3Rzdihjb3ZlcmFnZV9kZiwgXG4gICAgICAgICAgICAgICAgIGZpbGUucGF0aChyZXN1bHRfZGlyLCBcInRlc3RfY29tcGVuZGl1bV9wYXRod2F5X2NvdmVyYWdlLnRzdlwiKSlcbmBgYCJ9 -->
-<pre class="r"><code>coverage_df &lt;- dplyr::bind_rows(list(
-  &quot;all&quot; = both_tech_pathway_coverage,
-  &quot;microarray&quot; = microarray_pathway_coverage,
-  &quot;rnaseq&quot;= rnaseq_pathway_coverage),
-  .id = &quot;technology&quot;
-) %&gt;%
-  dplyr::mutate(metric = L2, seed = L1) %&gt;%
-  dplyr::select(c(-L2, -L1)) %&gt;%
-  dplyr::filter(metric != &quot;sig.pathway.by.lv&quot;) %&gt;%
-  dplyr::mutate(metric = dplyr::case_when(
-    metric == &quot;pathway&quot; ~ &quot;Pathway Coverage&quot;,
-    metric == &quot;lv&quot; ~ &quot;LV Proportion&quot;
-  ))
-readr::write_tsv(coverage_df, 
-                 file.path(result_dir, &quot;test_compendium_pathway_coverage.tsv&quot;))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuY292ZXJhZ2VfZGYgPC0gZHBseXI6OmJpbmRfcm93cyhsaXN0KFxuICBcXGFsbFxcID0gYm90aF90ZWNoX3BhdGh3YXlfY292ZXJhZ2UsXG4gIFxcbWljcm9hcnJheVxcID0gbWljcm9hcnJheV9wYXRod2F5X2NvdmVyYWdlLFxuICBcXHJuYXNlcVxcPSBybmFzZXFfcGF0aHdheV9jb3ZlcmFnZSksXG4gIC5pZCA9IFxcdGVjaG5vbG9neVxcXG4pICU+JVxuICBkcGx5cjo6bXV0YXRlKG1ldHJpYyA9IEwyLCBzZWVkID0gTDEpICU+JVxuICBkcGx5cjo6c2VsZWN0KGMoLUwyLCAtTDEpKSAlPiVcbiAgZHBseXI6OmZpbHRlcihtZXRyaWMgIT0gXFxzaWcucGF0aHdheS5ieS5sdlxcKSAlPiVcbiAgZHBseXI6Om11dGF0ZShtZXRyaWMgPSBkcGx5cjo6Y2FzZV93aGVuKFxuICAgIG1ldHJpYyA9PSBcXHBhdGh3YXlcXCB+IFxcUGF0aHdheSBDb3ZlcmFnZVxcLFxuICAgIG1ldHJpYyA9PSBcXGx2XFwgfiBcXExWIFByb3BvcnRpb25cXFxuICApKVxucmVhZHI6OndyaXRlX3Rzdihjb3ZlcmFnZV9kZiwgXG4gICAgICAgICAgICAgICAgIGZpbGUucGF0aChyZXN1bHRfZGlyLCBcXHRlc3RfY29tcGVuZGl1bV9wYXRod2F5X2NvdmVyYWdlLnRzdlxcKSlcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r coverage_df &lt;- dplyr::bind_rows(list(  = both_tech_pathway_coverage,  = microarray_pathway_coverage, = rnaseq_pathway_coverage), .id = <br />
+) %&gt;% dplyr::mutate(metric = L2, seed = L1) %&gt;% dplyr::select(c(-L2, -L1)) %&gt;% dplyr::filter(metric != .pathway.by.lv) %&gt;% dplyr::mutate(metric = dplyr::case_when( metric ==  ~ Coverage, metric ==  ~ Proportion<br />
+)) readr::write_tsv(coverage_df, file.path(result_dir, _compendium_pathway_coverage.tsv))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Number of latent variables</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2V0X251bV9sdnNfZGYgPC0gZnVuY3Rpb24ocGxpZXJfbGlzdCwgdGVjaG5vbG9neSA9IFwiYWxsXCIpIHtcbiAgcmVzaGFwZTI6Om1lbHQobGFwcGx5KHBsaWVyX2xpc3QsIGZ1bmN0aW9uKHgpIG5yb3coeCRCKSkpICU+JVxuICAgIGRwbHlyOjptdXRhdGUoc2VlZCA9IEwxLCBtZXRyaWMgPSByZXAoXCJOdW1iZXIgb2YgTFZzXCIsIFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGVuZ3RoKHBsaWVyX2xpc3QpKSxcbiAgICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgPSByZXAodGVjaG5vbG9neSwgbGVuZ3RoKHBsaWVyX2xpc3QpKSkgJT4lXG4gICAgZHBseXI6OnNlbGVjdCgtTDEpXG59XG5gYGAifQ== -->
-<pre class="r"><code>get_num_lvs_df &lt;- function(plier_list, technology = &quot;all&quot;) {
-  reshape2::melt(lapply(plier_list, function(x) nrow(x$B))) %&gt;%
-    dplyr::mutate(seed = L1, metric = rep(&quot;Number of LVs&quot;, 
-                                          length(plier_list)),
-                  technology = rep(technology, length(plier_list))) %&gt;%
-    dplyr::select(-L1)
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuZ2V0X251bV9sdnNfZGYgPC0gZnVuY3Rpb24ocGxpZXJfbGlzdCwgdGVjaG5vbG9neSA9IFxcYWxsXFwpIHtcbiAgcmVzaGFwZTI6Om1lbHQobGFwcGx5KHBsaWVyX2xpc3QsIGZ1bmN0aW9uKHgpIG5yb3coeCRCKSkpICU+JVxuICAgIGRwbHlyOjptdXRhdGUoc2VlZCA9IEwxLCBtZXRyaWMgPSByZXAoXFxOdW1iZXIgb2YgTFZzXFwsIFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGVuZ3RoKHBsaWVyX2xpc3QpKSxcbiAgICAgICAgICAgICAgICAgIHRlY2hub2xvZ3kgPSByZXAodGVjaG5vbG9neSwgbGVuZ3RoKHBsaWVyX2xpc3QpKSkgJT4lXG4gICAgZHBseXI6OnNlbGVjdCgtTDEpXG59XG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r get_num_lvs_df &lt;- function(plier_list, technology = ) { reshape2::melt(lapply(plier_list, function(x) nrow(x$B))) %&gt;% dplyr::mutate(seed = L1, metric = rep(of LVs, length(plier_list)), technology = rep(technology, length(plier_list))) %&gt;% dplyr::select(-L1) }</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubnVtX2x2c19kZiA8LSBkcGx5cjo6YmluZF9yb3dzKFxuICBcImFsbFwiID0gZ2V0X251bV9sdnNfZGYoYm90aF90ZWNoX3BsaWVyX2xpc3QpLFxuICBcIm1pY3JvYXJyYXlcIiA9IGdldF9udW1fbHZzX2RmKG1pY3JvYXJyYXlfcGxpZXJfbGlzdCwgXCJtaWNyb2FycmF5XCIpLFxuICBcInJuYXNlcVwiID0gZ2V0X251bV9sdnNfZGYocm5hc2VxX3BsaWVyX2xpc3QsIFwicm5hc2VxXCIpXG4pXG5jb3ZlcmFnZV9kZiA8LSBjb3ZlcmFnZV9kZiAlPiVcbiAgZHBseXI6OmJpbmRfcm93cyhudW1fbHZzX2RmKSBcbnJlYWRyOjp3cml0ZV90c3YoY292ZXJhZ2VfZGYsIFxuICAgICAgICAgICAgICAgICBmaWxlLnBhdGgocmVzdWx0X2RpcixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIFwidGVzdF9jb21wZW5kaXVtX3BhdGh3YXlfY292ZXJhZ2UudHN2XCIpKVxuYGBgIn0= -->
-<pre class="r"><code>num_lvs_df &lt;- dplyr::bind_rows(
-  &quot;all&quot; = get_num_lvs_df(both_tech_plier_list),
-  &quot;microarray&quot; = get_num_lvs_df(microarray_plier_list, &quot;microarray&quot;),
-  &quot;rnaseq&quot; = get_num_lvs_df(rnaseq_plier_list, &quot;rnaseq&quot;)
-)
-coverage_df &lt;- coverage_df %&gt;%
-  dplyr::bind_rows(num_lvs_df) 
-readr::write_tsv(coverage_df, 
-                 file.path(result_dir,
-                           &quot;test_compendium_pathway_coverage.tsv&quot;))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxubnVtX2x2c19kZiA8LSBkcGx5cjo6YmluZF9yb3dzKFxuICBcXGFsbFxcID0gZ2V0X251bV9sdnNfZGYoYm90aF90ZWNoX3BsaWVyX2xpc3QpLFxuICBcXG1pY3JvYXJyYXlcXCA9IGdldF9udW1fbHZzX2RmKG1pY3JvYXJyYXlfcGxpZXJfbGlzdCwgXFxtaWNyb2FycmF5XFwpLFxuICBcXHJuYXNlcVxcID0gZ2V0X251bV9sdnNfZGYocm5hc2VxX3BsaWVyX2xpc3QsIFxccm5hc2VxXFwpXG4pXG5jb3ZlcmFnZV9kZiA8LSBjb3ZlcmFnZV9kZiAlPiVcbiAgZHBseXI6OmJpbmRfcm93cyhudW1fbHZzX2RmKSBcbnJlYWRyOjp3cml0ZV90c3YoY292ZXJhZ2VfZGYsIFxuICAgICAgICAgICAgICAgICBmaWxlLnBhdGgocmVzdWx0X2RpcixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgIFxcdGVzdF9jb21wZW5kaXVtX3BhdGh3YXlfY292ZXJhZ2UudHN2XFwpKVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r num_lvs_df &lt;- dplyr::bind_rows(  = get_num_lvs_df(both_tech_plier_list),  = get_num_lvs_df(microarray_plier_list, ),  = get_num_lvs_df(rnaseq_plier_list, ) ) coverage_df &lt;- coverage_df %&gt;% dplyr::bind_rows(num_lvs_df) readr::write_tsv(coverage_df, file.path(result_dir, _compendium_pathway_coverage.tsv))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -984,14 +861,6 @@ readr::write_tsv(coverage_df,
 <h4>Save models to file</h4>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2F2ZVJEUyhib3RoX3RlY2hfcGxpZXJfbGlzdCwgXG4gICAgICAgIGZpbGUgPSBmaWxlLnBhdGgocGxpZXJfcmVzdWx0X2RpcixcImJvdGhfdGVjaG5vbG9naWVzX1BMSUVSX2xpc3QuUkRTXCIpKVxuc2F2ZVJEUyhtaWNyb2FycmF5X3BsaWVyX2xpc3QsIFxuICAgICAgICBmaWxlID0gZmlsZS5wYXRoKHBsaWVyX3Jlc3VsdF9kaXIsIFwibWljcm9hcnJheV9QTElFUl9saXN0LlJEU1wiKSlcbnNhdmVSRFMocm5hc2VxX3BsaWVyX2xpc3QsIFxuICAgICAgICBmaWxlID0gZmlsZS5wYXRoKHBsaWVyX3Jlc3VsdF9kaXIsIFwicm5hc2VxX1BMSUVSX2xpc3QuUkRTXCIpKVxuYGBgIn0= -->
-<pre class="r"><code>saveRDS(both_tech_plier_list, 
-        file = file.path(plier_result_dir,&quot;both_technologies_PLIER_list.RDS&quot;))
-saveRDS(microarray_plier_list, 
-        file = file.path(plier_result_dir, &quot;microarray_PLIER_list.RDS&quot;))
-saveRDS(rnaseq_plier_list, 
-        file = file.path(plier_result_dir, &quot;rnaseq_PLIER_list.RDS&quot;))</code></pre>
-<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1001,41 +870,10 @@ saveRDS(rnaseq_plier_list,
 <h2>Plotting</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyB0aGVzZSBtZXRyaWNzIGFyZSBvbiBkaWZmZXJlbnQgc2NhbGVzLCBzbyB3ZSdsbCBwbG90IHRoZW0gc2VwYXJhdGVseSBhbmRcbiMgdGhlbiBhc3NlbWJsZSB0aGVtIGludG8gYSBzaW5nbGUsIG11bHRpcGFuZWwgcGxvdFxucGxvdF9saXN0IDwtIFxuICBsYXBwbHkoYyhcIk51bWJlciBvZiBMVnNcIiwgXCJQYXRod2F5IENvdmVyYWdlXCIsIFwiTFYgUHJvcG9ydGlvblwiKSxcbiAgICAgICAgIGZ1bmN0aW9uKHgpIFxuICAgICAgICAgICBjb3ZlcmFnZV9kZiAlPiVcbiAgICAgICAgICAgZHBseXI6Om11dGF0ZSh0ZWNobm9sb2d5ID0gdG91cHBlcih0ZWNobm9sb2d5KSkgJT4lXG4gICAgICAgICAgIGRwbHlyOjpmaWx0ZXIobWV0cmljID09IHgpICU+JVxuICAgICAgICAgICBnZ3Bsb3QyOjpnZ3Bsb3QoZ2dwbG90Mjo6YWVzKHggPSB0ZWNobm9sb2d5LCB5ID0gdmFsdWUpKSArXG4gICAgICAgICAgIGdncGxvdDI6Omdlb21fYm94cGxvdCgpICtcbiAgICAgICAgICAgZ2dwbG90Mjo6Z2VvbV9qaXR0ZXIoYWxwaGEgPSAwLjIpICtcbiAgICAgICAgICAgZ2dwbG90Mjo6dGhlbWVfYncoKSArXG4gICAgICAgICAgIGdncGxvdDI6OmdndGl0bGUoeCkgK1xuICAgICAgICAgICBnZ3Bsb3QyOjp0aGVtZShwbG90LnRpdGxlID0gZ2dwbG90Mjo6ZWxlbWVudF90ZXh0KGhqdXN0ID0gMC41LFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZhY2UgPSBcImJvbGRcIiksXG4gICAgICAgICAgICAgICAgICAgICAgICAgIHRleHQgPSBnZ3Bsb3QyOjplbGVtZW50X3RleHQoc2l6ZSA9IDEyKSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgYXhpcy50ZXh0LnggPSBnZ3Bsb3QyOjplbGVtZW50X3RleHQoXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgYW5nbGUgPSA0NSwgdmp1c3QgPSAwLjVcbiAgICAgICAgICAgICAgICAgICAgICAgICAgKSkpXG5jb3dwbG90OjpwbG90X2dyaWQocGxvdGxpc3QgPSBwbG90X2xpc3QsIG5jb2wgPSAzKVxuYGBgIn0= -->
-<pre class="r"><code># these metrics are on different scales, so we'll plot them separately and
-# then assemble them into a single, multipanel plot
-plot_list &lt;- 
-  lapply(c(&quot;Number of LVs&quot;, &quot;Pathway Coverage&quot;, &quot;LV Proportion&quot;),
-         function(x) 
-           coverage_df %&gt;%
-           dplyr::mutate(technology = toupper(technology)) %&gt;%
-           dplyr::filter(metric == x) %&gt;%
-           ggplot2::ggplot(ggplot2::aes(x = technology, y = value)) +
-           ggplot2::geom_boxplot() +
-           ggplot2::geom_jitter(alpha = 0.2) +
-           ggplot2::theme_bw() +
-           ggplot2::ggtitle(x) +
-           ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5,
-                                                             face = &quot;bold&quot;),
-                          text = ggplot2::element_text(size = 12),
-                          axis.text.x = ggplot2::element_text(
-                            angle = 45, vjust = 0.5
-                          )))
-cowplot::plot_grid(plotlist = plot_list, ncol = 3)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJjb25kaXRpb25zIjpbXSwiaGVpZ2h0Ijo0MzIuNjMyOSwic2l6ZV9iZWhhdmlvciI6MCwid2lkdGgiOjcwMH0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ2dwbG90Mjo6Z2dzYXZlKGZpbGUucGF0aChwbG90X2RpciwgXG4gICAgICAgICAgICAgICAgICAgICAgICAgIFwidGVzdF9jb21wZW5kaXVtX3BsaWVyX21ldHJpY3NfYnlfdGVjaC5wbmdcIiksXG4gICAgICAgICAgICAgICAgaGVpZ2h0ID0gOC41LCB3aWR0aCA9IDExLFxuICAgICAgICAgICAgICAgIHBsb3QgPSBnZ3Bsb3QyOjpsYXN0X3Bsb3QoKSkgXG5gYGAifQ== -->
-<pre class="r"><code>ggplot2::ggsave(file.path(plot_dir, 
-                          &quot;test_compendium_plier_metrics_by_tech.png&quot;),
-                height = 8.5, width = 11,
-                plot = ggplot2::last_plot()) </code></pre>
-<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -1043,50 +881,12 @@ cowplot::plot_grid(plotlist = plot_list, ncol = 3)</code></pre>
 <h2>Session info</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2Vzc2lvbkluZm8oKVxuXG5gYGAifQ== -->
-<pre class="r"><code>sessionInfo()
-</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiUiB2ZXJzaW9uIDMuNS4xICgyMDE4LTA3LTAyKVxuUGxhdGZvcm06IHg4Nl82NC1wYy1saW51eC1nbnUgKDY0LWJpdClcblJ1bm5pbmcgdW5kZXI6IERlYmlhbiBHTlUvTGludXggOSAoc3RyZXRjaClcblxuTWF0cml4IHByb2R1Y3RzOiBkZWZhdWx0XG5CTEFTOiAvdXNyL2xpYi9vcGVuYmxhcy1iYXNlL2xpYmJsYXMuc28uM1xuTEFQQUNLOiAvdXNyL2xpYi9saWJvcGVuYmxhc3AtcjAuMi4xOS5zb1xuXG5sb2NhbGU6XG4gWzFdIExDX0NUWVBFPWVuX1VTLlVURi04ICAgICAgIExDX05VTUVSSUM9QyAgICAgICAgICAgICAgIExDX1RJTUU9ZW5fVVMuVVRGLTggICAgICAgIExDX0NPTExBVEU9ZW5fVVMuVVRGLTggICAgXG4gWzVdIExDX01PTkVUQVJZPWVuX1VTLlVURi04ICAgIExDX01FU1NBR0VTPUMgICAgICAgICAgICAgIExDX1BBUEVSPWVuX1VTLlVURi04ICAgICAgIExDX05BTUU9QyAgICAgICAgICAgICAgICAgXG4gWzldIExDX0FERFJFU1M9QyAgICAgICAgICAgICAgIExDX1RFTEVQSE9ORT1DICAgICAgICAgICAgIExDX01FQVNVUkVNRU5UPWVuX1VTLlVURi04IExDX0lERU5USUZJQ0FUSU9OPUMgICAgICAgXG5cbmF0dGFjaGVkIGJhc2UgcGFja2FnZXM6XG5bMV0gcGFyYWxsZWwgIHN0YXRzNCAgICBzdGF0cyAgICAgZ3JhcGhpY3MgIGdyRGV2aWNlcyB1dGlscyAgICAgZGF0YXNldHMgIG1ldGhvZHMgICBiYXNlICAgICBcblxub3RoZXIgYXR0YWNoZWQgcGFja2FnZXM6XG4gWzFdIG9yZy5Eci5lZy5kYl8zLjcuMCAgIEFubm90YXRpb25EYmlfMS40NC4wIElSYW5nZXNfMi4xNi4wICAgICAgIFM0VmVjdG9yc18wLjIwLjEgICAgIEJpb2Jhc2VfMi40Mi4wICAgICAgXG4gWzZdIEJpb2NHZW5lcmljc18wLjI4LjAgIFBMSUVSXzAuOTkuMCAgICAgICAgIHF2YWx1ZV8yLjE0LjEgICAgICAgIHJzdmRfMC45ICAgICAgICAgICAgIGtuaXRyXzEuMjAgICAgICAgICAgXG5bMTFdIGdsbW5ldF8yLjAtMTYgICAgICAgIGZvcmVhY2hfMS40LjQgICAgICAgIE1hdHJpeF8xLjItMTQgICAgICAgIHBoZWF0bWFwXzEuMC4xMCAgICAgIGdwbG90c18zLjAuMSAgICAgICAgXG5bMTZdIFJDb2xvckJyZXdlcl8xLjEtMiAgXG5cbmxvYWRlZCB2aWEgYSBuYW1lc3BhY2UgKGFuZCBub3QgYXR0YWNoZWQpOlxuIFsxXSBSY3BwXzAuMTIuMTggICAgICAgbGF0dGljZV8wLjIwLTM1ICAgIGd0b29sc18zLjguMSAgICAgICBycHJvanJvb3RfMS4zLTIgICAgYXNzZXJ0dGhhdF8wLjIuMCAgIGRpZ2VzdF8wLjYuMTcgICAgIFxuIFs3XSBSNl8yLjIuMiAgICAgICAgICAgcGx5cl8xLjguNCAgICAgICAgIGJhY2twb3J0c18xLjEuMiAgICBldmFsdWF0ZV8wLjExICAgICAgUlNRTGl0ZV8yLjEuMSAgICAgIGdncGxvdDJfMy4wLjAgICAgIFxuWzEzXSBwaWxsYXJfMS4zLjAgICAgICAgcmxhbmdfMC4yLjIgICAgICAgIGxhenlldmFsXzAuMi4xICAgICByc3R1ZGlvYXBpXzAuNyAgICAgZ2RhdGFfMi4xOC4wICAgICAgIGJsb2JfMS4xLjEgICAgICAgIFxuWzE5XSBybWFya2Rvd25fMS4xMCAgICAgc3BsaW5lc18zLjUuMSAgICAgIHN0cmluZ3JfMS4zLjEgICAgICBiaXRfMS4xLTE0ICAgICAgICAgbXVuc2VsbF8wLjUuMCAgICAgIGNvbXBpbGVyXzMuNS4xICAgIFxuWzI1XSBiYXNlNjRlbmNfMC4xLTMgICAgcGtnY29uZmlnXzIuMC4yICAgIGh0bWx0b29sc18wLjMuNiAgICB0aWR5c2VsZWN0XzAuMi40ICAgdGliYmxlXzEuNC4yICAgICAgIGNvZGV0b29sc18wLjItMTUgIFxuWzMxXSBjcmF5b25fMS4zLjQgICAgICAgZHBseXJfMC43LjYgICAgICAgIGJpdG9wc18xLjAtNiAgICAgICBncmlkXzMuNS4xICAgICAgICAganNvbmxpdGVfMS41ICAgICAgIGd0YWJsZV8wLjIuMCAgICAgIFxuWzM3XSBEQklfMS4wLjAgICAgICAgICAgbWFncml0dHJfMS41ICAgICAgIHNjYWxlc18xLjAuMCAgICAgICBLZXJuU21vb3RoXzIuMjMtMTUgc3RyaW5naV8xLjIuNCAgICAgIHJlc2hhcGUyXzEuNC4zICAgIFxuWzQzXSBiaW5kcmNwcF8wLjIuMiAgICAgaXRlcmF0b3JzXzEuMC4xMCAgIHRvb2xzXzMuNS4xICAgICAgICBiaXQ2NF8wLjktNyAgICAgICAgZ2x1ZV8xLjMuMCAgICAgICAgIHB1cnJyXzAuMi41ICAgICAgIFxuWzQ5XSB5YW1sXzIuMi4wICAgICAgICAgY29sb3JzcGFjZV8xLjMtMiAgIGNhVG9vbHNfMS4xNy4xLjEgICBtZW1vaXNlXzEuMS4wICAgICAgYmluZHJfMC4xLjEgICAgICAgXG4ifQ== -->
-<pre><code>R version 3.5.1 (2018-07-02)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Debian GNU/Linux 9 (stretch)
-
-Matrix products: default
-BLAS: /usr/lib/openblas-base/libblas.so.3
-LAPACK: /usr/lib/libopenblasp-r0.2.19.so
-
-locale:
- [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C              LC_PAPER=en_US.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C             LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
-
-attached base packages:
-[1] parallel  stats4    stats     graphics  grDevices utils     datasets  methods   base     
-
-other attached packages:
- [1] org.Dr.eg.db_3.7.0   AnnotationDbi_1.44.0 IRanges_2.16.0       S4Vectors_0.20.1     Biobase_2.42.0      
- [6] BiocGenerics_0.28.0  PLIER_0.99.0         qvalue_2.14.1        rsvd_0.9             knitr_1.20          
-[11] glmnet_2.0-16        foreach_1.4.4        Matrix_1.2-14        pheatmap_1.0.10      gplots_3.0.1        
-[16] RColorBrewer_1.1-2  
-
-loaded via a namespace (and not attached):
- [1] Rcpp_0.12.18       lattice_0.20-35    gtools_3.8.1       rprojroot_1.3-2    assertthat_0.2.0   digest_0.6.17     
- [7] R6_2.2.2           plyr_1.8.4         backports_1.1.2    evaluate_0.11      RSQLite_2.1.1      ggplot2_3.0.0     
-[13] pillar_1.3.0       rlang_0.2.2        lazyeval_0.2.1     rstudioapi_0.7     gdata_2.18.0       blob_1.1.1        
-[19] rmarkdown_1.10     splines_3.5.1      stringr_1.3.1      bit_1.1-14         munsell_0.5.0      compiler_3.5.1    
-[25] base64enc_0.1-3    pkgconfig_2.0.2    htmltools_0.3.6    tidyselect_0.2.4   tibble_1.4.2       codetools_0.2-15  
-[31] crayon_1.3.4       dplyr_0.7.6        bitops_1.0-6       grid_3.5.1         jsonlite_1.5       gtable_0.2.0      
-[37] DBI_1.0.0          magrittr_1.5       scales_1.0.0       KernSmooth_2.23-15 stringi_1.2.4      reshape2_1.4.3    
-[43] bindrcpp_0.2.2     iterators_1.0.10   tools_3.5.1        bit64_0.9-7        glue_1.3.0         purrr_0.2.5       
-[49] yaml_2.2.0         colorspace_1.3-2   caTools_1.17.1.1   memoise_1.1.0      bindr_0.1.1       </code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUnVuIFBMSUVSIG9uIHRlc3QgY29tcGVuZGl1bSIKb3V0cHV0OiAKICBodG1sX25vdGVib29rOgogICAgdG9jOiBUUlVFCiAgICB0b2NfZmxvYXQ6IFRSVUUKYXV0aG9yOiBKLiBUYXJvbmkgZm9yIENDREwKZGF0ZTogMjAxOQotLS0KCkRvIHdlICJnZXQgbW9yZSBiaW9sb2d5IiBvdXQgb2YgdGhlIGNvbWJpbmVkIHRlY2hub2xvZ3kgdGVzdCBjb21wZW5kaXVtIHRoYW4gd2UKZ2V0IG91dCBvZiBlYWNoIG9mIHRoZSB0ZWNobm9sb2dpZXMgaW5kaXZpZHVhbGx5PwoKV2UnbGwgdXNlIHRoZSBtZXRyaWNzIHdlIGRldmVsb3BlZCBhcyBwYXJ0IG9mIHRoZSBNdWx0aVBMSUVSIHByb2plY3QgaGVyZS4KU3BlY2lmaWNhbGx5LCBkbyB3ZSBnZXQgaGlnaGVyIHBhdGh3YXkgY292ZXJhZ2UgZm9yIGEgbW9kZWwgdHJhaW5lZCBvbgp0aGUgZHVhbC10ZWNobm9sb2d5IHRlc3QgY29tcGVuZGl1bSB2cy4gdGhvc2UgdHJhaW5lZCBvbiB0aGUgaW5kaXZpZHVhbAp0ZWNobm9sb2d5IGNvbXBlbmRpYT8KCiMjIFNldHVwCgojIyMjIEZ1bmN0aW9ucwoKU291cmNlIHRoZSBtb3N0IHJlY2VudCB2ZXJzaW9uIG9mIHRoZSBNdWx0aVBMSUVSIHV0aWxzIGZyb20gR2l0aHViCgpgYGB7cn0Kc291cmNlKCJodHRwczovL2dpdGh1Yi5jb20vZ3JlZW5lbGFiL211bHRpLXBsaWVyL3Jhdy83YzU2YTI4NjdmOWYwOGY3YmNkMzYxNzg3NWM3YzJkYmU4ODZjYmViL3V0aWwvcGxpZXJfdXRpbC5SIikKIyB3ZSBvbmx5IHdhbnQgR2V0UGF0aHdheUNvdmVyYWdlCnJtKGxpc3QgPSBzZXRkaWZmKGxzKCksICJHZXRQYXRod2F5Q292ZXJhZ2UiKSkKYGBgCgpgYGB7cn0KYCU+JWAgPC0gZHBseXI6OmAlPiVgCmBgYAoKYGBge3J9CiMgd2UnbGwgdHJhaW4gMyBQTElFUiBtb2RlbHM6IG1hdHJpeCB3aXRoIGJvdGggdGVjaG5vbG9naWVzLCBtaWNyb2FycmF5IHNhbXBsZXMKIyBvbmx5LCBhbmQgUk5BLXNlcSBzYW1wbGVzIG9ubHkKUExJRVJXcmFwcGVyIDwtIGZ1bmN0aW9uKGV4cHJzX21hdCwgY29tbW9uX2dlbmVzLCBwYXRod2F5X21hdCwgc2VlZCA9IDEyMykgewogIAogICMgc2V0IHNlZWQgZm9yIHJlcHJvZHVjaWJpbGl0eQogIHNldC5zZWVkKHNlZWQpCiAgCiAgIyB6LXNjb3JlIHRoZSBleHByZXNzaW9uIGRhdGEKICByb3dfbm9ybV9leHBycyA8LSBQTElFUjo6cm93Tm9ybShleHByc19tYXRbY29tbW9uX2dlbmVzLCBdKQogIAogICMgaG93IG1hbnkgInNpZ25pZmljYW50IFBDcyIgdmlhIHRoZSBlbGJvdyBtZXRob2QgLS0gd2UgdXNlIHRoaXMgdG8gc2V0IGsgd2hlbgogICMgdHJhaW5pbmcgYSBQTElFUiBtb2RlbAogIG51bV9wY3MgPC0gUExJRVI6Om51bS5wYyhyb3dfbm9ybV9leHBycykKICAKICByZXR1cm4oUExJRVI6OlBMSUVSKGRhdGEgPSByb3dfbm9ybV9leHByc1tjb21tb25fZ2VuZXMsIF0sIAogICAgICAgICAgICAgICAgICAgICAgcHJpb3JNYXQgPSBwYXRod2F5X21hdFtjb21tb25fZ2VuZXMsIF0sCiAgICAgICAgICAgICAgICAgICAgICBrID0gcm91bmQobnVtX3BjcyAqIDEuMykpKQp9CmBgYAoKIyMjIyBMaWJyYXJpZXMKCmBgYHtyfQojIFBMSUVSIGluc3RhbGxhdGlvbgojIEJpb2NNYW5hZ2VyOjppbnN0YWxsKCJxdmFsdWUiLCB1cGRhdGUgPSBGQUxTRSkKIyBkZXZ0b29sczo6aW5zdGFsbF9naXRodWIoJ3dnbWFvL1BMSUVSJywgCiMgICAgICAgICAgICAgICAgICAgICAgICAgIHJlZiA9ICdhMmQ0YTJhYTM0M2Y5ZWQ0YjliOTQ1YzA0MzI2YmViZDMxNTMzZDRkJywgCiMgICAgICAgICAgICAgICAgICAgICAgICAgIGRlcGVuZGVuY2llcyA9IFRSVUUpCiMgaW5zdGFsbC5wYWNrYWdlcygiY293cGxvdCIpCmBgYAoKYGBge3J9CmxpYnJhcnkoUExJRVIpCmxpYnJhcnkob3JnLkRyLmVnLmRiKQpgYGAKCiMjIyMgRGlyZWN0b3JpZXMKCmBgYHtyfQpwYXRod2F5X2RpciA8LSBmaWxlLnBhdGgoImRhdGEiLCAicGF0aHdheXMiKQpyZXN1bHRfZGlyIDwtICJyZXN1bHRzIgpwbG90X2RpciA8LSAicGxvdHMiCmBgYAoKUmVzdWx0cyBkaXJlY3Rvcnkgc3BlY2lmaWNhbGx5IGZvciBob2xkaW5nIHRoZSBQTElFUiBtb2RlbHMKCmBgYHtyfQpwbGllcl9yZXN1bHRfZGlyIDwtIGZpbGUucGF0aChyZXN1bHRfZGlyLCAiUExJRVJfbW9kZWxzIikKZGlyLmNyZWF0ZShwbGllcl9yZXN1bHRfZGlyLCBzaG93V2FybmluZ3MgPSBGQUxTRSwgcmVjdXJzaXZlID0gVFJVRSkKYGBgCgojIyBSZWFkIGluIGRhdGEKCiMjIyBQcmlvciBpbmZvcm1hdGlvbiBtYXRyaWNlcwoKV2UgbmVlZCB0byBnZXQgdGhlIDMgcGF0aHdheSBwcmlvciBpbmZvcm1hdGlvbiBtYXRyaWNlcyB3ZSBoYXZlOiBkZXZlbG9wbWVudGFsCnN0YWdlLCB0aXNzdWVzIChiYXNlZCBvbiBhZHVsdCBvbmx5KSwgYW5kIHRoZSB3aWtpcGF0aHdheXMgaW50byBhIHNpbmdsZSAKbWF0cml4LgpXZSBjYW4gZG8gdGhpcyB3aXRoIHRoZSBgUExJRVI6OmNvbWJpbmVQYXRoc2AgZnVuY3Rpb24uCgpgYGB7cn0KIyByZWFkIGluIHRoZSB0aHJlZSBpbmRpdmlkdWFsIG1hdHJpY2VzIHdlIHByZXBwZWQgaW4gCiMgMDktcHJpb3JfaW5mb3JtYXRpb25fbWF0cml4Cndpa2lwYXRod2F5X21hdCA8LSByZWFkUkRTKGZpbGUucGF0aChwYXRod2F5X2RpciwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAiRGFuaW9fcmVyaW9fd2lraXBhdGh3YXlzX3ByaW9yX2luZm8uUkRTIikpCmFkdWx0X3Rpc3N1ZV9tYXQgPC0gcmVhZFJEUyhmaWxlLnBhdGgocGF0aHdheV9kaXIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlpGSU5fYWR1bHRfdGlzc3VlX3ByaW9yX2luZm8uUkRTIikpCmRldl9zdGFnZV9tYXQgPC0gcmVhZFJEUyhmaWxlLnBhdGgocGF0aHdheV9kaXIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIlpGSU5fc3RhZ2VzX3ByaW9yX2luZm8uUkRTIikpCiMgY29tYmluZSBpbnRvIGEgc2luZ2xlIG1hdHJpeCBmb3IgdXNlIHdpdGggUExJRVIKY29tYmluZV9wYXRoX21hdCA8LSBQTElFUjo6Y29tYmluZVBhdGhzKGFkdWx0X3Rpc3N1ZV9tYXQsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBkZXZfc3RhZ2VfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgd2lraXBhdGh3YXlfbWF0KQojIHdlIG5vIGxvbmdlciBuZWVkIHRoZSBpbmRpdmlkdWFsIG1hdHJpY2VzCnJtKGFkdWx0X3Rpc3N1ZV9tYXQsIGRldl9zdGFnZV9tYXQsIHdpa2lwYXRod2F5X21hdCkKYGBgCgojIyMgVGVzdCBjb21wZW5kaXVtCgpXZSBuZWVkIHRvIGNvbnZlcnQgdGhlIHRlc3QgY29tcGVuZGl1bSBnZW5lIGlkZW50aWZpZXJzIGZyb20gRW5zZW1ibCBnZW5lIElEcyB0bwpaRklOIGlkZW50aWZpZXJzIHNvIHRoYXQgdGhlIElEcyBpbiB0aGUgcHJpb3IgaW5mb3JtYXRpb24gYW5kIHRoZSBleHByZXNzaW9uCmRhdGEgbWF0Y2guCgpgYGB7cn0KIyBmaXJzdCB3ZSBuZWVkIHRvIHJlYWQgaW4gdGhlIApleHByc19maWxlIDwtIGZpbGUucGF0aCgiZGF0YSIsICJyZWZpbmViaW9fdGVzdF9jb21wZW5kaXVtX2V4cHJzX21hdC5SRFMiKQpleHByc19tYXQgPC0gcmVhZFJEUyhleHByc19maWxlKQpgYGAKCldlIGV4cGVjdCB0aGF0IHRoZXJlIHdpbGwgYmUgYSAxOm1hbnkgbWFwcGluZyBoZXJlLCBzbyB3ZSdsbCB1c2UgdGhlIG9wdGlvbgp3aGVyZSBvbmx5IHRoZSBmaXJzdCB0aGluZyB0aGF0IGNvbWVzIGJhY2sgaXMgcmV0dXJuZWQgYnkgc2V0dGluZyAKYG11bHRpVmFscyA9ICJmaXJzdCJgIChub3RlIHRoYXQgdGhpcyBpcyB0aGUgZGVmYXVsdCBiZWhhdmlvcikuCgpgYGB7cn0KIyBFTlNEQVJHIC0+IFpEQi1HRU5FCnpmaW5faWRzIDwtIG1hcElkcyhvcmcuRHIuZWcuZGIsIGtleXMgPSByb3duYW1lcyhleHByc19tYXQpLAogICAgICAgICAgICAgICAgICAgY29sdW1uID0gIlpGSU4iLCBrZXl0eXBlID0gIkVOU0VNQkwiLAogICAgICAgICAgICAgICAgICAgbXVsdGlWYWxzID0gImZpcnN0IikKCiMgdGhlc2Ugc2hvdWxkIGJlIGluIHRoZSBzYW1lIG9yZGVyLCBidXQgb3V0IG9mIGFuIGFidW5kYW5jZSBvZiBjYXV0aW9uIQppZiAoYWxsLmVxdWFsKHJvd25hbWVzKGV4cHJzX21hdCksIG5hbWVzKHpmaW5faWRzKSkpIHsKICByb3duYW1lcyhleHByc19tYXQpIDwtIHpmaW5faWRzCn0gZWxzZSB7CiAgc3RvcCgiU29tZXRoaW5nIHdlbnQgd3JvbmchIikKfQpgYGAKCiMjIFBMSUVSCgpXZSdyZSBnb2luZyB0byBkbyBmaXZlIHJlcGVhdHMuCgpgYGB7cn0Kc2V0LnNlZWQoMTIzKQpzZWVkcyA8LSBzYW1wbGUoMToxMDAwMDAsIDUpCm5hbWVzKHNlZWRzKSA8LSBzZWVkcwpgYGAKCiMjIyBCb3RoIHRlY2hub2xvZ2llcwoKYGBge3J9CiMgZmluZCB0aGUgY29tbW9uIGdlbmVzIGJldHdlZW4gdGhlIGV4cHJlc3Npb24gbWF0cml4IGFuZCB0aGUgcHJpb3IgaW5mb3JtYXRpb24KIyBtYXRyaXgKY29tbW9uX2dlbmVzIDwtIFBMSUVSOjpjb21tb25Sb3dzKGV4cHJzX21hdCwgY29tYmluZV9wYXRoX21hdCkKCiMgdGhpcyBleHByZXNzaW9uIG1hdHJpeCBpbmNsdWRlcyBzYW1wbGVzIGZyb20gYm90aCB0ZWNobm9sb2dpZXMKYm90aF90ZWNoX3BsaWVyX2xpc3QgPC0gCiAgbGFwcGx5KHNlZWRzLAogICAgICAgICBmdW5jdGlvbih4KSBQTElFUldyYXBwZXIoZXhwcnNfbWF0ID0gZXhwcnNfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29tbW9uX2dlbmVzID0gY29tbW9uX2dlbmVzLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2VlZCA9IHgpCiAgKQpgYGAKCkNoZWNrIHRoZSBwYXRod2F5IGNvdmVyYWdlIGZvciB0aGVzZSBtb2RlbHMKCmBgYHtyfQpib3RoX3RlY2hfcGF0aHdheV9jb3ZlcmFnZSA8LSByZXNoYXBlMjo6bWVsdChsYXBwbHkoYm90aF90ZWNoX3BsaWVyX2xpc3QsIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgR2V0UGF0aHdheUNvdmVyYWdlKSkKYGBgCgojIyMgTWljcm9hcnJheSBvbmx5CgpgYGB7cn0KbWljcm9hcnJheV9tYXQgPC0gZXhwcnNfbWF0WywgZ3JlcCgiLlBDTCIsIGNvbG5hbWVzKGV4cHJzX21hdCkpXQptaWNyb2FycmF5X3BsaWVyX2xpc3QgPC0KICBsYXBwbHkoc2VlZHMsIAogICAgICAgICBmdW5jdGlvbih4KSBQTElFUldyYXBwZXIoZXhwcnNfbWF0ID0gbWljcm9hcnJheV9tYXQsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb21tb25fZ2VuZXMgPSBjb21tb25fZ2VuZXMsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYXRod2F5X21hdCA9IGNvbWJpbmVfcGF0aF9tYXQsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzZWVkID0geCkKICApCm1pY3JvYXJyYXlfcGF0aHdheV9jb3ZlcmFnZSA8LSByZXNoYXBlMjo6bWVsdChsYXBwbHkobWljcm9hcnJheV9wbGllcl9saXN0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIEdldFBhdGh3YXlDb3ZlcmFnZSkpCmBgYAoKIyMjIFJOQS1zZXEgb25seQoKYGBge3J9CnJuYXNlcV9tYXQgPC0gZXhwcnNfbWF0WywgZ3JlcCgibGVuZ3RoU2NhbGVkVFBNIiwgY29sbmFtZXMoZXhwcnNfbWF0KSldCnJuYXNlcV9wbGllcl9saXN0IDwtIAogIGxhcHBseShzZWVkcywgCiAgICAgICAgIGZ1bmN0aW9uKHgpIFBMSUVSV3JhcHBlcihleHByc19tYXQgPSBybmFzZXFfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29tbW9uX2dlbmVzID0gY29tbW9uX2dlbmVzLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2VlZCA9IHggKQogICAgICAgICApCnJuYXNlcV9wYXRod2F5X2NvdmVyYWdlIDwtIHJlc2hhcGUyOjptZWx0KGxhcHBseShybmFzZXFfcGxpZXJfbGlzdCwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKQpgYGAKCiMjIyMgV3JhbmdsZSBwYXRod2F5IGNvdmVyYWdlIHJlc3VsdHMgCgpBbmQgd3JpdGUgdG8gZmlsZQoKYGBge3J9CmNvdmVyYWdlX2RmIDwtIGRwbHlyOjpiaW5kX3Jvd3MobGlzdCgKICAiYWxsIiA9IGJvdGhfdGVjaF9wYXRod2F5X2NvdmVyYWdlLAogICJtaWNyb2FycmF5IiA9IG1pY3JvYXJyYXlfcGF0aHdheV9jb3ZlcmFnZSwKICAicm5hc2VxIj0gcm5hc2VxX3BhdGh3YXlfY292ZXJhZ2UpLAogIC5pZCA9ICJ0ZWNobm9sb2d5IgopICU+JQogIGRwbHlyOjptdXRhdGUobWV0cmljID0gTDIsIHNlZWQgPSBMMSkgJT4lCiAgZHBseXI6OnNlbGVjdChjKC1MMiwgLUwxKSkgJT4lCiAgZHBseXI6OmZpbHRlcihtZXRyaWMgIT0gInNpZy5wYXRod2F5LmJ5Lmx2IikgJT4lCiAgZHBseXI6Om11dGF0ZShtZXRyaWMgPSBkcGx5cjo6Y2FzZV93aGVuKAogICAgbWV0cmljID09ICJwYXRod2F5IiB+ICJQYXRod2F5IENvdmVyYWdlIiwKICAgIG1ldHJpYyA9PSAibHYiIH4gIkxWIFByb3BvcnRpb24iCiAgKSkKYGBgCgpOdW1iZXIgb2YgbGF0ZW50IHZhcmlhYmxlcwoKYGBge3J9CmdldF9udW1fbHZzX2RmIDwtIGZ1bmN0aW9uKHBsaWVyX2xpc3QsIHRlY2hub2xvZ3kgPSAiYWxsIikgewogIHJlc2hhcGUyOjptZWx0KGxhcHBseShwbGllcl9saXN0LCBmdW5jdGlvbih4KSBucm93KHgkQikpKSAlPiUKICAgIGRwbHlyOjptdXRhdGUoc2VlZCA9IEwxLCBtZXRyaWMgPSByZXAoIk51bWJlciBvZiBMVnMiLCAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGVuZ3RoKHBsaWVyX2xpc3QpKSwKICAgICAgICAgICAgICAgICAgdGVjaG5vbG9neSA9IHJlcCh0ZWNobm9sb2d5LCBsZW5ndGgocGxpZXJfbGlzdCkpKSAlPiUKICAgIGRwbHlyOjpzZWxlY3QoLUwxKQp9CmBgYAoKCmBgYHtyfQpudW1fbHZzX2RmIDwtIGRwbHlyOjpiaW5kX3Jvd3MoCiAgImFsbCIgPSBnZXRfbnVtX2x2c19kZihib3RoX3RlY2hfcGxpZXJfbGlzdCksCiAgIm1pY3JvYXJyYXkiID0gZ2V0X251bV9sdnNfZGYobWljcm9hcnJheV9wbGllcl9saXN0LCAibWljcm9hcnJheSIpLAogICJybmFzZXEiID0gZ2V0X251bV9sdnNfZGYocm5hc2VxX3BsaWVyX2xpc3QsICJybmFzZXEiKQopCgpjb3ZlcmFnZV9kZiA8LSBjb3ZlcmFnZV9kZiAlPiUKICBkcGx5cjo6YmluZF9yb3dzKG51bV9sdnNfZGYpIAoKcmVhZHI6OndyaXRlX3Rzdihjb3ZlcmFnZV9kZiwgCiAgICAgICAgICAgICAgICAgZmlsZS5wYXRoKHJlc3VsdF9kaXIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICJ0ZXN0X2NvbXBlbmRpdW1fcGF0aHdheV9jb3ZlcmFnZS50c3YiKSkKYGBgCgoKIyMjIyBTYXZlIG1vZGVscyB0byBmaWxlCgpgYGB7cn0Kc2F2ZVJEUyhib3RoX3RlY2hfcGxpZXJfbGlzdCwgCiAgICAgICAgZmlsZSA9IGZpbGUucGF0aChwbGllcl9yZXN1bHRfZGlyLCJib3RoX3RlY2hub2xvZ2llc19QTElFUl9saXN0LlJEUyIpKQpzYXZlUkRTKG1pY3JvYXJyYXlfcGxpZXJfbGlzdCwgCiAgICAgICAgZmlsZSA9IGZpbGUucGF0aChwbGllcl9yZXN1bHRfZGlyLCAibWljcm9hcnJheV9QTElFUl9saXN0LlJEUyIpKQpzYXZlUkRTKHJuYXNlcV9wbGllcl9saXN0LCAKICAgICAgICBmaWxlID0gZmlsZS5wYXRoKHBsaWVyX3Jlc3VsdF9kaXIsICJybmFzZXFfUExJRVJfbGlzdC5SRFMiKSkKYGBgCgojIyBQbG90dGluZwoKYGBge3J9CiMgdGhlc2UgbWV0cmljcyBhcmUgb24gZGlmZmVyZW50IHNjYWxlcywgc28gd2UnbGwgcGxvdCB0aGVtIHNlcGFyYXRlbHkgYW5kCiMgdGhlbiBhc3NlbWJsZSB0aGVtIGludG8gYSBzaW5nbGUsIG11bHRpcGFuZWwgcGxvdApwbG90X2xpc3QgPC0gCiAgbGFwcGx5KGMoIk51bWJlciBvZiBMVnMiLCAiUGF0aHdheSBDb3ZlcmFnZSIsICJMViBQcm9wb3J0aW9uIiksCiAgICAgICAgIGZ1bmN0aW9uKHgpIAogICAgICAgICAgIGNvdmVyYWdlX2RmICU+JQogICAgICAgICAgIGRwbHlyOjptdXRhdGUodGVjaG5vbG9neSA9IHRvdXBwZXIodGVjaG5vbG9neSkpICU+JQogICAgICAgICAgIGRwbHlyOjpmaWx0ZXIobWV0cmljID09IHgpICU+JQogICAgICAgICAgIGdncGxvdDI6OmdncGxvdChnZ3Bsb3QyOjphZXMoeCA9IHRlY2hub2xvZ3ksIHkgPSB2YWx1ZSkpICsKICAgICAgICAgICBnZ3Bsb3QyOjpnZW9tX2JveHBsb3QoKSArCiAgICAgICAgICAgZ2dwbG90Mjo6Z2VvbV9qaXR0ZXIoYWxwaGEgPSAwLjIpICsKICAgICAgICAgICBnZ3Bsb3QyOjp0aGVtZV9idygpICsKICAgICAgICAgICBnZ3Bsb3QyOjpnZ3RpdGxlKHgpICsKICAgICAgICAgICBnZ3Bsb3QyOjp0aGVtZShwbG90LnRpdGxlID0gZ2dwbG90Mjo6ZWxlbWVudF90ZXh0KGhqdXN0ID0gMC41LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZmFjZSA9ICJib2xkIiksCiAgICAgICAgICAgICAgICAgICAgICAgICAgdGV4dCA9IGdncGxvdDI6OmVsZW1lbnRfdGV4dChzaXplID0gMTIpLAogICAgICAgICAgICAgICAgICAgICAgICAgIGF4aXMudGV4dC54ID0gZ2dwbG90Mjo6ZWxlbWVudF90ZXh0KAogICAgICAgICAgICAgICAgICAgICAgICAgICAgYW5nbGUgPSA0NSwgdmp1c3QgPSAwLjUKICAgICAgICAgICAgICAgICAgICAgICAgICApKSkKCmNvd3Bsb3Q6OnBsb3RfZ3JpZChwbG90bGlzdCA9IHBsb3RfbGlzdCwgbmNvbCA9IDMpCmBgYAoKYGBge3J9CmdncGxvdDI6Omdnc2F2ZShmaWxlLnBhdGgocGxvdF9kaXIsIAogICAgICAgICAgICAgICAgICAgICAgICAgICJ0ZXN0X2NvbXBlbmRpdW1fcGxpZXJfbWV0cmljc19ieV90ZWNoLnBuZyIpLAogICAgICAgICAgICAgICAgaGVpZ2h0ID0gOC41LCB3aWR0aCA9IDExLAogICAgICAgICAgICAgICAgcGxvdCA9IGdncGxvdDI6Omxhc3RfcGxvdCgpKSAKYGBgCgoKIyMgU2Vzc2lvbiBpbmZvCgpgYGB7cn0Kc2Vzc2lvbkluZm8oKQpgYGAKCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUnVuIFBMSUVSIG9uIHRlc3QgY29tcGVuZGl1bSIKb3V0cHV0OiAKICBodG1sX25vdGVib29rOgogICAgdG9jOiBUUlVFCiAgICB0b2NfZmxvYXQ6IFRSVUUKYXV0aG9yOiBKLiBUYXJvbmkgZm9yIENDREwKZGF0ZTogMjAxOQotLS0KCkRvIHdlICJnZXQgbW9yZSBiaW9sb2d5IiBvdXQgb2YgdGhlIGNvbWJpbmVkIHRlY2hub2xvZ3kgdGVzdCBjb21wZW5kaXVtIHRoYW4gd2UKZ2V0IG91dCBvZiBlYWNoIG9mIHRoZSB0ZWNobm9sb2dpZXMgaW5kaXZpZHVhbGx5PwoKV2UnbGwgdXNlIHRoZSBtZXRyaWNzIHdlIGRldmVsb3BlZCBhcyBwYXJ0IG9mIHRoZSBNdWx0aVBMSUVSIHByb2plY3QgaGVyZS4KU3BlY2lmaWNhbGx5LCBkbyB3ZSBnZXQgaGlnaGVyIHBhdGh3YXkgY292ZXJhZ2UgZm9yIGEgbW9kZWwgdHJhaW5lZCBvbgp0aGUgZHVhbC10ZWNobm9sb2d5IHRlc3QgY29tcGVuZGl1bSB2cy4gdGhvc2UgdHJhaW5lZCBvbiB0aGUgaW5kaXZpZHVhbAp0ZWNobm9sb2d5IGNvbXBlbmRpYT8KCiMjIFNldHVwCgojIyMjIEZ1bmN0aW9ucwoKU291cmNlIHRoZSBtb3N0IHJlY2VudCB2ZXJzaW9uIG9mIHRoZSBNdWx0aVBMSUVSIHV0aWxzIGZyb20gR2l0aHViCgpgYGB7cn0Kc291cmNlKCJodHRwczovL2dpdGh1Yi5jb20vZ3JlZW5lbGFiL211bHRpLXBsaWVyL3Jhdy83YzU2YTI4NjdmOWYwOGY3YmNkMzYxNzg3NWM3YzJkYmU4ODZjYmViL3V0aWwvcGxpZXJfdXRpbC5SIikKIyB3ZSBvbmx5IHdhbnQgR2V0UGF0aHdheUNvdmVyYWdlCnJtKGxpc3QgPSBzZXRkaWZmKGxzKCksICJHZXRQYXRod2F5Q292ZXJhZ2UiKSkKYGBgCgpgYGB7cn0KYCU+JWAgPC0gZHBseXI6OmAlPiVgCmBgYAoKYGBge3J9CiMgd2UnbGwgdHJhaW4gMyBQTElFUiBtb2RlbHM6IG1hdHJpeCB3aXRoIGJvdGggdGVjaG5vbG9naWVzLCBtaWNyb2FycmF5IHNhbXBsZXMKIyBvbmx5LCBhbmQgUk5BLXNlcSBzYW1wbGVzIG9ubHkKUExJRVJXcmFwcGVyIDwtIGZ1bmN0aW9uKGV4cHJzX21hdCwgY29tbW9uX2dlbmVzLCBwYXRod2F5X21hdCwgc2VlZCA9IDEyMykgewogIAogICMgc2V0IHNlZWQgZm9yIHJlcHJvZHVjaWJpbGl0eQogIHNldC5zZWVkKHNlZWQpCiAgCiAgIyB6LXNjb3JlIHRoZSBleHByZXNzaW9uIGRhdGEKICByb3dfbm9ybV9leHBycyA8LSBQTElFUjo6cm93Tm9ybShleHByc19tYXRbY29tbW9uX2dlbmVzLCBdKQogIAogICMgaG93IG1hbnkgInNpZ25pZmljYW50IFBDcyIgdmlhIHRoZSBlbGJvdyBtZXRob2QgLS0gd2UgdXNlIHRoaXMgdG8gc2V0IGsgd2hlbgogICMgdHJhaW5pbmcgYSBQTElFUiBtb2RlbAogIG51bV9wY3MgPC0gUExJRVI6Om51bS5wYyhyb3dfbm9ybV9leHBycykKICAKICByZXR1cm4oUExJRVI6OlBMSUVSKGRhdGEgPSByb3dfbm9ybV9leHByc1tjb21tb25fZ2VuZXMsIF0sIAogICAgICAgICAgICAgICAgICAgICAgcHJpb3JNYXQgPSBwYXRod2F5X21hdFtjb21tb25fZ2VuZXMsIF0sCiAgICAgICAgICAgICAgICAgICAgICBrID0gcm91bmQobnVtX3BjcyAqIDEuMykpKQp9CmBgYAoKIyMjIyBMaWJyYXJpZXMKCmBgYHtyfQojIFBMSUVSIGluc3RhbGxhdGlvbgojIEJpb2NNYW5hZ2VyOjppbnN0YWxsKCJxdmFsdWUiLCB1cGRhdGUgPSBGQUxTRSkKIyBkZXZ0b29sczo6aW5zdGFsbF9naXRodWIoJ3dnbWFvL1BMSUVSJywKIyAgICAgICAgICAgICAgICAgICAgICAgICAgcmVmID0gJ2EyZDRhMmFhMzQzZjllZDRiOWI5NDVjMDQzMjZiZWJkMzE1MzNkNGQnLAojICAgICAgICAgICAgICAgICAgICAgICAgICBkZXBlbmRlbmNpZXMgPSBUUlVFKQojIGluc3RhbGwucGFja2FnZXMoImNvd3Bsb3QiKQpgYGAKCmBgYHtyfQpsaWJyYXJ5KFBMSUVSKQpsaWJyYXJ5KG9yZy5Eci5lZy5kYikKYGBgCgojIyMjIERpcmVjdG9yaWVzCgpgYGB7cn0KcGF0aHdheV9kaXIgPC0gZmlsZS5wYXRoKCJkYXRhIiwgInBhdGh3YXlzIikKcmVzdWx0X2RpciA8LSAicmVzdWx0cyIKcGxvdF9kaXIgPC0gInBsb3RzIgpgYGAKClJlc3VsdHMgZGlyZWN0b3J5IHNwZWNpZmljYWxseSBmb3IgaG9sZGluZyB0aGUgUExJRVIgbW9kZWxzCgpgYGB7cn0KcGxpZXJfcmVzdWx0X2RpciA8LSBmaWxlLnBhdGgocmVzdWx0X2RpciwgIlBMSUVSX21vZGVscyIpCmRpci5jcmVhdGUocGxpZXJfcmVzdWx0X2Rpciwgc2hvd1dhcm5pbmdzID0gRkFMU0UsIHJlY3Vyc2l2ZSA9IFRSVUUpCmBgYAoKIyMgUmVhZCBpbiBkYXRhCgojIyMgUHJpb3IgaW5mb3JtYXRpb24gbWF0cmljZXMKCldlIG5lZWQgdG8gZ2V0IHRoZSAzIHBhdGh3YXkgcHJpb3IgaW5mb3JtYXRpb24gbWF0cmljZXMgd2UgaGF2ZTogZGV2ZWxvcG1lbnRhbApzdGFnZSwgdGlzc3VlcyAoYmFzZWQgb24gYWR1bHQgb25seSksIGFuZCB0aGUgd2lraXBhdGh3YXlzIGludG8gYSBzaW5nbGUgCm1hdHJpeC4KV2UgY2FuIGRvIHRoaXMgd2l0aCB0aGUgYFBMSUVSOjpjb21iaW5lUGF0aHNgIGZ1bmN0aW9uLgoKYGBge3J9CiMgcmVhZCBpbiB0aGUgdGhyZWUgaW5kaXZpZHVhbCBtYXRyaWNlcyB3ZSBwcmVwcGVkIGluIAojIDA5LXByaW9yX2luZm9ybWF0aW9uX21hdHJpeAp3aWtpcGF0aHdheV9tYXQgPC0gcmVhZFJEUyhmaWxlLnBhdGgocGF0aHdheV9kaXIsIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIkRhbmlvX3JlcmlvX3dpa2lwYXRod2F5c19wcmlvcl9pbmZvLlJEUyIpKQphZHVsdF90aXNzdWVfbWF0IDwtIHJlYWRSRFMoZmlsZS5wYXRoKHBhdGh3YXlfZGlyLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJaRklOX2FkdWx0X3Rpc3N1ZV9wcmlvcl9pbmZvLlJEUyIpKQpkZXZfc3RhZ2VfbWF0IDwtIHJlYWRSRFMoZmlsZS5wYXRoKHBhdGh3YXlfZGlyLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJaRklOX3N0YWdlc19wcmlvcl9pbmZvLlJEUyIpKQojIGNvbWJpbmUgaW50byBhIHNpbmdsZSBtYXRyaXggZm9yIHVzZSB3aXRoIFBMSUVSCmNvbWJpbmVfcGF0aF9tYXQgPC0gUExJRVI6OmNvbWJpbmVQYXRocyhhZHVsdF90aXNzdWVfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGV2X3N0YWdlX21hdCwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHdpa2lwYXRod2F5X21hdCkKIyB3ZSBubyBsb25nZXIgbmVlZCB0aGUgaW5kaXZpZHVhbCBtYXRyaWNlcwpybShhZHVsdF90aXNzdWVfbWF0LCBkZXZfc3RhZ2VfbWF0LCB3aWtpcGF0aHdheV9tYXQpCmBgYAoKIyMjIFRlc3QgY29tcGVuZGl1bQoKV2UgbmVlZCB0byBjb252ZXJ0IHRoZSB0ZXN0IGNvbXBlbmRpdW0gZ2VuZSBpZGVudGlmaWVycyBmcm9tIEVuc2VtYmwgZ2VuZSBJRHMgdG8KWkZJTiBpZGVudGlmaWVycyBzbyB0aGF0IHRoZSBJRHMgaW4gdGhlIHByaW9yIGluZm9ybWF0aW9uIGFuZCB0aGUgZXhwcmVzc2lvbgpkYXRhIG1hdGNoLgoKYGBge3J9CiMgZmlyc3Qgd2UgbmVlZCB0byByZWFkIGluIHRoZSAKZXhwcnNfZmlsZSA8LSBmaWxlLnBhdGgoImRhdGEiLCAibGFyZ2VyX2NvbXBlbmRpdW1fZXhwcnNfbWF0LlJEUyIpCmV4cHJzX21hdCA8LSByZWFkUkRTKGV4cHJzX2ZpbGUpCmBgYAoKV2UgZXhwZWN0IHRoYXQgdGhlcmUgd2lsbCBiZSBhIDE6bWFueSBtYXBwaW5nIGhlcmUsIHNvIHdlJ2xsIHVzZSB0aGUgb3B0aW9uCndoZXJlIG9ubHkgdGhlIGZpcnN0IHRoaW5nIHRoYXQgY29tZXMgYmFjayBpcyByZXR1cm5lZCBieSBzZXR0aW5nIApgbXVsdGlWYWxzID0gImZpcnN0ImAgKG5vdGUgdGhhdCB0aGlzIGlzIHRoZSBkZWZhdWx0IGJlaGF2aW9yKS4KCmBgYHtyfQojIEVOU0RBUkcgLT4gWkRCLUdFTkUKemZpbl9pZHMgPC0gbWFwSWRzKG9yZy5Eci5lZy5kYiwga2V5cyA9IHJvd25hbWVzKGV4cHJzX21hdCksCiAgICAgICAgICAgICAgICAgICBjb2x1bW4gPSAiWkZJTiIsIGtleXR5cGUgPSAiRU5TRU1CTCIsCiAgICAgICAgICAgICAgICAgICBtdWx0aVZhbHMgPSAiZmlyc3QiKQoKIyB0aGVzZSBzaG91bGQgYmUgaW4gdGhlIHNhbWUgb3JkZXIsIGJ1dCBvdXQgb2YgYW4gYWJ1bmRhbmNlIG9mIGNhdXRpb24hCmlmIChhbGwuZXF1YWwocm93bmFtZXMoZXhwcnNfbWF0KSwgbmFtZXMoemZpbl9pZHMpKSkgewogIHJvd25hbWVzKGV4cHJzX21hdCkgPC0gemZpbl9pZHMKfSBlbHNlIHsKICBzdG9wKCJTb21ldGhpbmcgd2VudCB3cm9uZyEiKQp9CmBgYAoKIyMgUExJRVIKCldlJ3JlIGdvaW5nIHRvIGRvIGZpdmUgcmVwZWF0cy4KCmBgYHtyfQpzZXQuc2VlZCgxMjMpCnNlZWRzIDwtIHNhbXBsZSgxOjEwMDAwMCwgNSkKbmFtZXMoc2VlZHMpIDwtIHNlZWRzCmBgYAoKIyMjIEJvdGggdGVjaG5vbG9naWVzCgpgYGB7cn0KIyBmaW5kIHRoZSBjb21tb24gZ2VuZXMgYmV0d2VlbiB0aGUgZXhwcmVzc2lvbiBtYXRyaXggYW5kIHRoZSBwcmlvciBpbmZvcm1hdGlvbgojIG1hdHJpeApjb21tb25fZ2VuZXMgPC0gUExJRVI6OmNvbW1vblJvd3MoZXhwcnNfbWF0LCBjb21iaW5lX3BhdGhfbWF0KQoKIyB0aGlzIGV4cHJlc3Npb24gbWF0cml4IGluY2x1ZGVzIHNhbXBsZXMgZnJvbSBib3RoIHRlY2hub2xvZ2llcwpib3RoX3RlY2hfcGxpZXJfbGlzdCA8LSAKICBsYXBwbHkoc2VlZHMsCiAgICAgICAgIGZ1bmN0aW9uKHgpIFBMSUVSV3JhcHBlcihleHByc19tYXQgPSBleHByc19tYXQsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb21tb25fZ2VuZXMgPSBjb21tb25fZ2VuZXMsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBwYXRod2F5X21hdCA9IGNvbWJpbmVfcGF0aF9tYXQsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzZWVkID0geCkKICApCmBgYAoKQ2hlY2sgdGhlIHBhdGh3YXkgY292ZXJhZ2UgZm9yIHRoZXNlIG1vZGVscwoKYGBge3J9CmJvdGhfdGVjaF9wYXRod2F5X2NvdmVyYWdlIDwtIHJlc2hhcGUyOjptZWx0KGxhcHBseShib3RoX3RlY2hfcGxpZXJfbGlzdCwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKQpgYGAKCiMjIyBNaWNyb2FycmF5IG9ubHkKCmBgYHtyfQptaWNyb2FycmF5X21hdCA8LSBleHByc19tYXRbLCAtZ3JlcCgiU1JSfEVSUnxEUlIiLCBjb2xuYW1lcyhleHByc19tYXQpKV0KbWljcm9hcnJheV9wbGllcl9saXN0IDwtCiAgbGFwcGx5KHNlZWRzLCAKICAgICAgICAgZnVuY3Rpb24oeCkgUExJRVJXcmFwcGVyKGV4cHJzX21hdCA9IG1pY3JvYXJyYXlfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29tbW9uX2dlbmVzID0gY29tbW9uX2dlbmVzLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2VlZCA9IHgpCiAgKQptaWNyb2FycmF5X3BhdGh3YXlfY292ZXJhZ2UgPC0gcmVzaGFwZTI6Om1lbHQobGFwcGx5KG1pY3JvYXJyYXlfcGxpZXJfbGlzdCwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKQpgYGAKCiMjIyBSTkEtc2VxIG9ubHkKCmBgYHtyfQpybmFzZXFfbWF0IDwtIGV4cHJzX21hdFssIGdyZXAoIlNSUnxFUlJ8RFJSIiwgY29sbmFtZXMoZXhwcnNfbWF0KSldCnJuYXNlcV9wbGllcl9saXN0IDwtIAogIGxhcHBseShzZWVkcywgCiAgICAgICAgIGZ1bmN0aW9uKHgpIFBMSUVSV3JhcHBlcihleHByc19tYXQgPSBybmFzZXFfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgY29tbW9uX2dlbmVzID0gY29tbW9uX2dlbmVzLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcGF0aHdheV9tYXQgPSBjb21iaW5lX3BhdGhfbWF0LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2VlZCA9IHggKQogICAgICAgICApCnJuYXNlcV9wYXRod2F5X2NvdmVyYWdlIDwtIHJlc2hhcGUyOjptZWx0KGxhcHBseShybmFzZXFfcGxpZXJfbGlzdCwgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBHZXRQYXRod2F5Q292ZXJhZ2UpKQpgYGAKCiMjIyMgV3JhbmdsZSBwYXRod2F5IGNvdmVyYWdlIHJlc3VsdHMgCgpBbmQgd3JpdGUgdG8gZmlsZQoKYGBge3J9CmNvdmVyYWdlX2RmIDwtIGRwbHlyOjpiaW5kX3Jvd3MobGlzdCgKICAiYWxsIiA9IGJvdGhfdGVjaF9wYXRod2F5X2NvdmVyYWdlLAogICJtaWNyb2FycmF5IiA9IG1pY3JvYXJyYXlfcGF0aHdheV9jb3ZlcmFnZSwKICAicm5hc2VxIj0gcm5hc2VxX3BhdGh3YXlfY292ZXJhZ2UpLAogIC5pZCA9ICJ0ZWNobm9sb2d5IgopICU+JQogIGRwbHlyOjptdXRhdGUobWV0cmljID0gTDIsIHNlZWQgPSBMMSkgJT4lCiAgZHBseXI6OnNlbGVjdChjKC1MMiwgLUwxKSkgJT4lCiAgZHBseXI6OmZpbHRlcihtZXRyaWMgIT0gInNpZy5wYXRod2F5LmJ5Lmx2IikgJT4lCiAgZHBseXI6Om11dGF0ZShtZXRyaWMgPSBkcGx5cjo6Y2FzZV93aGVuKAogICAgbWV0cmljID09ICJwYXRod2F5IiB+ICJQYXRod2F5IENvdmVyYWdlIiwKICAgIG1ldHJpYyA9PSAibHYiIH4gIkxWIFByb3BvcnRpb24iCiAgKSkKYGBgCgpOdW1iZXIgb2YgbGF0ZW50IHZhcmlhYmxlcwoKYGBge3J9CmdldF9udW1fbHZzX2RmIDwtIGZ1bmN0aW9uKHBsaWVyX2xpc3QsIHRlY2hub2xvZ3kgPSAiYWxsIikgewogIHJlc2hhcGUyOjptZWx0KGxhcHBseShwbGllcl9saXN0LCBmdW5jdGlvbih4KSBucm93KHgkQikpKSAlPiUKICAgIGRwbHlyOjptdXRhdGUoc2VlZCA9IEwxLCBtZXRyaWMgPSByZXAoIk51bWJlciBvZiBMVnMiLCAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbGVuZ3RoKHBsaWVyX2xpc3QpKSwKICAgICAgICAgICAgICAgICAgdGVjaG5vbG9neSA9IHJlcCh0ZWNobm9sb2d5LCBsZW5ndGgocGxpZXJfbGlzdCkpKSAlPiUKICAgIGRwbHlyOjpzZWxlY3QoLUwxKQp9CmBgYAoKCmBgYHtyfQpudW1fbHZzX2RmIDwtIGRwbHlyOjpiaW5kX3Jvd3MoCiAgImFsbCIgPSBnZXRfbnVtX2x2c19kZihib3RoX3RlY2hfcGxpZXJfbGlzdCksCiAgIm1pY3JvYXJyYXkiID0gZ2V0X251bV9sdnNfZGYobWljcm9hcnJheV9wbGllcl9saXN0LCAibWljcm9hcnJheSIpLAogICJybmFzZXEiID0gZ2V0X251bV9sdnNfZGYocm5hc2VxX3BsaWVyX2xpc3QsICJybmFzZXEiKQopCgpjb3ZlcmFnZV9kZiA8LSBjb3ZlcmFnZV9kZiAlPiUKICBkcGx5cjo6YmluZF9yb3dzKG51bV9sdnNfZGYpIAoKcmVhZHI6OndyaXRlX3Rzdihjb3ZlcmFnZV9kZiwgCiAgICAgICAgICAgICAgICAgZmlsZS5wYXRoKHJlc3VsdF9kaXIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICJsYXJnZXJfY29tcGVuZGl1bV9wYXRod2F5X2NvdmVyYWdlLnRzdiIpKQpgYGAKCgojIyMjIFNhdmUgbW9kZWxzIHRvIGZpbGUKCmBgYHtyfQpzYXZlUkRTKGJvdGhfdGVjaF9wbGllcl9saXN0LCAKICAgICAgICBmaWxlID0gZmlsZS5wYXRoKHBsaWVyX3Jlc3VsdF9kaXIsCiAgICAgICAgICAgICAgICAgICAgICAgICAibGFyZ2VyX2JvdGhfdGVjaG5vbG9naWVzX1BMSUVSX2xpc3QuUkRTIikpCnNhdmVSRFMobWljcm9hcnJheV9wbGllcl9saXN0LCAKICAgICAgICBmaWxlID0gZmlsZS5wYXRoKHBsaWVyX3Jlc3VsdF9kaXIsIAogICAgICAgICAgICAgICAgICAgICAgICAgImxhcmdlcl9taWNyb2FycmF5X1BMSUVSX2xpc3QuUkRTIikpCnNhdmVSRFMocm5hc2VxX3BsaWVyX2xpc3QsIAogICAgICAgIGZpbGUgPSBmaWxlLnBhdGgocGxpZXJfcmVzdWx0X2RpciwgImxhcmdlcl9ybmFzZXFfUExJRVJfbGlzdC5SRFMiKSkKYGBgCgojIyBQbG90dGluZwoKYGBge3J9CiMgdGhlc2UgbWV0cmljcyBhcmUgb24gZGlmZmVyZW50IHNjYWxlcywgc28gd2UnbGwgcGxvdCB0aGVtIHNlcGFyYXRlbHkgYW5kCiMgdGhlbiBhc3NlbWJsZSB0aGVtIGludG8gYSBzaW5nbGUsIG11bHRpcGFuZWwgcGxvdApwbG90X2xpc3QgPC0gCiAgbGFwcGx5KGMoIk51bWJlciBvZiBMVnMiLCAiUGF0aHdheSBDb3ZlcmFnZSIsICJMViBQcm9wb3J0aW9uIiksCiAgICAgICAgIGZ1bmN0aW9uKHgpIAogICAgICAgICAgIGNvdmVyYWdlX2RmICU+JQogICAgICAgICAgIGRwbHlyOjptdXRhdGUodGVjaG5vbG9neSA9IHRvdXBwZXIodGVjaG5vbG9neSkpICU+JQogICAgICAgICAgIGRwbHlyOjpmaWx0ZXIobWV0cmljID09IHgpICU+JQogICAgICAgICAgIGdncGxvdDI6OmdncGxvdChnZ3Bsb3QyOjphZXMoeCA9IHRlY2hub2xvZ3ksIHkgPSB2YWx1ZSkpICsKICAgICAgICAgICBnZ3Bsb3QyOjpnZW9tX2JveHBsb3QoKSArCiAgICAgICAgICAgZ2dwbG90Mjo6Z2VvbV9qaXR0ZXIoYWxwaGEgPSAwLjIpICsKICAgICAgICAgICBnZ3Bsb3QyOjp0aGVtZV9idygpICsKICAgICAgICAgICBnZ3Bsb3QyOjpnZ3RpdGxlKHgpICsKICAgICAgICAgICBnZ3Bsb3QyOjp0aGVtZShwbG90LnRpdGxlID0gZ2dwbG90Mjo6ZWxlbWVudF90ZXh0KGhqdXN0ID0gMC41LAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZmFjZSA9ICJib2xkIiksCiAgICAgICAgICAgICAgICAgICAgICAgICAgdGV4dCA9IGdncGxvdDI6OmVsZW1lbnRfdGV4dChzaXplID0gMTIpLAogICAgICAgICAgICAgICAgICAgICAgICAgIGF4aXMudGV4dC54ID0gZ2dwbG90Mjo6ZWxlbWVudF90ZXh0KAogICAgICAgICAgICAgICAgICAgICAgICAgICAgYW5nbGUgPSA0NSwgdmp1c3QgPSAwLjUKICAgICAgICAgICAgICAgICAgICAgICAgICApKSkKCmNvd3Bsb3Q6OnBsb3RfZ3JpZChwbG90bGlzdCA9IHBsb3RfbGlzdCwgbmNvbCA9IDMpCmBgYAoKYGBge3J9CmdncGxvdDI6Omdnc2F2ZShmaWxlLnBhdGgocGxvdF9kaXIsIAogICAgICAgICAgICAgICAgICAgICAgICAgICJsYXJnZXJfY29tcGVuZGl1bV9wbGllcl9tZXRyaWNzX2J5X3RlY2gucG5nIiksCiAgICAgICAgICAgICAgICBoZWlnaHQgPSA4LjUsIHdpZHRoID0gMTEsCiAgICAgICAgICAgICAgICBwbG90ID0gZ2dwbG90Mjo6bGFzdF9wbG90KCkpIApgYGAKCgojIyBTZXNzaW9uIGluZm8KCmBgYHtyfQpzZXNzaW9uSW5mbygpCmBgYAoK</div>
 
 
 </div>

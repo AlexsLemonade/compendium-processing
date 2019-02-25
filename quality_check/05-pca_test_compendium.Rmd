@@ -48,7 +48,8 @@ dir.create(plot_dir, showWarnings = FALSE)
 Reading in the compendium expression data
 
 ```{r}
-compendium_exprs_df <- readr::read_tsv(compendium_exprs_file)
+compendium_exprs_df <- readr::read_tsv(compendium_exprs_file,
+                                       progress = FALSE)
 ```
 
 We can _infer_ which technology a sample is "part of" from the column names
@@ -85,12 +86,31 @@ saveRDS(exprs_mat, file.path("data", "larger_compendium_exprs_mat.RDS"))
 pca_results <- prcomp(t(exprs_mat))
 ```
 
-### Plotting
+Prepare as `data.frame` for use elsewhere
+
+```{r}
+pc_df <- pca_results$x[, 1:2] %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("Sample")
+```
 
 ```{r}
 # get the technology labels as a data.frame for plotting
 technology_df <- as.data.frame(compendium_technology_labels) 
+```
 
+```{r}
+pc_df <- technology_df %>%
+  dplyr::mutate("Sample" = sample_names) %>%
+  dplyr::inner_join(y = pc_df, by = "Sample")
+
+readr::write_tsv(pc_df, path = file.path("results",
+                                         "larger_compendium_PC1and2.tsv"))
+```
+
+### Plotting
+
+```{r}
 # plotting with autoplot for PCA
 autoplot(pca_results, data = technology_df, alpha = 0.5, 
          colour = 'compendium_technology_labels', scale = 0) +
@@ -130,4 +150,3 @@ dev.off()
 ```{r}
 sessionInfo()
 ```
-

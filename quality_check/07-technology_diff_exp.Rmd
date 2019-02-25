@@ -36,7 +36,7 @@ dir.create(results_dir, showWarnings = FALSE)
 Test compendium expression matrix
 
 ```{r}
-exprs_mat_file <- file.path("data", "refinebio_test_compendium_exprs_mat.RDS")
+exprs_mat_file <- file.path("data", "larger_compendium_exprs_mat.RDS")
 exprs_mat <- readRDS(exprs_mat_file)
 ```
 
@@ -45,7 +45,7 @@ Generate technology labels using the sample names
 ```{r}
 sample_names <- colnames(exprs_mat)
 compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
-compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNASEQ"
+compendium_technology_labels[grep("SRR|ERR|DRR", sample_names)] <- "RNASEQ"
 ```
 
 ### Differential expression
@@ -66,7 +66,7 @@ Save to file
 ```{r}
 readr::write_tsv(diff_exp_stats, 
                  file.path(results_dir, 
-                           "test_compendium_diff_exprs_technologies.tsv"))
+                           "larger_compendium_diff_exprs_technologies.tsv"))
 ```
 
 Genes with negative `t` values have lower values in RNA-seq samples.
@@ -149,7 +149,8 @@ As noted above:
 So shorter genes tend to have lower expression values in RNA-seq data.
 
 ```{r}
-ggplot2::ggsave(filename = file.path("plots", "tstat_length_scatter.png"),
+scatter_file <- file.path("plots", "larger_compendium_tstat_length_scatter.png")
+ggplot2::ggsave(filename = scatter_file,
                 plot = ggplot2::last_plot())
 ```
 

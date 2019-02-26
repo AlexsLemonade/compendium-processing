@@ -1,0 +1,200 @@
+---
+title: "Technical bias in RNA-seq data from larger compendium"
+output: 
+  html_notebook:
+    toc: TRUE
+    toc_float: TRUE
+author: J. Taroni for CCDL
+date: 2019
+---
+
+The PCA plot for the larger zebrafish test compendium (`05-pca_test_compendium`)
+showed a separation between what may be 2 groups of RNA-seq samples in PC1.
+
+Here, we'll dig into what may underlie the difference between the two clusters.
+We suspect it may have to do with sample prep; specifically, it may be the
+selection strategy (poly-A enrichment vs. rRNA depletion).
+First, we need to identify a random selection of samples that we will then
+read the experimental methods for.
+
+```{r}
+`%>%` <- dplyr::`%>%`
+library(ggplot2)
+```
+
+```{r}
+pc_file <- file.path("results", "larger_compendium_PC1and2.tsv")
+pc_df <- readr::read_tsv(pc_file)
+```
+
+```{r}
+seq_df <- pc_df %>%
+  dplyr::filter(compendium_technology_labels != "MICROARRAY")
+```
+
+We're going to somewhat arbitrarily divide samples into two groups on the basis
+of their values for PC1.
+
+```{r}
+seq_df <- seq_df %>%
+  dplyr::mutate(Group = dplyr::case_when(
+    PC1 > 0 ~ "positive",
+    PC1 < 0 ~ "negative"
+  ))
+```
+
+```{r}
+seq_df %>%
+  ggplot(aes(x = PC1, y = PC2, colour = Group)) +
+  geom_point() +
+  theme_bw()
+```
+
+This is probably close enough for what we're after here.
+
+```{r}
+set.seed(6345)
+```
+
+```{r}
+positive_samples <- sample(seq_df %>% 
+                             dplyr::filter(Group == "positive") %>% 
+                             dplyr::pull(Sample), 
+                           50)
+```
+
+```{r}
+negative_samples <- sample(seq_df %>% 
+                             dplyr::filter(Group == "negative") %>% 
+                             dplyr::pull(Sample), 
+                           50)
+```
+
+We took a look at a handful of samples and couldn't discern a pattern of poly-A
+enrichment vs. rRNA depletion.
+So we'll dig a bit deeper into metadata from the `salmon quant` runs themselves.
+
+```{r}
+extract_sample_metadata <- function(accession_code) {
+  
+  api_url <- paste0("https://api.refine.bio/samples/?accession_code=", 
+                    accession_code)
+  sample_info <- jsonlite::fromJSON(api_url)
+  
+  # what project accession number did this come from?
+  project_accession <- NA
+  reference_url <- sample_info$results$protocol_info[[1]]$Reference
+  if (!is.null(reference_url))
+    project_accession <- stringr::word(reference_url, -1, sep = "/")
+  
+  # the sample annotations contain all the relevant information about the salmon
+  # run
+  sample_annotations <- sample_info$results$results[[1]]$annotations
+  
+  # there are a bunch of empty data.frame -- we don't want that! so let's find
+  # the index of what we want and extract it
+  nonempty_index<- which(unlist(lapply(lapply(sample_annotations, colnames), 
+                                       length)) != 0)
+  # if there's more than one nonempty data.frame, pick the more recent one?
+  sample_info_df <- sample_annotations[[nonempty_index[1]]]$data
+  
+  # TODO: this can probably could use rlang to clean repetition up
+  percent_mapped <- sample_info_df %>%
+    dplyr::filter(!is.na(percent_mapped)) %>%
+    dplyr::pull(percent_mapped)
+  
+  num_reads <- sample_info_df %>%
+    dplyr::filter(!is.na(num_processed)) %>%
+    dplyr::pull(num_processed)
+  
+  # the library types inferred by salmon quant
+  library_type <- unique(unlist(sample_info_df$library_types))
+  # if more than one library type was detected, just report it as multiple
+  # this will require extra examination
+  if (length(library_type) > 1)
+    library_type <- "multiple"
+  
+  # compatible fragment ratio -- a measure of agreement with the inferred 
+  # library type
+  compatible_fragment_ratio <- sample_info_df %>%
+    dplyr::filter(!is.na(compatible_fragment_ratio)) %>%
+    dplyr::pull(compatible_fragment_ratio)
+  
+  # what length index was used?
+  index_length <- sample_info_df %>%
+    dplyr::filter(!is.na(index_length)) %>%
+    dplyr::pull(index_length)
+  
+  data.frame(
+    accession_code,
+    experiment = project_accession,
+    platform = sample_info$results$pretty_platform,
+    num_reads,
+    percent_mapped,
+    library_type,
+    compatible_fragment_ratio,
+    index_length
+  )
+  
+}
+```
+
+```{r}
+get_metadata_df <- function(accession_codes) {
+  # given a vector of sample accession codes, return a data.frame with the
+  # information returned by extract_sample_metadata
+  metadata_list <- lapply(accession_codes, extract_sample_metadata)
+  # metadata_list is a list of 1 row data.frames, so there will be 
+  # length(metadata_list) warnings about coercing to vector
+  metadata_df <- suppressWarnings(dplyr::bind_rows(metadata_list))
+}
+```
+
+Extract the relevant metadata for the positive samples
+
+```{r}
+positive_metadata_df <- get_metadata_df(positive_samples)
+positive_metadata_df %>%
+  dplyr::arrange(experiment)
+```
+
+Extract the relevant metadata for the negative samples
+
+```{r}
+negative_metadata_df <- get_metadata_df(negative_samples)
+negative_metadata_df %>%
+  dplyr::arrange(experiment)
+```
+
+Do all the negative samples come from very large experiments?
+Because `ERP008771` and `ERP006132` each have over 2000 samples.
+
+```{r}
+get_experiment_accession_code <- function(accession_code) {
+  api_url <- paste0("https://api.refine.bio/samples/?accession_code=", 
+                    accession_code)
+  sample_info <- jsonlite::fromJSON(api_url)
+  
+  # what project accession number did this come from?
+  project_accession <- NA
+  reference_url <- sample_info$results$protocol_info[[1]]$Reference
+  if (!is.null(reference_url))
+    project_accession <- stringr::word(reference_url, -1, sep = "/")
+}
+```
+
+```{r}
+all_negative_samples <- sort(seq_df %>% 
+  dplyr::filter(Group == "negative") %>% 
+  dplyr::pull(Sample))
+# sample every fiftieth sample
+indices <- seq(1, length(all_negative_samples), 25)
+```
+
+```{r}
+negative_experiment_accession_codes <- 
+  sapply(all_negative_samples[indices], get_experiment_accession_code)
+sort(unique(negative_experiment_accession_codes))
+```
+
+These are all from the Wellcome Trust Sanger Institute.

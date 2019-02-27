@@ -1,4 +1,4 @@
-RMSE	processing_method	repeat	imputation_method	missing_type
+RMSE	processing_method	seed	imputation_method	missing_type
 0.4025451192858823	BOTH LOG	1663	IterativeSVD	MRR
 0.31114718596528346	BOTH QN	1663	IterativeSVD	MRR
 0.6939250818417314	BOTH UN	1663	IterativeSVD	MRR

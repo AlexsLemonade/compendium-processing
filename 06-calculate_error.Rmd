@@ -5,13 +5,16 @@ date: 10/19/2018
 output: html_notebook
 ---
 
-```{r}
-# install.packages("Metrics")  # Metrics::rmse(actual, predicted)
-```
+## Functions and set up
 
 ```{r}
+# magrittr pipe
 `%>%` <- dplyr::`%>%`
+# we'll store results in a "results" directory
+dir.create("results", showWarnings = FALSE)
 ```
+
+## Read in data
 
 ```{r}
 # extract the seeds from the file names -- this is how we keep track of repeats
@@ -61,11 +64,7 @@ target <- read.delim(file.path("data", "qn_target",
 target <- as.vector(as.matrix(target))
 ```
 
-
-```{r}
-# we'll store results in a "results" directory
-dir.create("results", showWarnings = FALSE)
-```
+## Calculate RMSE
 
 ```{r}
 error_list <- list()
@@ -143,14 +142,16 @@ for (missing in missing_types) {
 }
 ```
 
+### Tidying
+
 ```{r}
 error_df <- reshape2::melt(error_list, value.name = "RMSE")
 colnames(error_df)[2:ncol(error_df)] <- c("processing_method",
-                                          "repeat", "imputation_method", 
+                                          "seed", "imputation_method", 
                                           "missing_type")
 error_df <- error_df %>%
   dplyr::mutate(processing_method = as.factor(processing_method),
-                `repeat` = as.factor(`repeat`),
+                seed = as.factor(seed),
                 missing_type = as.factor(missing_type),
                 imputation_method = as.factor(imputation_method)) %>%
   dplyr::mutate(imputation_method = 
@@ -170,6 +171,8 @@ error_df <- error_df %>%
 readr::write_tsv(error_df, 
                  file.path("results", "RMSE_all.tsv"))
 ```
+
+## Plotting
 
 ```{r}
 error_df %>%

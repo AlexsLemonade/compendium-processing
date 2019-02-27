@@ -33,5 +33,3 @@ salmon --no-version-check --threads=8 quant \
 	-o quants/SRP128941/SRR6466${i} \
 	--biasSpeedSamp 5 --seqBias --gcBias --dumpEq
 done
-
-

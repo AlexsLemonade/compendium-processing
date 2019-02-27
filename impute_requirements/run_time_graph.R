@@ -1,5 +1,9 @@
+# Make a graph of the run time results
+
 `%>%` <- dplyr::`%>%`
 library(ggplot2)
+
+dir.create("plots", showWarnings = FALSE)
 
 #### samples -------------------------------------------------------------------
 
@@ -34,6 +38,9 @@ samples_df %>%
        title = "KNN Impute (K=10)",
        subtitle = "n genes = 500")
 
+ggsave(filename = file.path("plots", "num_genes_constant.png"),
+       width = 5, height = 5)
+
 #### genes ---------------------------------------------------------------------
 
 genes_df <- data.frame(
@@ -58,6 +65,9 @@ genes_df %>%
        y = "run time (s)",
        title = "KNN Impute (K=10)",
        subtitle = "n samples = 500")
+
+ggsave(filename = file.path("plots", "num_samples_constant.png"),
+       width = 5, height = 5)
 
 #### "sweep" -------------------------------------------------------------------
 

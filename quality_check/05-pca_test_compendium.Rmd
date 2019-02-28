@@ -1,0 +1,151 @@
+---
+title: "PCA on zebrafish test compendium"
+output: 
+  html_notebook:
+    toc: TRUE
+    toc_float: TRUE
+author: J. Taroni for CCDL
+date: 2019
+---
+
+Here, we're using a large zebrafish test compendium that was run in production.
+It's majority RNA-seq data.
+We had early results using a small test compendium that suggested there was a 
+notable "platform bias" when using PCA.
+We'll perform PCA on the large compendium in this notebook with particular
+regard for technology.
+
+## Setup
+
+#### Packages and functions
+
+```{r}
+library(ggfortify)
+```
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+#### Directories/files
+
+```{r}
+test_compendium_dir <- file.path("refinebio-data", "larger-compendium", 
+                                 "DANIO_RERIO")
+compendium_exprs_file <- file.path(test_compendium_dir, "DANIO_RERIO.tsv")
+```
+
+Directory for plots
+
+```{r}
+plot_dir <- "plots"
+dir.create(plot_dir, showWarnings = FALSE)
+```
+
+## Main
+
+Reading in the compendium expression data
+
+```{r}
+compendium_exprs_df <- readr::read_tsv(compendium_exprs_file,
+                                       progress = FALSE)
+```
+
+We can _infer_ which technology a sample is "part of" from the column names
+of this `data.frame`.
+
+```{r}
+set.seed(123)
+colnames(compendium_exprs_df)[sample(2:ncol(compendium_exprs_df), 6)]
+```
+
+RNA-seq samples will have `ERR`, `SRR`, or `DRR` in their identifiers (column
+names).
+Let's generate _labels_ for the samples using this information.
+
+```{r}
+sample_names <- colnames(compendium_exprs_df)[-1]  # don't want gene id column
+compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
+compendium_technology_labels[grep("ERR|DRR|SRR", sample_names)] <- "RNA-SEQ"
+```
+
+Get expression values as a matrix 
+
+```{r}
+exprs_mat <- compendium_exprs_df %>%
+  as.data.frame() %>%
+  tibble::column_to_rownames("X1") %>%
+  as.matrix()
+saveRDS(exprs_mat, file.path("data", "larger_compendium_exprs_mat.RDS"))
+```
+
+### PCA
+
+```{r}
+pca_results <- prcomp(t(exprs_mat))
+```
+
+Prepare as `data.frame` for use elsewhere
+
+```{r}
+pc_df <- pca_results$x[, 1:2] %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("Sample")
+```
+
+```{r}
+# get the technology labels as a data.frame for plotting
+technology_df <- as.data.frame(compendium_technology_labels) 
+```
+
+```{r}
+pc_df <- technology_df %>%
+  dplyr::mutate("Sample" = sample_names) %>%
+  dplyr::inner_join(y = pc_df, by = "Sample")
+
+readr::write_tsv(pc_df, path = file.path("results",
+                                         "larger_compendium_PC1and2.tsv"))
+```
+
+### Plotting
+
+```{r}
+# plotting with autoplot for PCA
+autoplot(pca_results, data = technology_df, alpha = 0.5, 
+         colour = 'compendium_technology_labels', scale = 0) +
+  scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
+                     values = c("#E69F00", "#56B4E9")) +
+  theme_bw() +
+  ggtitle("Larger Test Compendium by Technology") +
+  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+  guides(colour = guide_legend(title = "technology"))
+```
+
+I'll note here that because of the way we process RNA-seq data in refine.bio,
+these RNA-seq samples with _necessarily_ be part of the same experiments. 
+There are no such guarantees for the microarray samples.
+We can see that there are some "clumps" in the RNA-seq, which, if I had to 
+guess, likely correspond to samples from an individual experiment.
+_Here, I'm using the term "experiment" to refer to what is called a study (e.g., 
+`SRP`, `ERP`, or `DRP`) in SRA._
+
+Save the plot to file.
+
+```{r}
+ggsave(filename = file.path(plot_dir, "larger_test_compendium_PCA.png"),
+       plot = last_plot(), width = 7, height = 5)
+```
+
+```{r}
+png(file.path(plot_dir, "larger_test_compendium_PCA_pairs_plot.png"))
+pairs(pca_results$x[, 1:5], col = dplyr::recode(compendium_technology_labels,
+                                                `MICROARRAY` = "#E69F00",
+                                                `RNA-SEQ` = "#56B4E9"))
+dev.off()
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```

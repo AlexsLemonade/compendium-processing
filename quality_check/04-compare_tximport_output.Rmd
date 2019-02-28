@@ -1,0 +1,182 @@
+---
+title: "Comparing gene-level estimates: `GRCz10` v. `GRCz11` "
+output: 
+  html_notebook:
+    toc: TRUE
+    toc_float: TRUE
+author: J. Taroni for CCDL
+date: 2019
+---
+
+In previous compendium processing experiments, I obtained the 
+`lengthScaledTPM.tsv` processed through refine.bio. 
+For _Danio rerio_, these RNA-seq samples were processed using a transcriptome
+index for the `GRCz11` genome build.
+We use Brainarray version `22.0.0` for processing the `zebrafish` microarrays,
+which is [built using `GRCz10`](http://brainarray.mbni.med.umich.edu/Brainarray/Database/CustomCDF/22.0.0/version.html).
+Here, we're interested in, for genes that are on both genome versions, if the
+`lengthScaledTPM` values are correlated.
+
+## Setup
+
+```{r}
+# magrittr pipe
+`%>%` <- dplyr::`%>%`
+```
+
+### Custom functions
+
+We're testing two paired-end experiments here: `DRP003275` and `SRP128941`
+We'll wrap our analyses into a function intended to be used in this environment
+and directory structure.
+
+```{r}
+calculate_sample_correlation <- function(experiment_accession_code,
+                                         compendium_genes) {
+  # given an experiment accession code, get the lengthScaledTPM values for
+  # the samples in that experiment and calculate the Pearson correlation between 
+  # those values that were generated locally using an older genome build and the 
+  # refine.bio processed data using the current genome build
+  # we perform this calculation twice: 1) using all genes common to both builds
+  # and 2) using only the genes contained in the test species compendium (this)
+  # gene vector is supplied as an argument
+  
+  # get the sample names
+  experiment_samples <- list.files(file.path("quants", 
+                                             experiment_accession_code))
+  
+  # this is where the lengthScaledTPM.tsv files for refine.bio processed data
+  # are locally
+  seq_rb_data_dir <- file.path("..", "data", "rnaseq")
+
+  # full paths to the refine.bio processed files for each sample, which we then
+  # use to get a data.frame with all samples
+  experiment_rb_files <- sapply(experiment_samples, 
+                                function(x) list.files(path = seq_rb_data_dir,
+                                                       pattern = x,
+                                                       full.names = TRUE))
+  exp_rb_df <- lapply(experiment_rb_files, readr::read_tsv) %>%
+    # bind all of these together
+    dplyr::bind_cols() %>%
+    # using bind_cols on this list introduces a bunch of duplicate gene columns
+    # they are in the same order, we can just drop them
+    dplyr::select(Gene, paste0(experiment_samples, "_output"))
+  
+  # read in the locally processed tximport output (all samples are in 
+  # one TSV file)
+  local_tximport_file <- file.path("tximport_output", 
+                                   paste0(experiment_accession_code,
+                                          "_lengthScaledTPM.tsv"))
+  exp_local_df <- readr::read_tsv(local_tximport_file)
+  
+  # inner join the two data.frames for convenience
+  exp_df <- dplyr::inner_join(exp_local_df, exp_rb_df, by = "Gene")
+  
+  # split these back apart, and we'll want matrices to calculate the correlation
+  exp_local_mat <- exp_df[, !grepl("output", colnames(exp_df))] %>%
+    # get rid of tibble warning about row names deprecation
+    as.data.frame() %>%
+    tibble::column_to_rownames("Gene") %>%
+    as.matrix()
+  
+  # for the refine.bio -- we need to make sure we hold onto the gene column
+  # that's why we use column indices
+  exp_rb_mat <- exp_df[, c(1, grep("output", colnames(exp_df)))] %>%
+    # get rid of tibble warning about row names deprecation
+    as.data.frame() %>%
+    tibble::column_to_rownames("Gene") %>%
+    as.matrix()
+  # remove the trailing _output in the colnames, such that the matrices are
+  # using the exact same identifiers
+  colnames(exp_rb_mat) <- sub("_output", "", colnames(exp_rb_mat))
+  
+  # check gene ordering
+  gene_order_check <- all.equal(rownames(exp_local_mat), 
+                                rownames(exp_rb_mat))
+  if (!gene_order_check) {
+    stop("Gene order is not the same, something went wrong!")
+  }
+  
+  # we're using the default here which is pearson
+  exp_cor_mat <- cor(exp_local_mat, exp_rb_mat)
+  
+  # before returning the diagonal of the matrix, let's make sure it's the
+  # samples we want
+  sample_order_check <- all.equal(colnames(exp_cor_mat), rownames(exp_cor_mat))
+  if (!sample_order_check) {
+    stop("Sample order is not the same, something went wrong!")
+  }
+  full_experiment_correlation <- diag(exp_cor_mat)
+  
+  # repeat the process but only using the genes supplied as the 
+  # compendium_genes
+  filtered_exp_rb_mat <- 
+    exp_rb_mat[which(rownames(exp_rb_mat) %in% compendium_genes), ]
+  filtered_exp_local_mat <- 
+    exp_local_mat[which(rownames(exp_local_mat) %in% compendium_genes), ]
+  filtered_cor_mat <- cor(filtered_exp_local_mat, filtered_exp_rb_mat)
+  filtered_correlation <- diag(filtered_cor_mat)
+  
+  # return both correlation vectors
+  return(list(all_genes = full_experiment_correlation, 
+              compendium_only = filtered_correlation))
+  
+}
+```
+
+## Get compendium genes
+
+```{r}
+compendium_exprs_file <- file.path("refinebio-data", "DANIO_RERIO", 
+                                   "DANIO_RERIO.tsv")
+compendium_genes <- readr::read_tsv(compendium_exprs_file,
+                                    progress = FALSE) %>%
+  dplyr::pull(X1)
+```
+
+## DRP003275
+
+We want highly correlated values for all genes in both builds and for only
+genes included in the test compendium.
+
+```{r}
+experiment1_results <- 
+  calculate_sample_correlation(experiment_accession_code = "DRP003275",
+                               compendium_genes = compendium_genes)
+```
+
+```{r}
+experiment1_results$all_genes
+```
+
+```{r}
+experiment1_results$compendium_only
+```
+
+## SRP128941
+
+```{r}
+experiment2_results <- 
+  calculate_sample_correlation(experiment_accession_code = "SRP128941",
+                               compendium_genes = compendium_genes)
+```
+
+```{r}
+experiment2_results$all_genes
+```
+
+```{r}
+experiment2_results$compendium_only
+```
+
+## Conclusion
+
+The samples for both experiments are very high regardless of the subset of
+genes used.
+
+## Session Info
+
+```{r}
+sessionInfo()
+```
+

@@ -40,6 +40,18 @@ calculate_sample_correlation <- function(experiment_accession_code,
   # we perform this calculation twice: 1) using all genes common to both builds
   # and 2) using only the genes contained in the test species compendium (this)
   # gene vector is supplied as an argument
+  # 
+  # Args:
+  #   experiment_accession_code: project accession code ("DRP003275" or 
+  #                              "SRP128941")
+  #   compendium_genes: a vector of genes that are included in a compendium
+  # 
+  # Returns:
+  #   A list with the following elements:
+  #     all_genes: vector of sample correlation values for all genes common
+  #                to both builds
+  #     compendium_only: vector of sample correlation values for genes common
+  #                      to both builds that are in the compendium_genes vector
   
   # get the sample names
   experiment_samples <- list.files(file.path("quants", 
@@ -81,7 +93,8 @@ calculate_sample_correlation <- function(experiment_accession_code,
   
   # for the refine.bio -- we need to make sure we hold onto the gene column
   # that's why we use column indices
-  exp_rb_mat <- exp_df[, c(1, grep("output", colnames(exp_df)))] %>%
+  exp_rb_mat <- exp_df %>%
+    dplyr::select(Gene, dplyr::contains("output")) %>%
     # get rid of tibble warning about row names deprecation
     as.data.frame() %>%
     tibble::column_to_rownames("Gene") %>%
@@ -97,7 +110,7 @@ calculate_sample_correlation <- function(experiment_accession_code,
     stop("Gene order is not the same, something went wrong!")
   }
   
-  # we're using the default here which is pearson
+  # we're using the default here which is Pearson
   exp_cor_mat <- cor(exp_local_mat, exp_rb_mat)
   
   # before returning the diagonal of the matrix, let's make sure it's the
@@ -120,7 +133,6 @@ calculate_sample_correlation <- function(experiment_accession_code,
   # return both correlation vectors
   return(list(all_genes = full_experiment_correlation, 
               compendium_only = filtered_correlation))
-  
 }
 ```
 

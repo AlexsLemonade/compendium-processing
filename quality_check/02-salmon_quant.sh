@@ -14,22 +14,22 @@
 
 # we can use the long txome index for both of these
 
-for i in {132..143}
+for drp_iter in {132..143}
 do
-salmon --no-version-check --threads=8 quant \
-	-l A -i transcriptome_index/Danio_rerio_long_index \
-	-1 data/fastq/DRP003275/DRR067${i}/DRR067${i}_1.fastq.gz \
-	-2 data/fastq/DRP003275/DRR067${i}/DRR067${i}_2.fastq.gz \
-	-o quants/DRP003275/DRR067${i} \
-	--biasSpeedSamp 5 --seqBias --gcBias --dumpEq
+  salmon --no-version-check --threads=8 quant \
+  	-l A -i transcriptome_index/Danio_rerio_long_index \
+  	-1 data/fastq/DRP003275/DRR067${drp_iter}/DRR067${drp_iter}_1.fastq.gz \
+  	-2 data/fastq/DRP003275/DRR067${drp_iter}/DRR067${drp_iter}_2.fastq.gz \
+  	-o quants/DRP003275/DRR067${drp_iter} \
+  	--biasSpeedSamp 5 --seqBias --gcBias --dumpEq
 done
 
-for i in {455..458}
+for srp_iter in {455..458}
 do
-salmon --no-version-check --threads=8 quant \
-	-l A -i transcriptome_index/Danio_rerio_long_index \
-	-1 data/fastq/SRP128941/SRR6466${i}/SRR6466${i}_1.fastq.gz \
-	-2 data/fastq/SRP128941/SRR6466${i}/SRR6466${i}_2.fastq.gz \
-	-o quants/SRP128941/SRR6466${i} \
-	--biasSpeedSamp 5 --seqBias --gcBias --dumpEq
+  salmon --no-version-check --threads=8 quant \
+  	-l A -i transcriptome_index/Danio_rerio_long_index \
+  	-1 data/fastq/SRP128941/SRR6466${srp_iter}/SRR6466${srp_iter}_1.fastq.gz \
+  	-2 data/fastq/SRP128941/SRR6466${srp_iter}/SRR6466${srp_iter}_2.fastq.gz \
+  	-o quants/SRP128941/SRR6466${srp_iter} \
+  	--biasSpeedSamp 5 --seqBias --gcBias --dumpEq
 done

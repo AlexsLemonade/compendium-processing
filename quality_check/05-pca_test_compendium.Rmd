@@ -55,8 +55,8 @@ We can _infer_ which technology a sample is "part of" from the column names
 of this `data.frame`.
 
 ```{r}
-set.seed(123)
-colnames(compendium_exprs_df)[sample(2:ncol(compendium_exprs_df), 6)]
+set.seed(125)
+sample(colnames(compendium_exprs_df), 6)
 ```
 
 RNA-seq samples will have `ERR`, `SRR`, or `DRR` in their identifiers (column
@@ -64,7 +64,9 @@ names).
 Let's generate _labels_ for the samples using this information.
 
 ```{r}
-sample_names <- colnames(compendium_exprs_df)[-1]  # don't want gene id column
+sample_names <- compendium_exprs_df %>%
+  dplyr::select(-X1) %>%  # don't want gene id column
+  colnames()
 compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
 compendium_technology_labels[grep("ERR|DRR|SRR", sample_names)] <- "RNA-SEQ"
 ```
@@ -99,12 +101,11 @@ technology_df <- as.data.frame(compendium_technology_labels)
 ```
 
 ```{r}
-pc_df <- technology_df %>%
+technology_df %>%
   dplyr::mutate("Sample" = sample_names) %>%
-  dplyr::inner_join(y = pc_df, by = "Sample")
-
-readr::write_tsv(pc_df, path = file.path("results",
-                                         "larger_compendium_PC1and2.tsv"))
+  dplyr::inner_join(y = pc_df, by = "Sample") %>%
+  readr::write_tsv(path = file.path("results",
+                                    "larger_compendium_PC1and2.tsv"))
 ```
 
 ### Plotting
@@ -121,9 +122,6 @@ autoplot(pca_results, data = technology_df, alpha = 0.5,
   guides(colour = guide_legend(title = "technology"))
 ```
 
-I'll note here that because of the way we process RNA-seq data in refine.bio,
-these RNA-seq samples with _necessarily_ be part of the same experiments. 
-There are no such guarantees for the microarray samples.
 We can see that there are some "clumps" in the RNA-seq, which, if I had to 
 guess, likely correspond to samples from an individual experiment.
 _Here, I'm using the term "experiment" to refer to what is called a study (e.g., 

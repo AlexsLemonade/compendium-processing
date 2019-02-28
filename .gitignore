@@ -1,5 +1,7 @@
 # turns out lots of these files will be big
 data/
+# but keep the quality check data
+!quality_check/data
 
 # imputed data are large files as well
 imputed/
@@ -9,3 +11,24 @@ impute_requirements/sampled_data/
 
 # checkpoints for jupyter notebook
 impute_requirements/\.ipynb_checkpoints/
+
+# salmon output, transcriptome indices, and fastq files from the quality check
+# analyses
+quality_check/transcriptome_index
+quality_check/quants
+quality_check/data/fastq
+quality_check/data/GRCz11
+
+# can't distribute ZFIN data
+quality_check/data/pathways/stage_ontology_2019.01.25.txt
+quality_check/data/pathways/wildtype-expression_fish_2019.01.25.txt
+quality_check/data/pathways/ZFIN_adult_tissue_prior_info.RDS
+quality_check/data/pathways/ZFIN_stages_prior_info.RDS
+
+# refine.bio test compendium is too big!
+quality_check/refinebio-data/
+quality_check/data/larger_compendium_exprs_mat.RDS
+
+# the lists of PLIER models (i.e., multiple PLIER results store as a list)
+# will be too large to track with git
+*_PLIER_list.RDS

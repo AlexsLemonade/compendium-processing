@@ -5,8 +5,8 @@
 
 # Generate Danio_rerio.GRCz10.91_tx2gene.tsv
 Rscript scripts/get_tx2gene.R \
-  --gtf_file transcriptome_index/Danio_rerio.GRCz10.91.gtf \
-  --output_file transcriptome_index/Danio_rerio.GRCz10.91_tx2gene.tsv
+	--gtf_file transcriptome_index/Danio_rerio.GRCz10.91.gtf \
+	--output_file transcriptome_index/Danio_rerio.GRCz10.91_tx2gene.tsv
 
 # get gene-level estimates with tximport
 mkdir tximport_output

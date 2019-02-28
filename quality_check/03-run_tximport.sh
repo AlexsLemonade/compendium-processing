@@ -3,20 +3,12 @@
 # use ccdl/dr_salmon:v1.4.9
 # like so: docker run -it --volume $(pwd):/media ccdl/dr_salmon:v1.4.9 bash
 
-# here's how Danio_rerio.GRCz10.91_tx2gene.tsv was generated in R
-#
-# gtf_file <- "transcriptome_index/Danio_rerio.GRCz10.91.gtf"
-# output_file <- "transcriptome_index/Danio_rerio.GRCz10.91_tx2gene.tsv"
-# db_file <- sub(".gtf", ".sqlite", gtf_file)
-# if (!file.exists(db_file)) {
-#   ensembldb::ensDbFromGtf(gtf_file, outfile = db_file)
-# }
-# edb <- ensembldb::EnsDb(db_file)
-# tx <- ensembldb::transcriptsBy(edb, by = "gene")
-# tx.df <- as.data.frame(tx@unlistData)
-# tx2gene <- tx.df[, c("tx_name", "gene_id")]
-# readr::write_tsv(tx2gene, path = output_file)
+# Generate Danio_rerio.GRCz10.91_tx2gene.tsv
+Rscript scripts/get_tx2gene.R \
+  --gtf_file transcriptome_index/Danio_rerio.GRCz10.91.gtf \
+  --output_file transcriptome_index/Danio_rerio.GRCz10.91_tx2gene.tsv
 
+# get gene-level estimates with tximport
 mkdir tximport_output
 
 # first experiment

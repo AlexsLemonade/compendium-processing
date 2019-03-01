@@ -1,0 +1,189 @@
+---
+title: "What genes are differentially expressed between technologies?"
+output: html_notebook
+  toc: TRUE
+  toc_float: TRUE
+author: J. Taroni for CCDL
+date: 2019
+---
+
+We'll use `limma` to identify genes that are differentially expressed between
+microarray and RNA-seq samples in the test compendium.
+
+Note that I had to roll back the R version here to get `Rsamtools` to install.
+This will be captured by `sessionInfo()` below.
+
+## Set up
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+```{r}
+library(limma)
+library(GenomicRanges)
+library(rtracklayer)
+library(Rsamtools)
+```
+
+```{r}
+results_dir <- "results"
+dir.create(results_dir, showWarnings = FALSE)
+```
+
+## Read in data
+
+Test compendium expression matrix
+
+```{r}
+exprs_mat_file <- file.path("data", "larger_compendium_exprs_mat.RDS")
+exprs_mat <- readRDS(exprs_mat_file)
+```
+
+Generate technology labels using the sample names
+
+```{r}
+sample_names <- colnames(exprs_mat)
+compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
+compendium_technology_labels[grep("SRR|ERR|DRR", sample_names)] <- "RNASEQ"
+```
+
+## Differential expression
+
+Test for genes that are differentially expressed between technologies
+
+```{r}
+design_matrix <- model.matrix(~ compendium_technology_labels)
+fit <- lmFit(exprs_mat, design = design_matrix)
+fit2 <- eBayes(fit)
+diff_exp_stats <- topTable(fit2, number = nrow(exprs_mat)) %>%
+  as.data.frame() %>%
+  tibble::rownames_to_column("Gene")
+```
+
+Save to file
+
+```{r}
+readr::write_tsv(diff_exp_stats, 
+                 file.path(results_dir, 
+                           "larger_compendium_diff_exprs_technologies.tsv"))
+```
+
+Let's take a peak at the "top" differentially expressed genes.
+
+```{r}
+diff_exp_stats %>%
+  dplyr::filter(adj.P.Val < 0.00001) %>%
+  dplyr::arrange(`t`) %>%
+  head()
+```
+
+```{r}
+data.frame(
+  expression_value = exprs_mat["ENSDARG00000098608", ],
+  technology = compendium_technology_labels
+) %>%
+  ggplot2::ggplot(ggplot2::aes(x = technology, y = expression_value)) +
+  ggplot2::geom_boxplot() +
+  ggplot2::labs(title = "ENSDARG00000098608", subtitle = "t = -234.7375") +
+  ggplot2::theme_bw()
+```
+
+Genes with negative `t` values have lower values in RNA-seq samples.
+
+And the genes that have higher values in RNA-seq samples (positive `t`).
+
+```{r}
+diff_exp_stats %>%
+  dplyr::filter(adj.P.Val < 0.00001) %>%
+  dplyr::arrange(`t`) %>%
+  tail()
+```
+
+```{r}
+data.frame(
+  expression_value = exprs_mat["ENSDARG00000060767", ],
+  technology = compendium_technology_labels
+) %>%
+  ggplot2::ggplot(ggplot2::aes(x = technology, y = expression_value)) +
+  ggplot2::geom_boxplot() +
+  ggplot2::labs(title = "ENSDARG00000060767", subtitle = "t = 165.2244") +
+  ggplot2::theme_bw()
+```
+
+
+### Relationship with gene lengths?
+
+Is there any relationship between the length of a gene and it's `t` statistic?
+
+`GRCz11` related files were obtained in `00-data_download.sh`
+
+Adapted from:
+https://github.com/dpryan79/Answers/blob/d2d7366fec907fd92ccf03e77c2d53cfe45b02c9/SEQanswers_42420/GTF2LengthGC.R
+
+See also: https://bioinformatics.stackexchange.com/questions/2567/how-can-i-calculate-gene-length-for-rpkm-calculation-from-counts-data
+
+```{r}
+gtf_file <- file.path("data", "GRCz11", "Danio_rerio.GRCz11.95.gtf")
+
+#Load the annotation and reduce it
+gtf <- import.gff(gtf_file, format = "gtf", genome = "GRCz11.95", 
+                  feature.type = "exon")
+grl <- reduce(split(gtf, elementMetadata(gtf)$gene_id))
+reduced_gtf <- unlist(grl, use.names = TRUE)
+elementMetadata(reduced_gtf)$gene_id <- rep(names(grl), elementNROWS(grl))
+elementMetadata(reduced_gtf)$widths <- width(reduced_gtf)
+output <- t(sapply(split(reduced_gtf, elementMetadata(reduced_gtf)$gene_id), 
+                   function(x) sum(elementMetadata(x)$widths)))
+output[, 1:5]
+```
+
+
+```{r}
+gene_lengths_df <- data.frame(Gene = colnames(output),
+                              gene_length = output[1, ])
+readr::write_tsv(gene_lengths_df, 
+                 file.path("data", 
+                           "Danio_rerio.GRCz11_gene_lengths_exons.tsv"))
+```
+
+```{r}
+# if one already had the gene lengths file, it could be loaded:
+# gene_lengths_df <-
+#   readr::read_tsv(file.path("data", 
+#                             "Danio_rerio.GRCz11_gene_names_and_lengths.tsv"),
+#                   col_names = FALSE) %>%
+#   dplyr::mutate(X1 = sub("gene:", "", X1))
+```
+
+Join the t-statistic with the gene lengths and make a scatterplot
+
+```{r}
+dplyr::inner_join(diff_exp_stats, gene_lengths_df, 
+                  by = "Gene") %>%
+  dplyr::select(c("Gene", "t", "gene_length")) %>%
+  ggplot2::ggplot(ggplot2::aes(x = `t`, y = gene_length)) +
+  ggplot2::geom_point(alpha = 0.2) +
+  ggplot2::geom_smooth() +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x = "t statistic", y = "gene length")
+```
+
+As noted above:
+
+> Genes with negative `t` values have lower values in RNA-seq samples.
+
+So longer genes tend to have higher expression values in RNA-seq data.
+
+```{r}
+scatter_file <- file.path("plots", "larger_compendium_tstat_length_scatter.png")
+ggplot2::ggsave(filename = scatter_file,
+                plot = ggplot2::last_plot())
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
+

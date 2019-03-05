@@ -1,8 +1,9 @@
 ---
 title: "What genes are differentially expressed between technologies?"
-output: html_notebook
-  toc: TRUE
-  toc_float: TRUE
+output: 
+  html_notebook:
+    toc: TRUE
+    toc_float: TRUE
 author: J. Taroni for CCDL
 date: 2019
 ---
@@ -91,7 +92,8 @@ data.frame(
 
 Genes with negative `t` values have lower values in RNA-seq samples.
 
-And the genes that have higher values in RNA-seq samples (positive `t`).
+Let's take a look at the genes that have higher values in RNA-seq samples 
+(positive `t`).
 
 ```{r}
 diff_exp_stats %>%
@@ -111,10 +113,9 @@ data.frame(
   ggplot2::theme_bw()
 ```
 
-
 ### Relationship with gene lengths?
 
-Is there any relationship between the length of a gene and it's `t` statistic?
+Is there any relationship between the length of a gene and its `t` statistic?
 
 `GRCz11` related files were obtained in `00-data_download.sh`
 
@@ -123,21 +124,28 @@ https://github.com/dpryan79/Answers/blob/d2d7366fec907fd92ccf03e77c2d53cfe45b02c
 
 See also: https://bioinformatics.stackexchange.com/questions/2567/how-can-i-calculate-gene-length-for-rpkm-calculation-from-counts-data
 
+Non-duplicated exons from each gene are summed up to get the length 
+("union gene model").
+
 ```{r}
+# obtained in 00-data_download.sh
 gtf_file <- file.path("data", "GRCz11", "Danio_rerio.GRCz11.95.gtf")
 
-#Load the annotation and reduce it
+# Load the annotation and reduce it -- filtering for exons
 gtf <- import.gff(gtf_file, format = "gtf", genome = "GRCz11.95", 
                   feature.type = "exon")
 grl <- reduce(split(gtf, elementMetadata(gtf)$gene_id))
 reduced_gtf <- unlist(grl, use.names = TRUE)
 elementMetadata(reduced_gtf)$gene_id <- rep(names(grl), elementNROWS(grl))
+
+# add the widths to the metadata slot -- number of values in the range
 elementMetadata(reduced_gtf)$widths <- width(reduced_gtf)
-output <- t(sapply(split(reduced_gtf, elementMetadata(reduced_gtf)$gene_id), 
-                   function(x) sum(elementMetadata(x)$widths)))
+output <- t(sapply(
+  split(reduced_gtf, elementMetadata(reduced_gtf)$gene_id), 
+  # for each gene sum exon widths
+  function(x) sum(elementMetadata(x)$widths)))
 output[, 1:5]
 ```
-
 
 ```{r}
 gene_lengths_df <- data.frame(Gene = colnames(output),

@@ -143,11 +143,11 @@ Find the gene identifiers of each of the "used-to-be-zero" values
 
 ```{r}
 zero_gene_list <- apply(seq_mat, 2, 
-                       function(x) { 
-                         mode_value <- calculate_mode(x)
-                         mode_index <- which(x == mode_value)
-                         rownames(seq_mat)[mode_index]
-                       })
+                        function(x) { 
+                          mode_value <- calculate_mode(x)
+                          mode_index <- which(x == mode_value)
+                          rownames(seq_mat)[mode_index]
+                        })
 ```
 
 Is it the same genes over and over again? 

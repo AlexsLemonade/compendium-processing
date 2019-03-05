@@ -67,7 +67,6 @@ purposes.
 random_index <- 34
 ```
 
-
 ```{r}
 example_ecdf_plot <- data.frame(x = seq_mat[, random_index]) %>%
   ggplot2::ggplot(ggplot2::aes(x)) +

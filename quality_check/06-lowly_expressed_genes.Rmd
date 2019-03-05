@@ -22,6 +22,7 @@ https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-fin
 
 ```{r}
 calculate_mode <- function(x) {
+  # where x is a numeric vector, return the numeric value of the mode 
   ux <- unique(x)
   ux[which.max(tabulate(match(x, ux)))]
 }
@@ -39,7 +40,9 @@ compendium_exprs_file <- file.path(test_compendium_dir, "DANIO_RERIO.tsv")
 compendium_exprs_df <- readr::read_tsv(compendium_exprs_file,
                                        progress = FALSE)
 # inferring sample technology from column name
-sample_names <- colnames(compendium_exprs_df)[-1]  # don't want gene id column
+sample_names <- compendium_exprs_df %>%
+  dplyr::select(-X1) %>%  # don't want gene id column
+  colnames()
 compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
 compendium_technology_labels[grep("SRR|ERR|DRR", sample_names)] <- "RNA-SEQ"
 ```

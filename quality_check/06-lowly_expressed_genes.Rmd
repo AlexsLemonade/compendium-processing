@@ -31,33 +31,18 @@ calculate_mode <- function(x) {
 ## Read in data
 
 ```{r}
-test_compendium_dir <- file.path("refinebio-data", "larger-compendium", 
-                                 "DANIO_RERIO")
-compendium_exprs_file <- file.path(test_compendium_dir, "DANIO_RERIO.tsv")
+exprs_mat <- readRDS(file.path("data", "larger_compendium_exprs_mat.RDS"))
 ```
 
 ```{r}
-compendium_exprs_df <- readr::read_tsv(compendium_exprs_file,
-                                       progress = FALSE)
 # inferring sample technology from column name
-sample_names <- compendium_exprs_df %>%
-  dplyr::select(-X1) %>%  # don't want gene id column
-  colnames()
+sample_names <- colnames(exprs_mat)
 compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
 compendium_technology_labels[grep("SRR|ERR|DRR", sample_names)] <- "RNA-SEQ"
 ```
 
 ```{r}
 table(compendium_technology_labels)
-```
-
-Get expression values as a matrix 
-
-```{r}
-exprs_mat <- compendium_exprs_df %>%
-  as.data.frame() %>%
-  tibble::column_to_rownames("X1") %>%
-  as.matrix()
 ```
 
 Split by technology, they have different distributions.
@@ -77,7 +62,14 @@ Let's look at the distribution of a single RNA-seq sample for illustrative
 purposes.
 
 ```{r}
-example_ecdf_plot <- data.frame(x = seq_mat[, 34]) %>%
+# selecting a single sample for illustrative purposes -- there is no reason for
+# using this sample in particular
+random_index <- 34
+```
+
+
+```{r}
+example_ecdf_plot <- data.frame(x = seq_mat[, random_index]) %>%
   ggplot2::ggplot(ggplot2::aes(x)) +
   ggplot2::stat_ecdf(geom = "point", size = 0.75, alpha = 0.75) +
   ggplot2::labs(y = "ecdf(x)", x = "expression value (x)",
@@ -100,7 +92,7 @@ we can dig into this more later.
 Let's take a look at our example, adding a dotted line for the mode.
 
 ```{r}
-example_mode <- calculate_mode(seq_mat[, 34])
+example_mode <- calculate_mode(seq_mat[, random_index])
 example_ecdf_plot + ggplot2::geom_vline(xintercept = example_mode,
                                         lty = "dotted")
 ```
@@ -114,7 +106,8 @@ data.frame(x = seq_mat[, another_random_index]) %>%
   ggplot2::stat_ecdf(geom = "point", size = 0.75, alpha = 0.75) +
   ggplot2::labs(y = "ecdf(x)", x = "expression value (x)") +
   ggplot2::theme_bw() +
-  ggplot2::geom_vline(xintercept = calculate_mode(seq_mat[, another_random_index]),
+  ggplot2::geom_vline(xintercept = 
+                        calculate_mode(seq_mat[, another_random_index]),
                       lty = "dotted")
 ```
 
@@ -147,16 +140,15 @@ So what are they and do they tend to be the same genes in many RNA-seq samples?
 
 ### RNA-seq
 
-```{r}
-seq_col_modes <- apply(seq_mat, 2, calculate_mode)
-```
-
-Find the indices of each of the "used-to-be-zero" values
+Find the gene identifiers of each of the "used-to-be-zero" values
 
 ```{r}
-zero_gene_list <- 
-  lapply(1:ncol(seq_mat),
-         function(x) rownames(seq_mat)[which(seq_mat[, x] == seq_col_modes[x])])
+zero_gene_list <- apply(seq_mat, 2, 
+                       function(x) { 
+                         mode_value <- calculate_mode(x)
+                         mode_index <- which(x == mode_value)
+                         rownames(seq_mat)[mode_index]
+                       })
 ```
 
 Is it the same genes over and over again? 
@@ -189,7 +181,7 @@ expression values in the test compendium than all the other genes?
 
 ```{r}
 high_zero_count_genes <- zero_counts_per_gene %>%
-  dplyr::filter(Freq >= 1000) %>%
+  dplyr::filter(Freq >= quantile(Freq, 0.75)) %>%
   dplyr::pull(Gene) %>%
   as.character()
 ```
@@ -216,6 +208,11 @@ array_avg_exprs_df %>%
   ggplot2::labs(x = "average expression in microarray samples") +
   ggplot2::guides(fill = ggplot2::guide_legend(title = "gene category in RNA-seq")) +
   ggplot2::scale_fill_manual(values = c("#000000", "#FFFFFF"))
+```
+
+```{r}
+plot_name <- file.path("plots", "average_expression_array_zero_count_genes.png")
+ggplot2::ggsave(plot_name)
 ```
 
 ## Session info

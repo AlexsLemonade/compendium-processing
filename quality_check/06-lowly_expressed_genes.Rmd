@@ -1,0 +1,222 @@
+---
+title: "Lowly expressed genes"
+output:   
+  html_notebook: 
+    toc: true
+    toc_float: true
+author: J. Taroni for CCDL
+date: 2019
+---
+
+We observed a slight "platform bias" in `05-pca_test_compendium` --
+do the lowly expressed genes account for the difference in platforms?
+
+## Set up
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+Function for calculating the mode from 
+https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode
+
+```{r}
+calculate_mode <- function(x) {
+  # where x is a numeric vector, return the numeric value of the mode 
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+```
+
+## Read in data
+
+```{r}
+exprs_mat <- readRDS(file.path("data", "larger_compendium_exprs_mat.RDS"))
+```
+
+```{r}
+# inferring sample technology from column name
+sample_names <- colnames(exprs_mat)
+compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
+compendium_technology_labels[grep("SRR|ERR|DRR", sample_names)] <- "RNA-SEQ"
+```
+
+```{r}
+table(compendium_technology_labels)
+```
+
+Split by technology, they have different distributions.
+More on that below!
+
+```{r}
+seq_mat <- exprs_mat[, which(compendium_technology_labels == "RNA-SEQ")]
+array_mat <- exprs_mat[, which(compendium_technology_labels == "MICROARRAY")]
+```
+
+## Explore distributions
+
+This test compendium is quantile normalized (QN'd). 
+RNA-seq data, even after all the other processing steps, likely has many 
+zeroes and we can spot that in the data post-QN.
+Let's look at the distribution of a single RNA-seq sample for illustrative
+purposes.
+
+```{r}
+# selecting a single sample for illustrative purposes -- there is no reason for
+# using this sample in particular
+random_index <- 34
+```
+
+```{r}
+example_ecdf_plot <- data.frame(x = seq_mat[, random_index]) %>%
+  ggplot2::ggplot(ggplot2::aes(x)) +
+  ggplot2::stat_ecdf(geom = "point", size = 0.75, alpha = 0.75) +
+  ggplot2::labs(y = "ecdf(x)", x = "expression value (x)",
+                title = "RNA-seq sample") +
+  ggplot2::theme_bw()
+example_ecdf_plot
+```
+
+We can see that because of the quantile normalization there is a "run" of
+values at the lowest express value in the sample _but_ it's not zero.
+
+I _think_ the expression values that get filled in for the zero values can be 
+determined by finding the mode for each sample rather than the minimum value
+for each sample because there's nothing forcing the lowest value in a RNA-seq
+sample to be _positive_.
+We're assuming that the _mode_ for an RNA-seq sample before we QN is zero, which
+is probably a pretty safe assumption;
+we can dig into this more later.
+
+Let's take a look at our example, adding a dotted line for the mode.
+
+```{r}
+example_mode <- calculate_mode(seq_mat[, random_index])
+example_ecdf_plot + ggplot2::geom_vline(xintercept = example_mode,
+                                        lty = "dotted")
+```
+
+And another example.
+
+```{r}
+another_random_index <- 387
+data.frame(x = seq_mat[, another_random_index]) %>%
+  ggplot2::ggplot(ggplot2::aes(x)) +
+  ggplot2::stat_ecdf(geom = "point", size = 0.75, alpha = 0.75) +
+  ggplot2::labs(y = "ecdf(x)", x = "expression value (x)") +
+  ggplot2::theme_bw() +
+  ggplot2::geom_vline(xintercept = 
+                        calculate_mode(seq_mat[, another_random_index]),
+                      lty = "dotted")
+```
+
+Picking an array sample at random we can look at the two ECDFs.
+
+```{r}
+data.frame(
+  expression_value = c(array_mat[, another_random_index],
+                       seq_mat[, another_random_index]),
+  technology = c(rep("MICROARRAY", nrow(array_mat)),
+                 rep("RNA-SEQ", nrow(seq_mat)))
+) %>% 
+  ggplot2::ggplot(ggplot2::aes(x = expression_value,
+                               colour = technology)) +
+  ggplot2::stat_ecdf(geom = "point", size = 0.75, alpha = 0.2) +
+  ggplot2::labs(y = "ecdf(x)", x = "expression value (x)") +
+  ggplot2::theme_bw() +
+  ggplot2::scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
+                              values = c("#E69F00", "#56B4E9"))
+```
+
+Consistent with expectations based on what we've laid out above: the microarray
+sample doesn't have a run of repeated values at the low end.
+
+## Explore lowly expressed genes
+
+The differences between platforms could be driven, in part, by these 
+"used-to-be-zero" values in the RNA-seq data.
+So what are they and do they tend to be the same genes in many RNA-seq samples?
+
+### RNA-seq
+
+Find the gene identifiers of each of the "used-to-be-zero" values
+
+```{r}
+zero_gene_list <- apply(seq_mat, 2, 
+                        function(x) { 
+                          mode_value <- calculate_mode(x)
+                          mode_index <- which(x == mode_value)
+                          rownames(seq_mat)[mode_index]
+                        })
+```
+
+Is it the same genes over and over again? 
+Let's count.
+
+```{r}
+zero_counts_per_gene <- data.frame(table(unlist(zero_gene_list)))
+colnames(zero_counts_per_gene)[1] <- "Gene"
+head(zero_counts_per_gene)
+```
+
+What does the distribution of these counts look like?
+
+```{r}
+zero_counts_per_gene %>%
+  ggplot2::ggplot(ggplot2::aes(x = Freq)) +
+  ggplot2::geom_bar() +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x = "number of samples",
+                title = "Frequency of zero values") +
+  ggplot2::xlim(c(0, ncol(seq_mat)))
+```
+
+This tells use that there a few genes that are missing (zero) in many of the 
+RNA-seq samples we've tested (but none that are missing in all samples) and lots
+of genes that are missing in only a few samples.
+
+Okay, do the genes that are missing in a bunch of samples tend to have lower
+expression values in the test compendium than all the other genes?
+
+```{r}
+high_zero_count_genes <- zero_counts_per_gene %>%
+  dplyr::filter(Freq >= quantile(Freq, 0.75)) %>%
+  dplyr::pull(Gene) %>%
+  as.character()
+```
+
+Get the average expression for each gene for the microarray samples
+
+```{r}
+array_avg_exprs_df <- data.frame(average_expression = rowMeans(array_mat),
+                                 gene = rownames(array_mat)) %>%
+  dplyr::mutate(gene_category = dplyr::case_when(
+    gene %in% high_zero_count_genes ~ "high zero count",
+    TRUE ~ "other"
+  ))
+```
+
+Plot the distributions
+
+```{r}
+array_avg_exprs_df %>%
+  ggplot2::ggplot(ggplot2::aes(x = average_expression,
+                               fill = gene_category)) +
+  ggplot2::geom_density(alpha = 0.4) +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x = "average expression in microarray samples") +
+  ggplot2::guides(fill = ggplot2::guide_legend(title = "gene category in RNA-seq")) +
+  ggplot2::scale_fill_manual(values = c("#000000", "#FFFFFF"))
+```
+
+```{r}
+plot_name <- file.path("plots", "average_expression_array_zero_count_genes.png")
+ggplot2::ggsave(plot_name)
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
+

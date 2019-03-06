@@ -26,37 +26,101 @@ smaller test compendium.
 
 ```{r}
 `%>%` <- dplyr::`%>%`
-```
-
-```{r}
 # we'll need ggfortify to do the PCA plots
 library(ggfortify)
 ```
+
+### Custom functions
+
+These are a series of wrapper functions for plotting, as we typically make
+plots for _all genes_ and then a subset of genes (such as those that are
+in the compendium).
+They generally expect certain objects to be in the global environment;
+see the documentation for the individual functions.
+
+```{r}
+zero_proportion_point_wrapper <- function(df, plot.subtitle) {
+  # Make the point plots (with geom_smooth) for the proportion of samples that
+  # have a value of 0 for a gene vs. that gene's length
+  # 
+  # Args:
+  #   df: a data.frame that includes 'gene_length' and 'Zero_proportion'
+  #   plot.subtitle: subtitle for the plot; character
+  # 
+  # Returns:
+  #   a ggplot as described above
+  
+  if(!all(c("gene_length" %in% colnames(df), 
+            "Zero_proportion" %in% colnames(df)))) {
+    stop("df must have colnames 'gene_length' and 'Zero_proportion'")  
+  }
+    
+  df %>%
+    ggplot(aes(x = gene_length, y = Zero_proportion)) +
+    geom_point(alpha = 0.2) +
+    geom_smooth() +
+    theme_bw() +
+    labs(x = "gene length", y = "proportion of samples with zero count",
+         subtitle = plot.subtitle, title = "Gene length and observations")
+}
+```
+
+```{r}
+pca_plot_wrapper <- function(prcomp_results, plot.title) {
+  # given the output of prcomp, make a scatterplot of PC1 and PC2 with 
+  # ggfortify::autoplot where the samples are colored by technology (e.g.,
+  # microarray, RNA-seq)
+  # requires technology_df to be in the global environment
+  # Args:
+  #  prcomp_results: output of prcomp, run on a transposed expression matrix
+  #  plot.title: title of the plot; character
+  #
+  # Returns
+  #   ggplot as described above
+  autoplot(prcomp_results, data = technology_df, alpha = 0.5, 
+           colour = 'compendium_technology_labels', scale = 0) +
+    scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
+                       values = c("#E69F00", "#56B4E9")) +
+    theme_bw() +
+    ggtitle(plot.title) +
+    theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+    guides(colour = guide_legend(title = "technology"))
+}
+```
+
+```{r}
+pca_pairs_plot_wrapper <- function(prcomp_results, plot.title) {
+  # given the output of prcomp, make a pairs plot of PC1-5 with where the 
+  # samples are colored by technology (e.g., microarray, RNA-seq)
+  # requires compendium_technology_labels to be in the global environment
+  #
+  # Args:
+  #  prcomp_results: output of prcomp, run on a transposed expression matrix
+  #  plot.title: title of the plot; character
+  #
+  # Returns
+  #   plot as described above
+  pairs(prcomp_results$x[, 1:5], 
+        col = dplyr::recode(compendium_technology_labels,
+                            `MICROARRAY` = "#E69F00",
+                            `RNASEQ` = "#56B4E9"),
+        main = plot.title)
+}
+```
+
+### Directories
 
 ```{r}
 # directory to hold the plots
 plot_dir <- "plots"
 ```
 
-#### Compendium genes
+## Read in data 
 
-We will explore this gene lengths-observations/expression levels relationship in
-_all_ genes and also subset to only the genes in the test compendium, so we 
-need to pull those gene identifiers out of the test compendium expression
-matrix.
+### `lengthScaledTPM.tsv` files
 
 ```{r}
-compendium_exprs_file <- file.path("refinebio-data", "DANIO_RERIO", 
-                                   "DANIO_RERIO.tsv")
-compendium_exprs_df <- readr::read_tsv(compendium_exprs_file, progress = FALSE)
-compendium_genes <- compendium_exprs_df %>%
-  dplyr::pull(X1)
-```
-
-## Read in `lengthScaledTPM.tsv` files
-
-```{r}
-list_of_rnaseq_files <- list.files(file.path("..", "data", "rnaseq/"),
+list_of_rnaseq_files <- list.files(file.path("..", "data", "rnaseq"),
                                    full.names = TRUE)
 ```
 
@@ -77,11 +141,10 @@ all.equal(rnaseq_df$Gene1, rnaseq_df$Gene112)
 ```{r}
 # drop the extra gene columns and set the rownames to gene identifiers -- this
 # will help with calculating the proportion of zeros, etc.
-rnaseq_df <- 
-  rnaseq_df[, c(TRUE, !grepl("Gene", colnames(rnaseq_df))[2:ncol(rnaseq_df)])]
 rnaseq_df <- rnaseq_df %>%
   as.data.frame() %>%
-  tibble::column_to_rownames("Gene")
+  tibble::column_to_rownames("Gene") %>%
+  dplyr::select(-dplyr::contains("Gene"))
 # remove the list of individual sample data.frame
 rm(rnaseq_df_list)
 ```
@@ -91,6 +154,33 @@ rm(rnaseq_df_list)
 gene_lengths_df <- 
   readr::read_tsv(file.path("data", 
                             "Danio_rerio.GRCz11_gene_lengths_exons.tsv"))
+```
+
+### Compendium genes, expression matrix, technology labels
+
+We will explore this gene lengths-observations/expression levels relationship in
+_all_ genes and also subset to only the genes in the test compendium, so we 
+need to pull those gene identifiers out of the test compendium expression
+matrix.
+
+```{r}
+# read in smaller test compendium and convert to expression matrix
+compendium_exprs_file <- file.path("refinebio-data", "DANIO_RERIO", 
+                                   "DANIO_RERIO.tsv")
+exprs_mat <- readr::read_tsv(compendium_exprs_file, progress = FALSE) %>%
+  as.data.frame() %>%
+  tibble::column_to_rownames("X1") %>%
+  as.matrix()
+
+# derive the technology labels from the sample names
+sample_names <- colnames(exprs_mat)
+compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
+compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNASEQ"
+# get the technology labels as a data.frame for plotting later
+technology_df <- as.data.frame(compendium_technology_labels) 
+
+# get the list of compendium genes
+compendium_genes <- rownames(exprs_mat)
 ```
 
 ## Gene zero counts and expression levels
@@ -125,12 +215,7 @@ summary(zeroes_df$gene_length)
 # filtering genes based on length to get a clearer picture
 zeroes_df %>%
   dplyr::filter(gene_length <= 20000) %>%
-  ggplot(aes(x = gene_length, y = Zero_proportion)) +
-  geom_point(alpha = 0.2) +
-  geom_smooth() +
-  theme_bw() +
-  labs(x = "gene length", y = "proportion of samples with zero count",
-       subtitle = "All genes", title = "Gene length and observations")
+  zero_proportion_point_wrapper(plot.subtitle = "All genes")
 ```
 
 ```{r}
@@ -146,13 +231,7 @@ ggsave(filename = file.path(plot_dir,
 zeroes_df %>%
   dplyr::filter(Gene %in% compendium_genes, 
                 gene_length <= 20000) %>%
-  ggplot(aes(x = gene_length, y = Zero_proportion)) +
-  geom_point(alpha = 0.2) +
-  geom_smooth() +
-  theme_bw() +
-  labs(x = "gene length", y = "proportion of samples with zero count",
-       subtitle = "Test compendium genes only", 
-       title = "Gene length and observations")
+  zero_proportion_point_wrapper(plot.subtitle = "Test compendium genes only")
 ```
 
 ```{r}
@@ -175,45 +254,14 @@ observed across samples.)
 Does removing shorter genes from the species compendium remove evidence of a
 technology bias?
 
-```{r}
-exprs_mat <- compendium_exprs_df %>%
-  as.data.frame() %>%
-  tibble::column_to_rownames("X1") %>%
-  as.matrix()
-```
+### PCA - all genes
 
-```{r}
-# derive the technology labels from the sample names
-sample_names <- colnames(exprs_mat)
-compendium_technology_labels <- rep("MICROARRAY", length(sample_names))
-compendium_technology_labels[grep("lengthScaledTPM", sample_names)] <- "RNASEQ"
-
-# get the technology labels as a data.frame for plotting
-technology_df <- as.data.frame(compendium_technology_labels) 
-```
-
-```{r}
-# what genes are short? using 25th percentile
-short_genes <- zeroes_df %>%
-  dplyr::filter(gene_length <= quantile(zeroes_df$gene_length, 0.25)) %>%
-  dplyr::pull(Gene)
-```
-
-#### PCA - all genes
-
-First we'll look at PC1 and PC2 for all genes
+#### PC1 and PC2 for all genes
 
 ```{r}
 pca_results <- prcomp(t(exprs_mat))
-# plotting with autoplot for PCA
-autoplot(pca_results, data = technology_df, alpha = 0.5, 
-         colour = 'compendium_technology_labels', scale = 0) +
-  scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
-                     values = c("#E69F00", "#56B4E9")) +
-  theme_bw() +
-  ggtitle("Test Compendium by Technology: All genes") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
-  guides(colour = guide_legend(title = "technology"))
+pca_plot_wrapper(prcomp_results = pca_results, 
+                 plot.title = "Test Compendium by Technology: All genes")
 ```
 
 ```{r}
@@ -222,39 +270,41 @@ ggsave(filename = file.path(plot_dir,
        plot = last_plot())
 ```
 
-Pairs plot (PC1-5)
+#### Pairs plot (PC1-5) for all genes
 
 ```{r}
 png(file.path(plot_dir, "small_test_compendium_pairs_plot.png"))
-pairs(pca_results$x[, 1:5], col = dplyr::recode(compendium_technology_labels,
-                                                `MICROARRAY` = "#E69F00",
-                                                `RNASEQ` = "#56B4E9"),
-      main = "Test Compendium by Technology: All genes")
+pca_pairs_plot_wrapper(prcomp_results = pca_results,
+                       plot.title = "Test Compendium by Technology: All genes")
 dev.off()
 ```
 
-#### Drop the "short" genes from the expression matrix
+### Drop the "short" genes from the expression matrix
+
+```{r}
+# what genes are short? using 25th percentile
+short_genes <- zeroes_df %>%
+  dplyr::filter(gene_length <= quantile(zeroes_df$gene_length, 0.25)) %>%
+  dplyr::pull(Gene)
+```
 
 ```{r}
 length_filtered_exprs_mat <- exprs_mat[!rownames(exprs_mat) %in% short_genes, ]
 dim(length_filtered_exprs_mat)
 ```
 
-Redo PCA with the short genes removed
+### PCA with the short genes removed
 
 ```{r}
 # PCA on the length filtered exprs mat
 filtered_pca_results <- prcomp(t(length_filtered_exprs_mat))
+```
+#### PC1 and PC2 scatterplot
 
-# plotting with autoplot for PCA
-autoplot(filtered_pca_results, data = technology_df, alpha = 0.5, 
-         colour = 'compendium_technology_labels', scale = 0) +
-  scale_color_manual(labels = c("MICROARRAY", "RNA-SEQ"), 
-                     values = c("#E69F00", "#56B4E9")) +
-  theme_bw() +
-  ggtitle("Test Compendium by Technology: Short genes removed") +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
-  guides(colour = guide_legend(title = "technology"))
+```{r}
+pca_plot_wrapper(prcomp_results = filtered_pca_results,
+                 plot.title = paste("Test Compendium by Technology:",  
+                                    "Short genes removed"))
 ```
 
 ```{r}
@@ -263,15 +313,13 @@ ggsave(filename = file.path(plot_dir,
        plot = last_plot())
 ```
 
-Pairs plot (PC1-5)
+#### Pairs plot (PC1-5)
 
 ```{r}
 png(file.path(plot_dir, "gene_lengths_test_compendium_pairs_plot.png"))
-pairs(filtered_pca_results$x[, 1:5], 
-      col = dplyr::recode(compendium_technology_labels,
-                          `MICROARRAY` = "#E69F00",
-                          `RNASEQ` = "#56B4E9"),
-      main = "Test Compendium by Technology: Short genes removed")
+pca_pairs_plot_wrapper(prcomp_results = filtered_pca_results,
+                       plot.title = paste("Test Compendium by Technology:",  
+                                          "Short genes removed"))
 dev.off()
 ```
 

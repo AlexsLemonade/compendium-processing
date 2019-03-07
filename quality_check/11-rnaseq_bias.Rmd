@@ -1,0 +1,294 @@
+---
+title: "Technical bias in RNA-seq data from larger compendium"
+output: 
+  html_notebook:
+    toc: TRUE
+    toc_float: TRUE
+author: J. Taroni for CCDL
+date: 2019
+---
+
+The PCA plot for the larger zebrafish test compendium (`05-pca_test_compendium`)
+showed a separation between what may be 2 groups of RNA-seq samples in PC1.
+
+Here, we'll dig into what may underlie the difference between the two clusters.
+We suspect it may have to do with sample prep; specifically, it may be the
+selection strategy (poly-A enrichment vs. rRNA depletion).
+First, we need to identify a random selection of samples that we will then
+read the experimental methods for.
+
+## Set up
+
+```{r}
+`%>%` <- dplyr::`%>%`
+library(ggplot2)
+```
+
+### Custom Functions
+
+```{r}
+refinebio_sample_code_to_list <- function(accession_code) {
+  # given a sample accession code, get the refine.bio sample information at
+  # at the samples endpoint into list format with jsonlite::fromJSON
+  #
+  # Args:
+  #   accession_code: sample accession code
+  # 
+  # Returns:
+  #   sample endpoint info as a list (from jsonlite::fromJSON)
+  api_url <- paste0("https://api.refine.bio/samples/?accession_code=", 
+                    accession_code)
+  sample_info <- jsonlite::fromJSON(api_url)
+}
+```
+
+```{r}
+get_sample_project_accession <- function(accession_code) {
+  # takes the output of refinebio_sample_code_to_list and returns a project
+  # (e.g., SRPXXXXXX) for an RNA-seq sample
+  # 
+  # Args:
+  #   accession_code: sample accession code (should be RNA-seq!)
+  #
+  # Returns:
+  #   project_accession: the project accession code associated with sample,
+  #                      which is extracted from the European Nucleotide 
+  #                      Archive reference URL
+  
+  sample_info <- refinebio_sample_code_to_list(accession_code)
+  
+  # this is only intended to work for RNA-seq samples
+  if(sample_info$results$technology != "RNA-SEQ") 
+    stop("get_sample_project_accession only works with RNA-seq samples!")
+  
+  # what project accession number did this come from? we can get this from the
+  # url of the source reference stored in refine.bio
+  project_accession <- NA
+  reference_url <- sample_info$results$protocol_info[[1]]$Reference
+  if (!is.null(reference_url))
+    project_accession <- stringr::word(reference_url, -1, sep = "/")
+  return(project_accession)
+}
+```
+
+```{r}
+extract_sample_metadata <- function(accession_code) {
+  # given an RNA-seq sample (run) accession code (e.g., SRRXXXXX), return the 
+  # following metadata from the refine.bio API as a data.frame that is a 
+  # single row: 
+  #   sample accession code, project accession code (e.g.), library layout, 
+  #   percent of reads mapped by salmon quant, number of reads, inferred library
+  #   type, compatible fragment ratio, which length salmon index was used
+  # 
+  # Args:
+  #   accession_code: the sample (run in SRA parlance) accession code
+  #                   for an RNA-seq sample such as "SRR998890" (character)
+  # 
+  # Returns:
+  #   a data.frame of dimensions 1, 9 that contains the information for the
+  #   sample outlined above
+  #   
+  
+  # internal helper function -- there are a bunch of variables that we need
+  # to pull from a data.frame and get rid of multiple NAs so we'll use 
+  # rlang::sym to help us with that
+  extract_var_na_rm <- function(var_name = "percent_mapped") {
+    sample_info_df %>%
+      dplyr::filter(!is.na(!!rlang::sym(var_name))) %>%
+      dplyr::pull(!!rlang::sym(var_name))
+  }
+  
+  # get the sample annotations, etc. from the refine.bio API
+  sample_info <- refinebio_sample_code_to_list(accession_code)
+  
+  # this is only intended to work for RNA-seq samples
+  if(sample_info$results$technology != "RNA-SEQ") 
+    stop("extract_sample_metadata only works with RNA-seq samples!")
+  
+  # what's the SRP|ERP|DRP ? this will help us track down 
+  project_accession <- get_sample_project_accession(accession_code)
+  
+  # the sample annotations contain all the relevant information about the salmon
+  # run
+  sample_annotations <- sample_info$results$results[[1]]$annotations
+  
+  # there are a bunch of empty data.frame -- we don't want that! so let's find
+  # the index of what we want and extract it
+  nonempty_index<- which(unlist(lapply(lapply(sample_annotations, colnames), 
+                                       length)) != 0)
+  # if there's more than one nonempty data.frame, pick the first one
+  # this is a hack but will do for this purpose
+  sample_info_df <- sample_annotations[[nonempty_index[1]]]$data
+  
+  # paired or single end read -- only paired end will have corrections for
+  # GC bias
+  library_layout <- "SINGLE"
+  gc_bias <- any(sample_info_df$gc_bias_correct)
+  if (gc_bias & !is.na(gc_bias))
+    library_layout <- "PAIRED"
+  
+  # the library types inferred by salmon quant
+  library_type <- unique(unlist(sample_info_df$library_types))
+  # if more than one library type was detected, just report it as multiple
+  # this will require extra examination
+  if (length(library_type) > 1)
+    library_type <- "multiple"
+
+  # what % of the reads for this sample are successfully mapped to the txome
+  # index?
+  percent_mapped <- extract_var_na_rm("percent_mapped") 
+  
+  # how many reads does this sample have?
+  num_reads <- extract_var_na_rm("num_processed")
+  
+  # compatible fragment ratio -- a measure of agreement with the inferred 
+  # library type
+  compatible_fragment_ratio <- extract_var_na_rm("compatible_fragment_ratio")
+  
+  # what length index was used? (short or long)
+  index_length <- extract_var_na_rm("index_length")
+  
+  data.frame(
+    accession_code,
+    experiment = project_accession,
+    library_layout,
+    platform = sample_info$results$pretty_platform,
+    num_reads,
+    percent_mapped,
+    library_type,
+    compatible_fragment_ratio,
+    index_length
+  )
+  
+}
+```
+
+```{r}
+get_metadata_df <- function(accession_codes) {
+  # given a vector of sample accession codes, return a data.frame with the
+  # information returned by extract_sample_metadata; we bind all the rows 
+  # together
+  # 
+  # Args:
+  #   accession_codes: a vector of sample accession codes (should be RNA-seq
+  #                    samples) to be used with extract_sample_metadata
+  #
+  # Returns:
+  #   metadata_df: the output of extract_sample_metdata (a 1 row data.frame for
+  #                each sample) for each sample, now with the rows in a single
+  #                data.frame via dplyr::bind_rows
+
+  metadata_list <- lapply(accession_codes, extract_sample_metadata)
+  # metadata_list is a list of 1 row data.frames, so there will be 
+  # length(metadata_list) warnings about coercing to vector
+  metadata_df <- suppressWarnings(dplyr::bind_rows(metadata_list))
+}
+```
+
+### Set seed for reproducibility
+
+```{r}
+set.seed(6345)
+```
+
+## Initial investigation of RNA-seq sample groups
+
+Read in the data for PC1 and PC2 from `05-pca_test_compendium` and filter to
+only the RNA-seq samples
+
+```{r}
+pc_file <- file.path("results", "larger_compendium_PC1and2.tsv")
+seq_df <- readr::read_tsv(pc_file) %>%
+  dplyr::filter(compendium_technology_labels != "MICROARRAY")
+```
+
+We're going to somewhat arbitrarily divide samples into two groups on the basis
+of their values for PC1.
+
+```{r}
+seq_df <- seq_df %>%
+  dplyr::mutate(Group = dplyr::case_when(
+    PC1 > 0 ~ "positive",
+    PC1 < 0 ~ "negative"
+  ))
+```
+
+How's this look?
+
+```{r}
+seq_df %>%
+  ggplot(aes(x = PC1, y = PC2, colour = Group)) +
+  geom_point() +
+  theme_bw()
+```
+
+This is probably close enough for what we're after here.
+
+### Random subset of samples from each group
+
+```{r}
+positive_samples <- sample(seq_df %>% 
+                             dplyr::filter(Group == "positive") %>% 
+                             dplyr::pull(Sample), 
+                           50)
+```
+
+```{r}
+negative_samples <- sample(seq_df %>% 
+                             dplyr::filter(Group == "negative") %>% 
+                             dplyr::pull(Sample), 
+                           50)
+```
+
+We took a look at a handful of samples and couldn't discern a pattern of poly-A
+enrichment vs. rRNA depletion.
+So we decided to dig a bit deeper into metadata from the `salmon quant` runs 
+themselves. 
+(See all the custom functions above.)
+
+### Extract (`salmon quant`) metadata about the two groups
+
+Extract the relevant metadata for the random subset of positive samples
+
+```{r}
+positive_metadata_df <- get_metadata_df(positive_samples)
+positive_metadata_df %>%
+  dplyr::arrange(experiment)
+```
+
+Extract the relevant metadata for the random subset of negative samples
+
+```{r}
+negative_metadata_df <- get_metadata_df(negative_samples)
+negative_metadata_df %>%
+  dplyr::arrange(experiment)
+```
+
+#### Notes on features of two groups
+
+* The positive group contains a mix of library layouts, instruments, and short
+and long read lengths.
+* The negative group is entirely paired-end samples with short read lengths and 
+generally it looks like there are lower % reads mapped. _However_ only a few 
+experiments appear to be represented in this group.
+
+### What experiments are represented in the "negative" group?
+
+Do all the negative samples come from very large experiments?
+Because `ERP008771` and `ERP006132` each have over 2000 samples.
+
+```{r}
+# to save on compute time, we'll sort the sample accession codes so runs from
+# the same experiment should be next to each other and then examine every
+# 25th sample
+all_negative_samples <- sort(seq_df %>% 
+  dplyr::filter(Group == "negative") %>% 
+  dplyr::pull(Sample))
+indices <- seq(1, length(all_negative_samples), 25)
+negative_experiment_accession_codes <- 
+  sapply(all_negative_samples[indices], get_sample_project_accession)
+# display in a readable format
+data.frame(sort(unique(negative_experiment_accession_codes)))
+```
+
+These are all from the Wellcome Trust Sanger Institute.

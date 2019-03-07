@@ -59,7 +59,8 @@ calculate_sample_correlation <- function(experiment_accession_code,
   
   # this is where the lengthScaledTPM.tsv files for refine.bio processed data
   # are locally
-  seq_rb_data_dir <- file.path("..", "data", "rnaseq")
+  seq_rb_data_dir <- file.path("..", "select_imputation_method", "data", 
+                               "rnaseq")
 
   # full paths to the refine.bio processed files for each sample, which we then
   # use to get a data.frame with all samples

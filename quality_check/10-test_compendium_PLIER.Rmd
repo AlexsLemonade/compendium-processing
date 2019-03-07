@@ -1,0 +1,308 @@
+---
+title: "Run PLIER on test compendium"
+output: 
+  html_notebook:
+    toc: TRUE
+    toc_float: TRUE
+author: J. Taroni for CCDL
+date: 2019
+---
+
+Do we "get more biology" out of the combined technology test compendium than we
+get out of each of the technologies individually?
+
+We'll use the metrics we developed as part of the MultiPLIER project here.
+Specifically, do we get higher pathway coverage for a model trained on
+the dual-technology test compendium vs. those trained on the individual
+technology compendia?
+
+## Setup
+
+#### Functions
+
+Source the most recent version of the MultiPLIER utils from Github
+
+```{r}
+source("https://github.com/greenelab/multi-plier/raw/7c56a2867f9f08f7bcd3617875c7c2dbe886cbeb/util/plier_util.R")
+# we only want GetPathwayCoverage
+rm(list = setdiff(ls(), "GetPathwayCoverage"))
+```
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+```{r}
+# we'll train 3 PLIER models: matrix with both technologies, microarray samples
+# only, and RNA-seq samples only
+PLIERWrapper <- function(exprs_mat, common_genes, pathway_mat, seed = 123) {
+  
+  # set seed for reproducibility
+  set.seed(seed)
+  
+  # z-score the expression data
+  row_norm_exprs <- PLIER::rowNorm(exprs_mat[common_genes, ])
+  
+  # how many "significant PCs" via the elbow method -- we use this to set k when
+  # training a PLIER model
+  num_pcs <- PLIER::num.pc(row_norm_exprs)
+  
+  return(PLIER::PLIER(data = row_norm_exprs[common_genes, ], 
+                      priorMat = pathway_mat[common_genes, ],
+                      k = round(num_pcs * 1.3)))
+}
+```
+
+#### Libraries
+
+```{r}
+# PLIER installation
+# BiocManager::install("qvalue", update = FALSE)
+# devtools::install_github('wgmao/PLIER',
+#                          ref = 'a2d4a2aa343f9ed4b9b945c04326bebd31533d4d',
+#                          dependencies = TRUE)
+# install.packages("cowplot")
+```
+
+```{r}
+library(PLIER)
+library(org.Dr.eg.db)
+```
+
+#### Directories
+
+```{r}
+pathway_dir <- file.path("data", "pathways")
+result_dir <- "results"
+plot_dir <- "plots"
+```
+
+Results directory specifically for holding the PLIER models
+
+```{r}
+plier_result_dir <- file.path(result_dir, "PLIER_models")
+dir.create(plier_result_dir, showWarnings = FALSE, recursive = TRUE)
+```
+
+## Read in data
+
+### Prior information matrices
+
+We need to get the 3 pathway prior information matrices we have: developmental
+stage, tissues (based on adult only), and the wikipathways into a single 
+matrix.
+We can do this with the `PLIER::combinePaths` function.
+
+```{r}
+# read in the three individual matrices we prepped in 
+# 09-prior_information_matrix
+wikipathway_mat <- readRDS(file.path(pathway_dir, 
+                                     "Danio_rerio_wikipathways_prior_info.RDS"))
+adult_tissue_mat <- readRDS(file.path(pathway_dir,
+                                      "ZFIN_adult_tissue_prior_info.RDS"))
+dev_stage_mat <- readRDS(file.path(pathway_dir,
+                                   "ZFIN_stages_prior_info.RDS"))
+# combine into a single matrix for use with PLIER
+combine_path_mat <- PLIER::combinePaths(adult_tissue_mat,
+                                        dev_stage_mat,
+                                        wikipathway_mat)
+# we no longer need the individual matrices
+rm(adult_tissue_mat, dev_stage_mat, wikipathway_mat)
+```
+
+### Test compendium
+
+We need to convert the test compendium gene identifiers from Ensembl gene IDs to
+ZFIN identifiers so that the IDs in the prior information and the expression
+data match.
+
+```{r}
+# first we need to read in the 
+exprs_file <- file.path("data", "larger_compendium_exprs_mat.RDS")
+exprs_mat <- readRDS(exprs_file)
+```
+
+We expect that there will be a 1:many mapping here, so we'll use the option
+where only the first thing that comes back is returned by setting 
+`multiVals = "first"` (note that this is the default behavior).
+
+```{r}
+# ENSDARG -> ZDB-GENE
+zfin_ids <- mapIds(org.Dr.eg.db, keys = rownames(exprs_mat),
+                   column = "ZFIN", keytype = "ENSEMBL",
+                   multiVals = "first")
+
+# these should be in the same order, but out of an abundance of caution!
+if (all.equal(rownames(exprs_mat), names(zfin_ids))) {
+  rownames(exprs_mat) <- zfin_ids
+} else {
+  stop("Something went wrong!")
+}
+```
+
+## PLIER
+
+We're going to do five repeats.
+
+```{r}
+set.seed(123)
+seeds <- sample(1:100000, 5)
+names(seeds) <- seeds
+```
+
+### Both technologies
+
+```{r}
+# find the common genes between the expression matrix and the prior information
+# matrix
+common_genes <- PLIER::commonRows(exprs_mat, combine_path_mat)
+
+# this expression matrix includes samples from both technologies
+both_tech_plier_list <- 
+  lapply(seeds,
+         function(x) PLIERWrapper(exprs_mat = exprs_mat,
+                                  common_genes = common_genes,
+                                  pathway_mat = combine_path_mat,
+                                  seed = x)
+  )
+```
+
+Check the pathway coverage for these models
+
+```{r}
+both_tech_pathway_coverage <- reshape2::melt(lapply(both_tech_plier_list, 
+                                                    GetPathwayCoverage))
+```
+
+### Microarray only
+
+```{r}
+microarray_mat <- exprs_mat[, -grep("SRR|ERR|DRR", colnames(exprs_mat))]
+microarray_plier_list <-
+  lapply(seeds, 
+         function(x) PLIERWrapper(exprs_mat = microarray_mat,
+                                  common_genes = common_genes,
+                                  pathway_mat = combine_path_mat,
+                                  seed = x)
+  )
+microarray_pathway_coverage <- reshape2::melt(lapply(microarray_plier_list,
+                                                     GetPathwayCoverage))
+```
+
+### RNA-seq only
+
+```{r}
+rnaseq_mat <- exprs_mat[, grep("SRR|ERR|DRR", colnames(exprs_mat))]
+rnaseq_plier_list <- 
+  lapply(seeds, 
+         function(x) PLIERWrapper(exprs_mat = rnaseq_mat,
+                                  common_genes = common_genes,
+                                  pathway_mat = combine_path_mat,
+                                  seed = x )
+         )
+rnaseq_pathway_coverage <- reshape2::melt(lapply(rnaseq_plier_list, 
+                                                 GetPathwayCoverage))
+```
+
+#### Wrangle pathway coverage results 
+
+And write to file
+
+```{r}
+coverage_df <- dplyr::bind_rows(list(
+  "all" = both_tech_pathway_coverage,
+  "microarray" = microarray_pathway_coverage,
+  "rnaseq"= rnaseq_pathway_coverage),
+  .id = "technology"
+) %>%
+  dplyr::mutate(metric = L2, seed = L1) %>%
+  dplyr::select(c(-L2, -L1)) %>%
+  dplyr::filter(metric != "sig.pathway.by.lv") %>%
+  dplyr::mutate(metric = dplyr::case_when(
+    metric == "pathway" ~ "Pathway Coverage",
+    metric == "lv" ~ "LV Proportion"
+  ))
+```
+
+Number of latent variables
+
+```{r}
+get_num_lvs_df <- function(plier_list, technology = "all") {
+  reshape2::melt(lapply(plier_list, function(x) nrow(x$B))) %>%
+    dplyr::mutate(seed = L1, metric = rep("Number of LVs", 
+                                          length(plier_list)),
+                  technology = rep(technology, length(plier_list))) %>%
+    dplyr::select(-L1)
+}
+```
+
+
+```{r}
+num_lvs_df <- dplyr::bind_rows(
+  "all" = get_num_lvs_df(both_tech_plier_list),
+  "microarray" = get_num_lvs_df(microarray_plier_list, "microarray"),
+  "rnaseq" = get_num_lvs_df(rnaseq_plier_list, "rnaseq")
+)
+
+coverage_df <- coverage_df %>%
+  dplyr::bind_rows(num_lvs_df) 
+
+readr::write_tsv(coverage_df, 
+                 file.path(result_dir,
+                           "larger_compendium_pathway_coverage.tsv"))
+```
+
+
+#### Save models to file
+
+```{r}
+saveRDS(both_tech_plier_list, 
+        file = file.path(plier_result_dir,
+                         "larger_both_technologies_PLIER_list.RDS"))
+saveRDS(microarray_plier_list, 
+        file = file.path(plier_result_dir, 
+                         "larger_microarray_PLIER_list.RDS"))
+saveRDS(rnaseq_plier_list, 
+        file = file.path(plier_result_dir, "larger_rnaseq_PLIER_list.RDS"))
+```
+
+## Plotting
+
+```{r}
+# these metrics are on different scales, so we'll plot them separately and
+# then assemble them into a single, multipanel plot
+plot_list <- 
+  lapply(c("Number of LVs", "Pathway Coverage", "LV Proportion"),
+         function(x) 
+           coverage_df %>%
+           dplyr::mutate(technology = toupper(technology)) %>%
+           dplyr::filter(metric == x) %>%
+           ggplot2::ggplot(ggplot2::aes(x = technology, y = value)) +
+           ggplot2::geom_boxplot() +
+           ggplot2::geom_jitter(alpha = 0.2) +
+           ggplot2::theme_bw() +
+           ggplot2::ggtitle(x) +
+           ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5,
+                                                             face = "bold"),
+                          text = ggplot2::element_text(size = 12),
+                          axis.text.x = ggplot2::element_text(
+                            angle = 45, vjust = 0.5
+                          )))
+
+cowplot::plot_grid(plotlist = plot_list, ncol = 3)
+```
+
+```{r}
+ggplot2::ggsave(file.path(plot_dir, 
+                          "larger_compendium_plier_metrics_by_tech.png"),
+                height = 8.5, width = 11,
+                plot = ggplot2::last_plot()) 
+```
+
+
+## Session info
+
+```{r}
+sessionInfo()
+```
+

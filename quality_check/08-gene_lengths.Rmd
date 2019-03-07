@@ -120,7 +120,8 @@ plot_dir <- "plots"
 ### `lengthScaledTPM.tsv` files
 
 ```{r}
-list_of_rnaseq_files <- list.files(file.path("..", "data", "rnaseq"),
+list_of_rnaseq_files <- list.files(file.path("..", "select_imputation_method", 
+                                             "data", "rnaseq"),
                                    full.names = TRUE)
 ```
 

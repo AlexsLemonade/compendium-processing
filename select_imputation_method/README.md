@@ -9,7 +9,7 @@ older arrays measure fewer genes compared to more recent platforms.
 
 The goal of refine.bio is to provide uniformly processed and normalized gene expression data. 
 This includes the capability to combine samples that were measured on different technologies. 
-In many cases, removing genes that not measured for every sample will result in a greatly reduced feature space. 
+In many cases, removing genes that are not measured for every sample will result in a greatly reduced feature space. 
 To avoid this problem, it is desirable to impute missing values. 
 Here, we're evaluating imputation approaches for constructing species compendia. Species compendia will be comprised of all samples from a species in our system.
 

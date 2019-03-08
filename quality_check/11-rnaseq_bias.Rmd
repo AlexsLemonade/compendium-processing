@@ -58,16 +58,17 @@ get_sample_project_accession <- function(accession_code) {
   sample_info <- refinebio_sample_code_to_list(accession_code)
   
   # this is only intended to work for RNA-seq samples
-  if(sample_info$results$technology != "RNA-SEQ") 
+  if (sample_info$results$technology != "RNA-SEQ") 
     stop("get_sample_project_accession only works with RNA-seq samples!")
   
   # what project accession number did this come from? we can get this from the
   # url of the source reference stored in refine.bio
-  project_accession <- NA
   reference_url <- sample_info$results$protocol_info[[1]]$Reference
-  if (!is.null(reference_url))
-    project_accession <- stringr::word(reference_url, -1, sep = "/")
-  return(project_accession)
+  if (!is.null(reference_url)) {
+    project_accession <- stringr::word(reference_url, -1, sep = "/") 
+  } else {
+    project_accession <- NA
+  }
 }
 ```
 
@@ -102,7 +103,7 @@ extract_sample_metadata <- function(accession_code) {
   sample_info <- refinebio_sample_code_to_list(accession_code)
   
   # this is only intended to work for RNA-seq samples
-  if(sample_info$results$technology != "RNA-SEQ") 
+  if (sample_info$results$technology != "RNA-SEQ") 
     stop("extract_sample_metadata only works with RNA-seq samples!")
   
   # what's the SRP|ERP|DRP ? this will help us track down 
@@ -114,18 +115,20 @@ extract_sample_metadata <- function(accession_code) {
   
   # there are a bunch of empty data.frame -- we don't want that! so let's find
   # the index of what we want and extract it
-  nonempty_index<- which(unlist(lapply(lapply(sample_annotations, colnames), 
-                                       length)) != 0)
+  nonempty_index <- which(unlist(lapply(lapply(sample_annotations, colnames), 
+                                        length)) != 0)
   # if there's more than one nonempty data.frame, pick the first one
   # this is a hack but will do for this purpose
   sample_info_df <- sample_annotations[[nonempty_index[1]]]$data
   
   # paired or single end read -- only paired end will have corrections for
   # GC bias
-  library_layout <- "SINGLE"
   gc_bias <- any(sample_info_df$gc_bias_correct)
-  if (gc_bias & !is.na(gc_bias))
+  if (gc_bias & !is.na(gc_bias)) {
     library_layout <- "PAIRED"
+  } else {
+    library_layout <- "SINGLE"
+  }
   
   # the library types inferred by salmon quant
   library_type <- unique(unlist(sample_info_df$library_types))
@@ -194,7 +197,7 @@ set.seed(6345)
 ## Initial investigation of RNA-seq sample groups
 
 Read in the data for PC1 and PC2 from `05-pca_test_compendium` and filter to
-only the RNA-seq samples
+only the RNA-seq samples.
 
 ```{r}
 pc_file <- file.path("results", "larger_compendium_PC1and2.tsv")
@@ -227,17 +230,17 @@ This is probably close enough for what we're after here.
 ### Random subset of samples from each group
 
 ```{r}
-positive_samples <- sample(seq_df %>% 
-                             dplyr::filter(Group == "positive") %>% 
-                             dplyr::pull(Sample), 
-                           50)
+positive_samples <- seq_df %>% 
+  dplyr::filter(Group == "positive") %>% 
+  dplyr::pull(Sample) %>%
+  sample(50)
 ```
 
 ```{r}
-negative_samples <- sample(seq_df %>% 
-                             dplyr::filter(Group == "negative") %>% 
-                             dplyr::pull(Sample), 
-                           50)
+negative_samples <- seq_df %>% 
+  dplyr::filter(Group == "negative") %>% 
+  dplyr::pull(Sample) %>%
+  sample(50)
 ```
 
 We took a look at a handful of samples and couldn't discern a pattern of poly-A
@@ -291,4 +294,15 @@ negative_experiment_accession_codes <-
 data.frame(sort(unique(negative_experiment_accession_codes)))
 ```
 
-These are all from the Wellcome Trust Sanger Institute.
+## Conclusion
+
+These are all samples from large experiments from the Wellcome Sanger Institute 
+Zebrafish Mutation Project. 
+These samples tend to have fewer reads and lower mapping rates compared to a 
+random selection of samples from the other group.
+
+## Session Info
+
+```{r}
+sessionInfo()
+```

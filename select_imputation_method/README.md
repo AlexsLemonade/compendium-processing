@@ -59,4 +59,4 @@ Many of the imputed values were 0 and it was unlikely to be appropriate for the 
 * `KNN` performed well and has been regularly used for imputing gene expression values ([Troyanskaya et al., 2001](https://doi.org/10.1093/bioinformatics/17.6.520)), which is why we elected to explore it further.
 Unfortunately, it would likely take too long to run (see [`impute_requirements`](https://github.com/AlexsLemonade/compendium-processing/tree/master/impute_requirements))!
 
-Ultimately, we elected to use `IterativeSVD` for initial species compendia processing.
+Ultimately, we elected to use `IterativeSVD` for initial species compendia processing as it performs similarly enough to KNN and [is much faster](https://github.com/AlexsLemonade/compendium-processing/blob/a001b80ddf34bfcab63829ec40c19197e3830529/impute_requirements/methods_comparison.ipynb).

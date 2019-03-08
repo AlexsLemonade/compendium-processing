@@ -15,7 +15,7 @@ Here, we're evaluating imputation approaches for constructing species compendia.
 
 ### Experiment
 
-We constructed gene expression matrix from ~800 _Danio rerio_ samples split approximately evenly between microarray and RNA-seq data and only retained genes measured in all samples.
+We constructed a gene expression matrix from ~800 _Danio rerio_ samples split approximately evenly between microarray and RNA-seq data and only retained genes measured in all samples.
 
 We masked this data using two methods (see #5):
 

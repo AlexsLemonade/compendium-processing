@@ -56,12 +56,10 @@ matrix we'll need for use with PLIER.
 
 ```{r}
 names(zebrafish_wp_list$genesets) <- make.names(  # remove hyphens
-  gsub(" ", "_",  # convert spaces to underscores
-       gsub("%WikiPathways_20190110%", " ",  # remove date, WP information 
-            gsub("%Danio rerio", "",  # remove species information
-                 zebrafish_wp_list$geneset.names))
-  )
-)
+  # remove date, WP information, convert spaces to underscores
+  gsub("%WikiPathways_20190110%| ", "_",  
+       gsub("%Danio rerio", "",  # remove species information
+            zebrafish_wp_list$geneset.names)))
 # remove pathway names and descriptions
 zebrafish_wp_list <- zebrafish_wp_list$genesets
 ```
@@ -108,7 +106,6 @@ the archive date in the file name/header and including the column names, we've
 obtained these files via the 
 [downloads webpage](https://zfin.org/downloads/archive/2019.01.25) using the
 date that is currently the most recent archive (`2019-01-25`).
-
 
 ```{r}
 wildtype_expression_file <- 
@@ -160,9 +157,12 @@ for (current_gene in unique(wildtype_expression_df$`Gene ID`)) {
     # names from the ordered factor vector
     start_index <- which(stage_ordered_factor == start_stage)
     end_index <- which(stage_ordered_factor == end_stage)
-    covered_stages <- as.character(stage_ordered_factor[start_index:end_index])
-    current_gene_stages <- append(current_gene_stages,
-                                  covered_stages)
+    if (end_index >= start_index) {
+      covered_stages <- 
+        as.character(stage_ordered_factor[start_index:end_index])
+      current_gene_stages <- append(current_gene_stages,
+                                    covered_stages)
+    } 
   }
   gene_stages_list[[current_gene]] <- current_gene_stages
 }
@@ -222,4 +222,3 @@ saveRDS(adult_tissue_wt_binary_mat,
 ```{r}
 sessionInfo()
 ```
-

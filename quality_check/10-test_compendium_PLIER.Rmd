@@ -18,7 +18,27 @@ technology compendia?
 
 ## Setup
 
-#### Functions
+### Libraries
+
+```{r}
+# PLIER installation
+# BiocManager::install("qvalue", update = FALSE)
+# devtools::install_github('wgmao/PLIER',
+#                          ref = 'a2d4a2aa343f9ed4b9b945c04326bebd31533d4d',
+#                          dependencies = TRUE)
+# install.packages("cowplot")
+```
+
+```{r}
+library(PLIER)
+library(org.Dr.eg.db)
+```
+
+### Functions
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
 
 Source the most recent version of the MultiPLIER utils from Github
 
@@ -29,13 +49,9 @@ rm(list = setdiff(ls(), "GetPathwayCoverage"))
 ```
 
 ```{r}
-`%>%` <- dplyr::`%>%`
-```
-
-```{r}
 # we'll train 3 PLIER models: matrix with both technologies, microarray samples
 # only, and RNA-seq samples only
-PLIERWrapper <- function(exprs_mat, common_genes, pathway_mat, seed = 123) {
+PLIER_wrapper <- function(exprs_mat, common_genes, pathway_mat, seed = 123) {
   
   # set seed for reproducibility
   set.seed(seed)
@@ -53,23 +69,43 @@ PLIERWrapper <- function(exprs_mat, common_genes, pathway_mat, seed = 123) {
 }
 ```
 
-#### Libraries
+```{r}
+# wrapper function for running PLIER repeatedly with different seeds that are
+# supplied through the seeds vector
+get_plier_list <- function(exprs_mat, common_genes, pathway_mat,
+                           seeds) {
+  lapply(seeds,
+         function(x) PLIER_wrapper(exprs_mat = exprs_mat,
+                                   common_genes = common_genes,
+                                   pathway_mat = combine_path_mat,
+                                   seed = x)
+  )
+}
+```
+
+These functions are specifically for use with the lists of PLIER models that
+are returned from `get_plier_list`.
 
 ```{r}
-# PLIER installation
-# BiocManager::install("qvalue", update = FALSE)
-# devtools::install_github('wgmao/PLIER',
-#                          ref = 'a2d4a2aa343f9ed4b9b945c04326bebd31533d4d',
-#                          dependencies = TRUE)
-# install.packages("cowplot")
+# get pathway coverage metrics for each model in the list into a data.frame
+get_pathway_df <- function(plier_list) { 
+  reshape2::melt(lapply(plier_list, GetPathwayCoverage))
+}
 ```
 
 ```{r}
-library(PLIER)
-library(org.Dr.eg.db)
+# get a data.frame of the number of latent variables in each model
+get_num_lvs_df <- function(plier_list, technology = "all") {
+  # technology will be the label used in the 'technology' label
+  reshape2::melt(lapply(plier_list, function(x) nrow(x$B))) %>%
+    dplyr::mutate(seed = L1, metric = rep("Number of LVs", 
+                                          length(plier_list)),
+                  technology = rep(technology, length(plier_list))) %>%
+    dplyr::select(-L1)
+}
 ```
 
-#### Directories
+### Directories
 
 ```{r}
 pathway_dir <- file.path("data", "pathways")
@@ -158,50 +194,38 @@ names(seeds) <- seeds
 common_genes <- PLIER::commonRows(exprs_mat, combine_path_mat)
 
 # this expression matrix includes samples from both technologies
-both_tech_plier_list <- 
-  lapply(seeds,
-         function(x) PLIERWrapper(exprs_mat = exprs_mat,
-                                  common_genes = common_genes,
-                                  pathway_mat = combine_path_mat,
-                                  seed = x)
-  )
+both_tech_plier_list <- get_plier_list(exprs_mat = exprs_mat,
+                                       common_genes = common_genes,
+                                       pathway_mat = combine_path_mat,
+                                       seeds = seeds)
 ```
 
 Check the pathway coverage for these models
 
 ```{r}
-both_tech_pathway_coverage <- reshape2::melt(lapply(both_tech_plier_list, 
-                                                    GetPathwayCoverage))
+both_tech_pathway_coverage <- get_pathway_df(both_tech_plier_list)
 ```
 
 ### Microarray only
 
 ```{r}
 microarray_mat <- exprs_mat[, -grep("SRR|ERR|DRR", colnames(exprs_mat))]
-microarray_plier_list <-
-  lapply(seeds, 
-         function(x) PLIERWrapper(exprs_mat = microarray_mat,
-                                  common_genes = common_genes,
-                                  pathway_mat = combine_path_mat,
-                                  seed = x)
-  )
-microarray_pathway_coverage <- reshape2::melt(lapply(microarray_plier_list,
-                                                     GetPathwayCoverage))
+microarray_plier_list <- get_plier_list(exprs_mat = microarray_mat,
+                                        common_genes = common_genes,
+                                        pathway_mat = combine_path_mat,
+                                        seeds = seeds)
+microarray_pathway_coverage <- get_pathway_df(microarray_plier_list)
 ```
 
 ### RNA-seq only
 
 ```{r}
 rnaseq_mat <- exprs_mat[, grep("SRR|ERR|DRR", colnames(exprs_mat))]
-rnaseq_plier_list <- 
-  lapply(seeds, 
-         function(x) PLIERWrapper(exprs_mat = rnaseq_mat,
+rnaseq_plier_list <- get_plier_list(exprs_mat = rnaseq_mat,
                                   common_genes = common_genes,
                                   pathway_mat = combine_path_mat,
-                                  seed = x )
-         )
-rnaseq_pathway_coverage <- reshape2::melt(lapply(rnaseq_plier_list, 
-                                                 GetPathwayCoverage))
+                                  seeds = seeds)
+rnaseq_pathway_coverage <- get_pathway_df(rnaseq_plier_list)
 ```
 
 #### Wrangle pathway coverage results 
@@ -227,17 +251,6 @@ coverage_df <- dplyr::bind_rows(list(
 Number of latent variables
 
 ```{r}
-get_num_lvs_df <- function(plier_list, technology = "all") {
-  reshape2::melt(lapply(plier_list, function(x) nrow(x$B))) %>%
-    dplyr::mutate(seed = L1, metric = rep("Number of LVs", 
-                                          length(plier_list)),
-                  technology = rep(technology, length(plier_list))) %>%
-    dplyr::select(-L1)
-}
-```
-
-
-```{r}
 num_lvs_df <- dplyr::bind_rows(
   "all" = get_num_lvs_df(both_tech_plier_list),
   "microarray" = get_num_lvs_df(microarray_plier_list, "microarray"),
@@ -251,7 +264,6 @@ readr::write_tsv(coverage_df,
                  file.path(result_dir,
                            "larger_compendium_pathway_coverage.tsv"))
 ```
-
 
 #### Save models to file
 
@@ -298,7 +310,6 @@ ggplot2::ggsave(file.path(plot_dir,
                 height = 8.5, width = 11,
                 plot = ggplot2::last_plot()) 
 ```
-
 
 ## Session info
 

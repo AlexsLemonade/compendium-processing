@@ -44,4 +44,3 @@ docker run -it -e PASSWORD=<PASSWORD> --volume $(pwd):/home/rstudio/kitematic -p
 ```
 
 The subsequent steps are the same as above.
-

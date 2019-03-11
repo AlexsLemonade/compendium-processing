@@ -1,46 +1,46 @@
 technology	value	metric	seed
-all	0.14358974358974358	Pathway Coverage	28758
-all	0.2	LV Proportion	28758
-all	0.147008547008547	Pathway Coverage	78830
-all	0.2032520325203252	LV Proportion	78830
-all	0.11623931623931624	Pathway Coverage	40897
-all	0.17560975609756097	LV Proportion	40897
-all	0.13504273504273503	Pathway Coverage	88300
-all	0.1951219512195122	LV Proportion	88300
-all	0.15384615384615385	Pathway Coverage	94043
-all	0.208130081300813	LV Proportion	94043
-microarray	0.07692307692307693	Pathway Coverage	28758
-microarray	0.41228070175438597	LV Proportion	28758
-microarray	0.06666666666666667	Pathway Coverage	78830
-microarray	0.42105263157894735	LV Proportion	78830
-microarray	0.07008547008547009	Pathway Coverage	40897
-microarray	0.42105263157894735	LV Proportion	40897
-microarray	0.08205128205128205	Pathway Coverage	88300
-microarray	0.4298245614035088	LV Proportion	88300
-microarray	0.07521367521367521	Pathway Coverage	94043
-microarray	0.4473684210526316	LV Proportion	94043
-rnaseq	0.11282051282051282	Pathway Coverage	28758
-rnaseq	0.15165165165165165	LV Proportion	28758
-rnaseq	0.10085470085470086	Pathway Coverage	78830
-rnaseq	0.14714714714714713	LV Proportion	78830
-rnaseq	0.11794871794871795	Pathway Coverage	40897
-rnaseq	0.14264264264264265	LV Proportion	40897
-rnaseq	0.11965811965811966	Pathway Coverage	88300
-rnaseq	0.14864864864864866	LV Proportion	88300
-rnaseq	0.12136752136752137	Pathway Coverage	94043
-rnaseq	0.15465465465465467	LV Proportion	94043
-all	615	Number of LVs	28758
-all	615	Number of LVs	78830
-all	615	Number of LVs	40897
-all	615	Number of LVs	88300
-all	615	Number of LVs	94043
-microarray	114	Number of LVs	28758
-microarray	114	Number of LVs	78830
-microarray	114	Number of LVs	40897
-microarray	114	Number of LVs	88300
-microarray	114	Number of LVs	94043
-rnaseq	666	Number of LVs	28758
-rnaseq	666	Number of LVs	78830
-rnaseq	666	Number of LVs	40897
-rnaseq	666	Number of LVs	88300
-rnaseq	666	Number of LVs	94043
+all	0.13675213675213677	Pathway Coverage	28758
+all	0.2765072765072765	LV Proportion	28758
+all	0.1282051282051282	Pathway Coverage	78830
+all	0.24324324324324326	LV Proportion	78830
+all	0.14017094017094017	Pathway Coverage	40897
+all	0.27234927234927236	LV Proportion	40897
+all	0.12136752136752137	Pathway Coverage	88300
+all	0.23492723492723494	LV Proportion	88300
+all	0.147008547008547	Pathway Coverage	94043
+all	0.2785862785862786	LV Proportion	94043
+microarray	0.08376068376068375	Pathway Coverage	28758
+microarray	0.28019323671497587	LV Proportion	28758
+microarray	0.08547008547008547	Pathway Coverage	78830
+microarray	0.3188405797101449	LV Proportion	78830
+microarray	0.08376068376068375	Pathway Coverage	40897
+microarray	0.2946859903381642	LV Proportion	40897
+microarray	0.0905982905982906	Pathway Coverage	88300
+microarray	0.34299516908212563	LV Proportion	88300
+microarray	0.0905982905982906	Pathway Coverage	94043
+microarray	0.3285024154589372	LV Proportion	94043
+rnaseq	0.13504273504273503	Pathway Coverage	28758
+rnaseq	0.1960431654676259	LV Proportion	28758
+rnaseq	0.12478632478632479	Pathway Coverage	78830
+rnaseq	0.17805755395683454	LV Proportion	78830
+rnaseq	0.13162393162393163	Pathway Coverage	40897
+rnaseq	0.19244604316546762	LV Proportion	40897
+rnaseq	0.12478632478632479	Pathway Coverage	88300
+rnaseq	0.2844574780058651	LV Proportion	88300
+rnaseq	0.13162393162393163	Pathway Coverage	94043
+rnaseq	0.20863309352517986	LV Proportion	94043
+all	481	Number of LVs	28758
+all	481	Number of LVs	78830
+all	481	Number of LVs	40897
+all	481	Number of LVs	88300
+all	481	Number of LVs	94043
+microarray	207	Number of LVs	28758
+microarray	207	Number of LVs	78830
+microarray	207	Number of LVs	40897
+microarray	207	Number of LVs	88300
+microarray	207	Number of LVs	94043
+rnaseq	556	Number of LVs	28758
+rnaseq	556	Number of LVs	78830
+rnaseq	556	Number of LVs	40897
+rnaseq	341	Number of LVs	88300
+rnaseq	556	Number of LVs	94043

@@ -6,7 +6,7 @@ We use 3 separate Docker images for the analyses in this directory.
 
 #### Comparing gene-level estimates between _D. rerio_ genome builds
 
-For the following scripts
+For the following scripts:
 
 ```
 01-build_salmon_index.sh

@@ -67,7 +67,7 @@ Part of any difference between technologies could be driven by lowly expressed g
 <img src='https://github.com/AlexsLemonade/compendium-processing/raw/6826cc448d8bd8605ba73d30e344e7d20438234c/quality_check/plots/larger_compendium_tstat_length_scatter.png' width='600'>
 
 We tested for genes that are "differentially expressed" between RNA-seq samples and microarray samples (see [this notebook](https://alexslemonade.github.io/compendium-processing/quality_check/07-technology_diff_exp.nb.html)).
-Genes with a positive t statistic have higher values in RNA-seq data. 
+Genes with a positive t-statistic have higher values in RNA-seq data. 
 We can see that longer genes tend to have positive t statistics.
 ([Here](https://github.com/AlexsLemonade/compendium-processing/blob/6826cc448d8bd8605ba73d30e344e7d20438234c/quality_check/07-technology_diff_exp.Rmd#L120)'s how we calculate gene length.)
 

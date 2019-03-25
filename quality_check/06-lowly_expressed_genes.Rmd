@@ -28,6 +28,13 @@ calculate_mode <- function(x) {
 }
 ```
 
+### Results directory
+
+```{r}
+results_dir <- "results"
+dir.create(results_dir, showWarnings = FALSE)
+```
+
 ## Read in data
 
 ```{r}
@@ -178,22 +185,35 @@ of genes that are missing in only a few samples.
 Okay, do the genes that are missing in a bunch of samples tend to have lower
 expression values in the test compendium than all the other genes?
 
-```{r}
-high_zero_count_genes <- zero_counts_per_gene %>%
-  dplyr::filter(Freq >= quantile(Freq, 0.75)) %>%
-  dplyr::pull(Gene) %>%
-  as.character()
-```
-
 Get the average expression for each gene for the microarray samples
 
 ```{r}
-array_avg_exprs_df <- data.frame(average_expression = rowMeans(array_mat),
-                                 gene = rownames(array_mat)) %>%
-  dplyr::mutate(gene_category = dplyr::case_when(
-    gene %in% high_zero_count_genes ~ "high zero count",
-    TRUE ~ "other"
-  ))
+array_avg_exprs_df <- data.frame(Gene = rownames(array_mat),
+                                 average_expression = rowMeans(array_mat)) %>%
+  dplyr::inner_join(zero_counts_per_gene, by = "Gene") %>%
+  dplyr::mutate(Gene_category = dplyr::case_when(
+      Freq >= quantile(Freq, 0.75) ~ "high zero count",
+      TRUE ~ "other"
+    ),
+    Proportion_zero = Freq / ncol(seq_mat))
+```
+
+Plot the relationship between average expression and proportion of zero counts
+
+```{r}
+array_avg_exprs_df %>%
+  ggplot2::ggplot(ggplot2::aes(x = average_expression,
+                               y = Proportion_zero)) +
+  ggplot2::geom_point(alpha = 0.5) +
+  ggplot2::geom_smooth() +
+  ggplot2::theme_bw() +
+  ggplot2::labs(x = "average expression in microarray",
+                y = "proportion of samples with zero count")
+```
+
+```{r}
+plot_name <- file.path("plots", "array_average_expression_proportion_zeros.png")
+ggplot2::ggsave(plot_name)
 ```
 
 Plot the distributions
@@ -201,7 +221,7 @@ Plot the distributions
 ```{r}
 array_avg_exprs_df %>%
   ggplot2::ggplot(ggplot2::aes(x = average_expression,
-                               fill = gene_category)) +
+                               fill = Gene_category)) +
   ggplot2::geom_density(alpha = 0.4) +
   ggplot2::theme_bw() +
   ggplot2::labs(x = "average expression in microarray samples") +
@@ -212,6 +232,14 @@ array_avg_exprs_df %>%
 ```{r}
 plot_name <- file.path("plots", "average_expression_array_zero_count_genes.png")
 ggplot2::ggsave(plot_name)
+```
+
+Let's save the `data.frame` with the average expression values, etc. to file
+
+```{r}
+readr::write_tsv(array_avg_exprs_df, 
+                 file.path(results_dir, 
+                           "array_average_expression_rnaseq_zero_count.tsv"))
 ```
 
 ## Session info

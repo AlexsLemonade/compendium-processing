@@ -132,6 +132,14 @@ as.data.frame(log_seq_matrix) %>%
   tibble::rownames_to_column("Gene") %>%
   readr::write_tsv(file.path(aggregated_path, "log_common_seq_zebrafish.tsv"))
 
+#### Combine technologies ------------------------------------------------------
+
+combined_tech_df <- as.data.frame(log_seq_matrix) %>%
+  tibble::rownames_to_column("Gene") %>%
+  dplyr::inner_join(common_microarray_df, by = "Gene")
+readr::write_tsv(combined_tech_df, path = file.path(aggregated_path, 
+                                                    "both_tech_aggregated.tsv"))
+
 #### Quantile normalize --------------------------------------------------------
 
 # read in target distribution file from refine.bio and make a vector

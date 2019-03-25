@@ -225,6 +225,14 @@ ggsave(filename = file.path(plot_dir,
        plot = last_plot())
 ```
 
+Save the `data.frame` to TSV as well
+
+```{r}
+zeroes_df %>%
+  readr::write_tsv(file.path("results", 
+                             "gene_length_vs_rnaseq_zero_count.tsv"))
+```
+
 #### Compendium genes only
 
 ```{r}

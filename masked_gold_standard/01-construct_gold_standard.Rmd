@@ -1,0 +1,230 @@
+---
+title: "Constructing masked gold standards"
+output: html_notebook
+author: J. Taroni for CCDL
+date: 2019
+---
+
+Construct multiple masked gold standards with the following features:
+
+ * 15% of rows are missing values for _all_ microarray samples
+ * The proportion of missing values for a gene in RNA-seq samples is determined
+   by the gene length (exon union model)
+ * Some values are missing completely at random (5% on top of the above)
+
+## Functions
+
+```{r}
+`%>%` <- dplyr::`%>%`
+```
+
+### Masking functions
+
+```{r}
+mask_entire_row <- function(exprs_mat, seed = 12345, perc_masked = 0.15) {
+  # mask entire rows, the proportion of rows is determined by the perc_masked
+  # argument
+  set.seed(seed)
+  random_index <- sample(1:nrow(exprs_mat), 
+                         floor(nrow(exprs_mat) * perc_masked))
+  exprs_mat[random_index, ] <- NA
+  return(exprs_mat)
+}
+```
+
+```{r}
+mask_based_on_length <- function(seq_mat, gam_predict_df,
+                                             seed = 12345) {
+  # TODO: documentation documentation documentation!
+
+  # want the genes to be in the correct order
+  if (!all.equal(rownames(seq_mat), gam_predict_df$gene)) {
+    stop("gam fit is out of order!")
+  }
+  
+  set.seed(seed)
+  
+  # for each gene -- uniformly sample a value between the lower and upper bound
+  # this will determine how many columns (samples) to mask
+  perc_missing <- gam_predict_df %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(perc_missing = runif(n = 1, min = lower_bound, 
+                                       max = upper_bound)) %>%
+    dplyr::pull(perc_missing)
+  
+  # what number of columns should be masked?
+  num_col_mask <- floor(perc_missing * ncol(seq_mat))
+  
+  # if any are negative values, set to zero
+  # we observed this for very long gene with large SE
+  if (any(num_col_mask < 0)) {
+    num_col_mask[which(num_col_mask < 0)] <- 0
+  }
+  
+  # which columns should be masked?
+  masked_list <- lapply(num_col_mask, function(x) sample(1:ncol(seq_mat), x))
+  names(masked_list) <- as.character(1:nrow(seq_mat))
+  
+  # get this as a matrix that can be used to mask the seq_mat values
+  indices <- reshape2::melt(masked_list) %>%
+    dplyr::select(c(2, 1)) %>%
+    as.matrix()
+  
+  # mask the values!
+  masked_seq_mat <- seq_mat
+  masked_seq_mat[as.integer(indices)] <- NA
+  
+  # must explicitly return the matrix
+  return(masked_seq_mat)
+  
+}
+```
+
+```{r}
+# before passing indices_df to this, it should be filtered to remove values
+# that are already NA
+mask_completely_at_random <- function(exprs_mat, indices_df,
+                                      seed = 12345, perc_masked = 0.3) {
+  # given an expression matrix (exprs_mat) and a "grid" of its indices 
+  # (indices_df, where the row indices are in the first column and column 
+  # indices are in the second column), mask some percentage (perc_masked)
+  # of the values by replacing them with NAs
+  
+  # set seed for reproducibility!
+  set.seed(seed)
+  
+  # how many cells do we want to mask in the expression data.frame and which
+  # cells are they?
+  ncells <- floor(nrow(indices_df) * perc_masked)
+  rand_indices_df <- indices_df[sample(1:nrow(indices_df), ncells), ]
+  
+  # we need to return a matrix that has NAs -- the values are "masked"
+  masked_exprs_mat <- exprs_mat
+  masked_exprs_mat[as.matrix(rand_indices_df)] <- NA
+  
+  return(masked_exprs_mat)
+  
+}
+```
+
+```{r}
+get_masked_matrix <- function(microarray_mat, seq_mat, gam_predict_df,
+                              seed = 12345) {
+  # TODO: documentation
+  # mask entire rows of microarray data
+  masked_microarray_mat <- mask_entire_row(exprs_mat = microarray_mat,
+                                           seed = seed)
+  # mask RNA-seq data based on gene length information
+  masked_rnaseq_mat <- mask_based_on_length(seq_mat = seq_mat,
+                                            gam_predict_df = gam_predict_df,
+                                            seed = seed)
+  
+  combined_mat <- merge(masked_microarray_mat, masked_rnaseq_mat,
+                        by = "row.names") %>%
+    tibble::column_to_rownames("Row.names") %>%
+    as.matrix()
+
+  # get the indices data.frame to pass to MCAR
+  indices <- which(!is.na(combined_mat), arr.ind = TRUE)
+  
+  final_masked_mat <- mask_completely_at_random(exprs_mat = combined_mat,
+                                                indices_df = indices,
+                                                seed = seed,
+                                                perc_masked = 0.05)
+}
+```
+
+### Directory 
+
+```{r}
+masked_dir <- file.path("data", "masked")
+dir.create(masked_dir, recursive = TRUE, showWarnings = FALSE)
+```
+
+## Read in data
+
+```{r}
+log_seq_matrix <- 
+  data.table::fread(file.path("data", "aggregated", 
+                              "log_common_seq_zebrafish.tsv"),
+                    data.table = FALSE) %>%
+  tibble::column_to_rownames("Gene") %>%
+  as.matrix()
+```
+
+```{r}
+microarray_mat <- 
+  data.table::fread(file.path("data", "aggregated", 
+                              "common_microarray_zebrafish.tsv"),
+                    data.table = FALSE) %>%
+  tibble::column_to_rownames("Gene") %>%
+  as.matrix()
+```
+
+## Gene length influences the likelihood that genes = 0 in RNA-seq data
+
+We'll use `mgcv::gam` to fit a model -- this is based off of what was used in
+by `ggplot2::geom_smooth` in `../quality_check/08-gene_lengths`.
+
+```{r}
+gene_length_file <- file.path("..", "quality_check", "results", 
+                              "gene_length_vs_rnaseq_zero_count.tsv")
+gene_length_df <- readr::read_tsv(gene_length_file)
+```
+
+```{r}
+length_gam_model <- 
+  mgcv::gam(gene_length_df$Zero_proportion ~ s(gene_length_df$gene_length, 
+                                               bs = "cs"))
+```
+
+Based on answers from https://stackoverflow.com/questions/9789871/method-to-extract-stat-smooth-line-fit
+
+```{r}
+length_gam_fit <- predict(length_gam_model, se = TRUE)
+```
+
+Get upper and lower bounds, etc. for only those genes in the log2-transformed
+RNA-seq matrix
+
+```{r}
+gam_predict_df <- 
+  data.frame(gene = gene_length_df$Gene,
+             gene_length = gene_length_df$gene_length,
+             model_fit = length_gam_fit$fit,
+             upper_bound = length_gam_fit$fit + 2 * length_gam_fit$se.fit,
+             lower_bound = length_gam_fit$fit - 2 * length_gam_fit$se.fit,
+             stringsAsFactors = FALSE) %>%
+  dplyr::filter(gene %in% rownames(log_seq_matrix))
+```
+
+```{r}
+all.equal(gam_predict_df$gene, rownames(log_seq_matrix))
+```
+
+## 10x repeat masking 
+
+```{r}
+set.seed(123)
+seeds <- sample(1:10000, 10)
+for (seed in seeds) {
+  
+  # masked matrix for this repeat/seed
+  masked_mat <- get_masked_matrix(microarray_mat = microarray_mat,
+                                  seq_mat = log_seq_matrix,
+                                  gam_predict_df = gam_predict_df,
+                                  seed = seed)
+  
+  # write this to a PCL file
+  data.frame(masked_mat) %>%
+    tibble::rownames_to_column("Gene") %>%
+    readr::write_tsv(file.path(masked_dir,
+                               paste0("masked_gold_standard_", seed, ".tsv")))
+}
+```
+
+## Session Info
+
+```{r}
+sessionInfo()
+```

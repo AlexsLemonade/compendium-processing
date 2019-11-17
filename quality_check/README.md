@@ -75,7 +75,7 @@ We can see that longer genes tend to have positive t-statistics.
 
 <img src='https://github.com/AlexsLemonade/compendium-processing/raw/6826cc448d8bd8605ba73d30e344e7d20438234c/quality_check/plots/gene_length_vs_zero_count_all_genes.png' width='600'>
 
-We [process RNA-seq data in a manner that _should_ take into account gene length](http://docs.refine.bio/en/latest/main_text.html#tximport), but if short genes have less observations this is likely to be less effective.
+We [process RNA-seq data in a manner that captures some information about gene length](http://docs.refine.bio/en/latest/main_text.html#tximport), but can not account for short genes having less observations.
 
 ##### There appear to be two groups of RNA-seq samples in a larger test compendium
 
